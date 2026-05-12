@@ -1,0 +1,55 @@
+@model IEnumerable<ShoesBangladesh.Web.Models.Product>
+
+@{
+    ViewData["Title"] = "Our Collection";
+}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Shoes Bangladesh Collection</h1>
+        <p class="lead text-muted">Premium footwear for every occasion, fetched via API.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-shadow transition">
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/600x400?text=No+Image" : item.ImageUrl)" class="card-img-top" alt="@item.Name">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@item.Name</h5>
+                            <p class="card-text text-muted text-truncate">@item.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-success">৳@item.Price</span>
+                                <span class="badge bg-info text-dark">@item.Category?.Name</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pb-3">
+                            <button class="btn btn-outline-primary w-100">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    No products found. Make sure the API is running and the database has data.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .transition {
+        transition: all 0.3s ease;
+    }
+</style>
