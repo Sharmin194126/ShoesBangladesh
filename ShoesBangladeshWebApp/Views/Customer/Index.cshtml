@@ -1,0 +1,126 @@
+@{
+    ViewData["Title"] = "My Account";
+}
+
+<div class="customer-dashboard">
+    <div class="welcome-banner">
+        <h1>Hello, @User.Identity?.Name!</h1>
+        <p>Manage your orders, profile and track your shoe deliveries.</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Recent Orders</h3>
+            </div>
+            <div class="card-body">
+                <div class="order-item">
+                    <div class="order-info">
+                        <strong>#SHOES-1029</strong>
+                        <span>Placed on May 10, 2026</span>
+                    </div>
+                    <span class="status shipped">Shipped</span>
+                </div>
+                <div class="order-item">
+                    <div class="order-info">
+                        <strong>#SHOES-0988</strong>
+                        <span>Placed on April 28, 2026</span>
+                    </div>
+                    <span class="status delivered">Delivered</span>
+                </div>
+                <a href="#" class="view-all">View all orders</a>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>Account Settings</h3>
+            </div>
+            <div class="card-body">
+                <ul class="settings-list">
+                    <li><a href="#"><i class="fas fa-user-circle"></i> Edit Profile</a></li>
+                    <li><a asp-controller="Account" asp-action="ChangePassword"><i class="fas fa-key"></i> Change Password</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Saved Addresses</a></li>
+                    <li><a asp-controller="Account" asp-action="Logout" class="text-danger"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .customer-dashboard {
+        padding: 40px 0;
+    }
+    .welcome-banner {
+        background: #6c5ce7;
+        color: white;
+        padding: 40px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+    }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+    @@media (max-width: 768px) {
+        .dashboard-grid { grid-template-columns: 1fr; }
+    }
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .card-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        background: #fcfcfc;
+    }
+    .card-body {
+        padding: 20px;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f9f9f9;
+    }
+    .order-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .status {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .status.shipped { background: #e3f2fd; color: #1976d2; }
+    .status.delivered { background: #e8f5e9; color: #388e3c; }
+    
+    .settings-list {
+        list-style: none;
+        padding: 0;
+    }
+    .settings-list li a {
+        display: block;
+        padding: 12px 0;
+        color: #2d3436;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .settings-list li a i { margin-right: 10px; width: 20px; color: #636e72; }
+    .settings-list li a:hover { color: #6c5ce7; }
+    .view-all {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #6c5ce7;
+        font-weight: 600;
+        text-decoration: none;
+    }
+</style>
