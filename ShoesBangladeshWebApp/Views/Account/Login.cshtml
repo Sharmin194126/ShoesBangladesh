@@ -1,0 +1,127 @@
+@model ShoesBangladeshWebApp.Request.LoginRequest
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Login to your account to continue</p>
+        </div>
+        <form asp-action="Login" method="post">
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="auth-options">
+                <a asp-action="ForgotPassword" class="forgot-link">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn-auth">Login</button>
+        </form>
+        <div class="auth-footer">
+            <p>Don't have an account? <a asp-action="Register">Sign Up</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+    }
+    .auth-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 450px;
+        transition: transform 0.3s ease;
+    }
+    .auth-card:hover {
+        transform: translateY(-5px);
+    }
+    .auth-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .auth-header h2 {
+        color: #2d3436;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .auth-header p {
+        color: #636e72;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2d3436;
+        font-weight: 500;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #dfe6e9;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    .form-control:focus {
+        border-color: #6c5ce7;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+    }
+    .auth-options {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+    .forgot-link {
+        color: #6c5ce7;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .btn-auth {
+        width: 100%;
+        padding: 14px;
+        background: #6c5ce7;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+    .btn-auth:hover {
+        background: #5b4bc4;
+    }
+    .auth-footer {
+        margin-top: 25px;
+        text-align: center;
+        color: #636e72;
+    }
+    .auth-footer a {
+        color: #6c5ce7;
+        text-decoration: none;
+        font-weight: 600;
+    }
+</style>
