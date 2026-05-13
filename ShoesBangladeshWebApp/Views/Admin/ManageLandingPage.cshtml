@@ -5,77 +5,137 @@
     Layout = "_AdminLayout";
 }
 
+<style>
+    .settings-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .section-divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 2rem 0;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .input-group-text {
+        border-radius: 12px 0 0 12px;
+        background: #f8fafc;
+        border-color: #e2e8f0;
+    }
+    
+    .rounded-end-12 {
+        border-radius: 0 12px 12px 0 !important;
+    }
+</style>
+
 <div class="row">
     <div class="col-lg-8">
-        <div class="card-admin">
+        <div class="settings-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0">Update Site Content</h5>
-                <a href="/Landing" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                    <i class="bi bi-eye me-1"></i> View Changes
+                <div>
+                    <h4 class="fw-bold mb-1">Configuration</h4>
+                    <p class="text-muted small mb-0">Customize your website appearance and active offers.</p>
+                </div>
+                <a href="/Landing" target="_blank" class="btn btn-outline-primary rounded-pill px-4 fw-600">
+                    <i class="bi bi-eye me-2"></i> Preview Site
                 </a>
             </div>
 
             <form asp-action="UpdateSettings" method="post">
                 <!-- Hero Section Offer -->
-                <div class="section-title mb-3 text-primary small fw-bold text-uppercase">Hero Section & Offers</div>
-                <div class="row g-3 mb-4">
+                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Campaign & Offers</h6>
+                <div class="row g-4">
                     <div class="col-md-8">
-                        <label class="form-label small fw-bold">Offer Title</label>
-                        <input asp-for="EidOfferTitle" class="form-control rounded-3" placeholder="e.g. Eid-ul-Adha Special" />
+                        <label class="form-label">Main Offer Title</label>
+                        <input asp-for="EidOfferTitle" class="form-control" placeholder="e.g. Eid-ul-Adha Special" />
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label small fw-bold">Discount (%)</label>
-                        <input asp-for="DiscountPercentage" type="number" class="form-control rounded-3" />
+                        <label class="form-label">Discount Percentage (%)</label>
+                        <input asp-for="DiscountPercentage" type="number" class="form-control" />
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">Offer Subtitle</label>
-                        <input asp-for="EidOfferSubtitle" class="form-control rounded-3" />
+                        <label class="form-label">Campaign Subtitle</label>
+                        <input asp-for="EidOfferSubtitle" class="form-control" placeholder="Short description of the offer..." />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-bold">Offer End Date</label>
-                        <input asp-for="EidOfferEndTime" type="datetime-local" class="form-control rounded-3" />
+                        <label class="form-label">Offer Expiry Date</label>
+                        <input asp-for="EidOfferEndTime" type="datetime-local" class="form-control" />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label d-block small fw-bold">Offer Status</label>
+                        <label class="form-label d-block">Campaign Status</label>
                         <div class="form-check form-switch mt-2">
-                            <input asp-for="IsOfferActive" class="form-check-input" type="checkbox">
-                            <label class="form-check-label">Show Eid Offer Section</label>
+                            <input asp-for="IsOfferActive" class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;">
+                            <label class="form-check-label ms-2 mt-1">Enable Eid Campaign Section</label>
                         </div>
                     </div>
                 </div>
+
+                <div class="section-divider"></div>
 
                 <!-- Company & Product Descriptions -->
-                <div class="section-title mb-3 text-primary small fw-bold text-uppercase">Company & Product Info</div>
-                <div class="row g-3 mb-4">
+                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Company Information</h6>
+                <div class="row g-4">
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">Company Name</label>
-                        <input asp-for="CompanyName" class="form-control rounded-3" />
+                        <label class="form-label">Brand Name</label>
+                        <input asp-for="CompanyName" class="form-control" />
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">Company Description (Footer)</label>
-                        <textarea asp-for="CompanyDescription" class="form-control rounded-3" rows="3"></textarea>
+                        <label class="form-label">Footer Description</label>
+                        <textarea asp-for="CompanyDescription" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">Product Collection Description</label>
-                        <textarea asp-for="ProductSectionDescription" class="form-control rounded-3" rows="3" placeholder="Describe your product collection..."></textarea>
+                        <label class="form-label">Product Collection Intro</label>
+                        <textarea asp-for="ProductSectionDescription" class="form-control" rows="3" placeholder="A short intro for your products list..."></textarea>
                     </div>
                 </div>
 
+                <div class="section-divider"></div>
+
                 <!-- Social Links -->
-                <div class="section-title mb-3 text-primary small fw-bold text-uppercase">Social & Contact</div>
-                <div class="row g-3 mb-4">
+                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Social Channels</h6>
+                <div class="row g-4">
                     <div class="col-md-12">
-                        <label class="form-label small fw-bold">Facebook Page Link</label>
+                        <label class="form-label">Facebook Page URL</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-facebook text-primary"></i></span>
-                            <input asp-for="FacebookPageLink" class="form-control border-start-0 rounded-end-3" />
+                            <span class="input-group-text"><i class="bi bi-facebook text-primary"></i></span>
+                            <input asp-for="FacebookPageLink" class="form-control rounded-end-12" placeholder="https://facebook.com/yourpage" />
                         </div>
                     </div>
                 </div>
 
-                <div class="border-top pt-4 mt-2">
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-3">
-                        <i class="bi bi-save me-2"></i> Save Changes
+                <div class="mt-5 pt-3">
+                    <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-4 shadow-sm w-100 w-md-auto">
+                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Update Landing Page
                     </button>
                 </div>
             </form>
@@ -83,31 +143,40 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card-admin bg-light border-0">
-            <h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i> How it works</h6>
-            <p class="small text-muted mb-3">The information you provide here is used across your landing page to attract customers.</p>
-            <ul class="small text-muted ps-3 mb-0">
-                <li class="mb-2"><strong>Hero Section:</strong> Changes the main banner and countdown timer.</li>
-                <li class="mb-2"><strong>Descriptions:</strong> Updated in the footer and product section headers.</li>
-                <li><strong>Status:</strong> Use the switch to temporarily hide the Eid campaign.</li>
-            </ul>
+        <div class="info-box mb-4">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-lightbulb text-warning"></i> Quick Tips
+            </h6>
+            <p class="small text-muted mb-3">Keep your campaign titles short and punchy for better mobile view.</p>
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex gap-2">
+                    <div class="bg-primary bg-opacity-10 p-1 rounded-circle" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;">1</div>
+                    <p class="small mb-0">Use the <strong>Live Status</strong> toggle to enable/disable holiday banners.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="bg-primary bg-opacity-10 p-1 rounded-circle" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;">2</div>
+                    <p class="small mb-0">Product descriptions appear right above your shoe catalog.</p>
+                </div>
+            </div>
         </div>
         
-        <div class="card-admin mt-3 border-0 bg-primary bg-opacity-10">
-            <h6 class="fw-bold text-primary mb-2">Need to add products?</h6>
-            <p class="small text-muted mb-3">Go to the Product Management section to add products with desktop image upload.</p>
-            <a asp-controller="Product" asp-action="Index" class="btn btn-sm btn-primary w-100 rounded-pill">Manage Products</a>
+        <div class="settings-card border-0 bg-dark text-white p-4">
+            <h6 class="fw-bold mb-3">Product Sync</h6>
+            <p class="small text-white-50 mb-4">Need to add new shoes to the catalog? Head over to inventory.</p>
+            <a asp-controller="Product" asp-action="Index" class="btn btn-primary w-100 rounded-pill py-2 fw-600">
+                Go to Inventory
+            </a>
         </div>
     </div>
 </div>
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div class="toast show align-items-center text-white bg-success border-0" role="alert">
+    <div class="toast-container position-fixed bottom-0 end-0 p-4">
+        <div class="toast show align-items-center text-white bg-dark border-0 rounded-4" role="alert">
             <div class="d-flex">
-                <div class="toast-body">
-                    @TempData["SuccessMessage"]
+                <div class="toast-body p-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> @TempData["SuccessMessage"]
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>

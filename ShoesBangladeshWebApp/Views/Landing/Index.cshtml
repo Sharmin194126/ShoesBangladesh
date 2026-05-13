@@ -1,135 +1,318 @@
 @model ShoesBangladesh.API.ViewModels.LandingPageResponse
 
 @{
-    ViewData["Title"] = "Eid Special Collection";
+    ViewData["Title"] = "Premium Footwear Collection";
     Layout = "_Layout";
 }
 
-<div class="landing-page">
-    <!-- Hero Section -->
-    <section class="hero-eid">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <div class="offer-badge pulse">
-                <span class="discount-text">@(Model.Settings.DiscountPercentage)% OFF</span>
-                <span class="eid-text">Eid Special</span>
-            </div>
-            <h1 class="glow-text">@Model.Settings.EidOfferTitle</h1>
-            <p class="hero-subtitle">@Model.Settings.EidOfferSubtitle</p>
-            
-            <div class="highlights">
-                <span><i class="bi bi-patch-check-fill"></i> Premium Leather</span>
-                <span><i class="bi bi-truck"></i> Fast Delivery</span>
-                <span><i class="bi bi-shield-lock-fill"></i> Trusted Brand</span>
-            </div>
+<style>
+    /* Hero Section */
+    .hero-v2 {
+        position: relative;
+        min-height: 90vh;
+        background: #0f172a;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        color: white;
+    }
 
-            <div class="countdown-container">
-                <p>Offer Ends In:</p>
-                <div id="countdown" data-endtime="@Model.Settings.EidOfferEndTime.ToString("yyyy-MM-ddTHH:mm:ss")">
-                    <div class="time-box"><span id="days">00</span><small>Days</small></div>
-                    <div class="time-box"><span id="hours">00</span><small>Hours</small></div>
-                    <div class="time-box"><span id="minutes">00</span><small>Mins</small></div>
-                    <div class="time-box"><span id="seconds">00</span><small>Secs</small></div>
+    .hero-v2::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, #0f172a, transparent), url('https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=2012&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        opacity: 0.6;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 700px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        padding: 8px 20px;
+        border-radius: 100px;
+        color: #818cf8;
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-title {
+        font-size: 5rem;
+        font-weight: 900;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        margin-bottom: 2.5rem;
+        line-height: 1.6;
+    }
+
+    /* Product Grid */
+    .section-padding {
+        padding: 8rem 0;
+    }
+
+    .section-title {
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+
+    .item-card {
+        background: #f8fafc;
+        border-radius: 32px;
+        padding: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        border: 1px solid transparent;
+        position: relative;
+    }
+
+    .item-card:hover {
+        background: white;
+        border-color: #e2e8f0;
+        box-shadow: 0 30px 60px -12px rgba(0,0,0,0.08);
+        transform: translateY(-10px);
+    }
+
+    .item-img-container {
+        height: 300px;
+        border-radius: 24px;
+        overflow: hidden;
+        background: white;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .item-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.6s ease;
+        padding: 2rem;
+    }
+
+    .item-card:hover .item-img {
+        transform: scale(1.1) rotate(-5deg);
+    }
+
+    .item-tag {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: #0f172a;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.75rem;
+    }
+
+    .price-large {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .price-strike {
+        text-decoration: line-through;
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-left: 10px;
+    }
+
+    .btn-buy {
+        width: 45px;
+        height: 45px;
+        background: #0f172a;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+
+    .btn-buy:hover {
+        background: #6366f1;
+        color: white;
+    }
+
+    /* Countdown */
+    .timer-container {
+        background: #6366f1;
+        border-radius: 24px;
+        padding: 3rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: -5rem;
+        position: relative;
+        z-index: 20;
+        box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+    }
+
+    .time-unit {
+        text-align: center;
+    }
+
+    .time-val {
+        font-size: 3.5rem;
+        font-weight: 900;
+        display: block;
+        line-height: 1;
+    }
+
+    .time-lbl {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+
+    /* Responsive */
+    @media (max-width: 991px) {
+        .hero-title { font-size: 3.5rem; }
+        .hero-v2::after { display: none; }
+        .timer-container { flex-direction: column; gap: 2rem; text-align: center; }
+    }
+</style>
+
+<div class="landing-v2">
+    <!-- Hero -->
+    <section class="hero-v2">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="bi bi-patch-check-fill"></i>
+                    <span>Official Eid Collection @(Model.Settings.DiscountPercentage)% Discount</span>
+                </div>
+                <h1 class="hero-title">@Model.Settings.EidOfferTitle</h1>
+                <p class="hero-subtitle">@Model.Settings.EidOfferSubtitle</p>
+                
+                <div class="d-flex gap-3">
+                    <a href="#collection" class="btn btn-primary px-5 py-3 rounded-pill fw-bold">Explore Now</a>
+                    <a href="#" class="btn btn-outline-light px-5 py-3 rounded-pill fw-bold">Watch Film</a>
+                </div>
+
+                <div class="mt-5 d-flex gap-4 align-items-center opacity-75">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-truck fs-4"></i>
+                        <span class="small fw-600">Free Express Delivery</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-repeat fs-4"></i>
+                        <span class="small fw-600">30-Day Returns</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="hero-actions">
-                <a href="#collection" class="btn-premium">Shop Now</a>
-                <a href="#collection" class="btn-outline-white">Explore Collection</a>
-            </div>
-
         </div>
     </section>
 
-    <!-- Product Section -->
-    <section id="collection" class="collection-section">
-        <div class="container">
-            <div class="section-header text-center mb-5">
-                <h2>Our Premium Collection</h2>
-                <p class="text-muted mx-auto" style="max-width: 650px;">@Model.Settings.ProductSectionDescription</p>
-                <div class="divider"></div>
+    <div class="container">
+        <!-- Countdown -->
+        <div class="timer-container">
+            <div>
+                <h4 class="fw-800 mb-1">Limited Time Eid Offer</h4>
+                <p class="mb-0 opacity-75">Hurry up! The campaign is ending soon.</p>
+            </div>
+            <div class="d-flex gap-4" id="countdown" data-endtime="@Model.Settings.EidOfferEndTime.ToString("yyyy-MM-ddTHH:mm:ss")">
+                <div class="time-unit">
+                    <span class="time-val" id="days">00</span>
+                    <span class="time-lbl">Days</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-val" id="hours">00</span>
+                    <span class="time-lbl">Hours</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-val" id="minutes">00</span>
+                    <span class="time-lbl">Mins</span>
+                </div>
+                <div class="time-unit">
+                    <span class="time-val" id="seconds">00</span>
+                    <span class="time-lbl">Secs</span>
+                </div>
+            </div>
+            <a href="#collection" class="btn btn-white bg-white text-primary px-5 py-3 rounded-pill fw-bold shadow-sm">Claim Now</a>
+        </div>
+
+        <!-- Collection -->
+        <section class="section-padding" id="collection">
+            <div class="row align-items-end mb-5">
+                <div class="col-lg-6">
+                    <h2 class="section-title">New Arrivals</h2>
+                    <p class="text-muted">@Model.Settings.ProductSectionDescription</p>
+                </div>
+                <div class="col-lg-6 text-lg-end">
+                    <div class="d-inline-flex gap-2 p-1 bg-light rounded-pill">
+                        <button class="btn btn-primary rounded-pill px-4">All</button>
+                        <button class="btn btn-light rounded-pill px-4">Formal</button>
+                        <button class="btn btn-light rounded-pill px-4">Casual</button>
+                    </div>
+                </div>
             </div>
 
-
-            <div class="product-grid">
+            <div class="row g-4">
                 @foreach (var product in Model.Products)
                 {
-                    <div class="product-card @(product.Id == Model.TargetProductId ? "highlighted-card" : "")">
-                        @if (product.IsEidOffer)
-                        {
-                            <div class="card-badge">Eid Offer</div>
-                        }
-                        <div class="card-img-wrapper">
-                            <img src="http://localhost:5190@product.ImageUrl" alt="@product.Name" loading="lazy" onerror="this.src='https://placehold.co/400x300?text=No+Image'" />
-
-                            <div class="card-overlay">
-                                <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-quick-view">Quick View</a>
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="item-card">
+                            @if (product.IsEidOffer)
+                            {
+                                <div class="item-tag">Eid Special</div>
+                            }
+                            <div class="item-img-container">
+                                <a asp-action="ProductDetails" asp-route-id="@product.Id">
+                                    <img src="http://localhost:5190@product.ImageUrl" 
+                                         alt="@product.Name" 
+                                         class="item-img"
+                                         onerror="this.src='https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=1000&auto=format&fit=crop'">
+                                </a>
                             </div>
-                        </div>
-                        <div class="card-body">
-                            <span class="cat-name">@product.CategoryName</span>
-                            <h3>@product.Name</h3>
-                            <div class="price-box">
-                                @if (product.DiscountPrice.HasValue)
-                                {
-                                    <span class="old-price">৳@product.Price</span>
-                                    <span class="new-price">৳@product.DiscountPrice</span>
-                                }
-                                else
-                                {
-                                    <span class="new-price">৳@product.Price</span>
-                                }
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="fw-bold mb-1">@product.Name</h6>
+                                    <p class="small text-muted mb-3">Premium Lifestyle Shoe</p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="price-large">৳@(product.DiscountPrice ?? product.Price)</span>
+                                        @if (product.DiscountPrice.HasValue)
+                                        {
+                                            <span class="price-strike">৳@product.Price</span>
+                                        }
+                                    </div>
+                                </div>
+                                <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-buy">
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
                             </div>
-                            <div class="rating">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span>(4.5)</span>
-                            </div>
-                            <a asp-action="OrderNow" asp-route-productId="@product.Id" class="btn-order floating-btn">Order Now</a>
                         </div>
                     </div>
                 }
             </div>
-        </div>
-    </section>
-
-    <!-- Facebook Footer -->
-    <footer class="premium-footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-info">
-                    <img src="/images/logo-white.png" alt="Logo" class="footer-logo" onerror="this.src='https://via.placeholder.com/150x50?text=SHOES+BD'"/>
-                    <p>@Model.Settings.CompanyDescription</p>
-                    <div class="social-links">
-                        <a href="@Model.Settings.FacebookPageLink" target="_blank"><i class="bi bi-facebook"></i></a>
-                        <a href="#"><i class="bi bi-instagram"></i></a>
-                        <a href="#"><i class="bi bi-whatsapp"></i></a>
-                    </div>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Returns & Refunds</a></li>
-                        <li><a href="#">Support</a></li>
-                    </ul>
-                </div>
-                <div class="footer-contact">
-                    <h4>Contact Us</h4>
-                    <p><i class="bi bi-envelope"></i> info@shoesbangladesh.com</p>
-                    <p><i class="bi bi-telephone"></i> +880 1234 56789</p>
-                    <p><i class="bi bi-geo-alt"></i> Dhaka, Bangladesh</p>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; @DateTime.Now.Year @(Model.Settings.CompanyName). All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+        </section>
+    </div>
 </div>
 
 @section Scripts {
@@ -144,7 +327,7 @@
                 const distance = endTime - now;
 
                 if (distance < 0) {
-                    countdownEl.innerHTML = "<h4>Offer Expired</h4>";
+                    countdownEl.innerHTML = "<h4 class='mb-0'>Offer Expired</h4>";
                     return;
                 }
 
@@ -164,5 +347,3 @@
         }
     </script>
 }
-
-

@@ -3,85 +3,230 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ShoesBangladesh.Web</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Shoes Bangladesh</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ShoesBangladesh.Web.styles.css" asp-append-version="true" />
+    
+    <style>
+        :root {
+            --primary-accent: #6366f1;
+            --primary-dark: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            background-color: white;
+            overflow-x: hidden;
+        }
+
+        /* Modern Navbar */
+        .navbar-premium {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 1.25rem 0;
+            transition: var(--transition);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main) !important;
+            padding: 0.5rem 1.25rem !important;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-accent) !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-link.btn-cta {
+            background: var(--primary-accent);
+            color: white !important;
+            border-radius: 100px;
+            padding: 0.6rem 1.75rem !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+            margin-left: 1rem;
+        }
+
+        .nav-link.btn-cta:hover {
+            background: #4f46e5;
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+            color: white !important;
+        }
+
+        /* Footer Styling */
+        .footer-premium {
+            background: var(--primary-dark);
+            color: white;
+            padding: 5rem 0 2rem;
+            margin-top: 5rem;
+        }
+
+        .footer-logo {
+            font-weight: 800;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .footer-link {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-circle {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .social-circle:hover {
+            background: var(--primary-accent);
+            transform: translateY(-3px);
+        }
+
+        main {
+            min-height: 70vh;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ShoesBangladesh.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-premium sticky-top">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; background: linear-gradient(135deg, #6366f1, #a855f7) !important;">S</div>
+                    <span>SHOES<span class="text-primary">BD</span></span>
+                </a>
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-controller="Landing" asp-action="Index">Collection</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-danger fw-bold" asp-controller="Landing" asp-action="Index"><i class="bi bi-stars"></i> Eid Collection</a>
+                            <a class="nav-link" href="#">Men</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+                            <a class="nav-link" href="#">Women</a>
                         </li>
-
-                        @if (User.Identity.IsAuthenticated)
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Customer" asp-action="Index">My Account</a>
-                                </li>
-                            }
+                            <li class="nav-item">
+                                <a class="nav-link text-primary fw-bold" asp-controller="Admin" asp-action="Index">Admin Panel</a>
+                            </li>
                         }
                     </ul>
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav align-items-center">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <span class="nav-link text-primary fw-bold">Hello, @(User.FindFirst("FullName")?.Value ?? User.Identity.Name)</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                    <img src="https://ui-avatars.com/api/?name=@(User.Identity.Name)&background=6366f1&color=fff" class="rounded-circle" width="30">
+                                    <span>Account</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2">
+                                    <li><a class="dropdown-item rounded-3 py-2" asp-controller="Customer" asp-action="Index">Dashboard</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item rounded-3 py-2 text-danger" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                                </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Sign Up</a>
+                                <a class="nav-link btn-cta" asp-controller="Account" asp-action="Register">Join Us</a>
                             </li>
                         }
                     </ul>
-
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer-premium">
         <div class="container">
-            &copy; 2026 - ShoesBangladesh.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <span class="footer-logo">SHOES<span class="text-primary">BD</span></span>
+                    <p class="text-muted mb-4">Premium footwear for the modern generation. Quality, comfort, and style in every step.</p>
+                    <div class="d-flex">
+                        <a href="#" class="social-circle"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="social-circle"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="social-circle"><i class="bi bi-twitter-x"></i></a>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 ms-auto">
+                    <h6 class="fw-bold mb-4">Shop</h6>
+                    <a href="#" class="footer-link">New Arrivals</a>
+                    <a href="#" class="footer-link">Best Sellers</a>
+                    <a href="#" class="footer-link">Men</a>
+                    <a href="#" class="footer-link">Women</a>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-4">Support</h6>
+                    <a href="#" class="footer-link">Help Center</a>
+                    <a href="#" class="footer-link">Shipping</a>
+                    <a href="#" class="footer-link">Returns</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-bold mb-4">Newsletter</h6>
+                    <p class="small text-muted mb-4">Get updates on new collections and special offers.</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-dark border-0 text-white rounded-start-pill px-4" placeholder="Your email">
+                        <button class="btn btn-primary rounded-end-pill px-4">Join</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-5 mt-5 border-top border-secondary border-opacity-25 text-center text-muted small">
+                <p class="mb-0">&copy; @DateTime.Now.Year Shoes Bangladesh. All rights reserved.</p>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
