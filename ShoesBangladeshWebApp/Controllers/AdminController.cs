@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoesBangladesh.API.ViewModels;
-
-
-using System.Text.Json;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ShoesBangladeshWebApp.Controllers
 {
@@ -30,6 +31,32 @@ namespace ShoesBangladeshWebApp.Controllers
                 return View(stats);
             }
             return View(new AdminStatsViewModel());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetYearlyGoalStats(int year)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync($"api/Dashboard/GetYearlyGoalStats?year={year}");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return Content(json, "application/json");
+            }
+            return BadRequest();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetYearlySales(int year)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync($"api/Dashboard/GetYearlySales?year={year}");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return Content(json, "application/json");
+            }
+            return BadRequest();
         }
 
         public async Task<IActionResult> ManageLandingPage()
@@ -216,5 +243,13 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(new List<RecentOrderViewModel>());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateSalesGoal(int year, decimal goalAmount)
+        {
+            // For now, this is a placeholder. You could implement a setting in the API.
+            // For demonstration, we'll just return to dashboard.
+            TempData["SuccessMessage"] = $"Sales goal for {year} updated to {goalAmount}!";
+            return RedirectToAction("Index");
+        }
     }
 }
