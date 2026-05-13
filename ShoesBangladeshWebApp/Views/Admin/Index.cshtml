@@ -1,6 +1,5 @@
 @model ShoesBangladesh.API.ViewModels.AdminStatsViewModel
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env
-@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @{
     ViewData["Title"] = "Admin Dashboard";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -9,906 +8,269 @@
 <style>
     .stat-card {
         padding: 20px;
-        border-radius: 10px;
+        border-radius: 15px;
         color: white;
         margin-bottom: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        display: block;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
     }
-    .bg-delivered { background-color: #28a745; }
-    .bg-pending { background-color: #ffc107; color: #333; }
-    .bg-processing { background-color: #17a2b8; }
-    .bg-revenue { background-color: #532374; }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        color: white;
+    }
+    .bg-delivered { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
+    .bg-pending { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333 !important; }
+    .bg-processing { background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%); }
+    .bg-revenue { background: linear-gradient(135deg, #532374 0%, #3a1852 100%); }
     
+    .stat-card i {
+        position: absolute;
+        right: 15px;
+        bottom: 10px;
+        font-size: 3rem;
+        opacity: 0.2;
+    }
+
     .table-container {
-        background: #f2efe9;
-        padding: 20px;
-        border-radius: 12px;
-        margin-top: 30px;
-        border: 1px solid #e6e2db;
+        background: white;
+        padding: 25px;
+        border-radius: 20px;
+        margin-top: 20px;
+        border: 1px solid #eef2f7;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
     }
     .table-container h4 {
-        color: #33312e;
+        color: #333;
         margin-bottom: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
-    .nav-shortcuts .dash-card {
+    
+    .quick-link-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         padding: 15px;
         text-align: center;
-        border-radius: 8px;
-        transition: 0.3s;
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #475569;
     }
-    .nav-shortcuts .dash-card:hover {
-        transform: translateY(-5px);
+    .quick-link-card:hover {
+        background: white;
+        border-color: #6366f1;
+        color: #6366f1;
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+    }
+    .quick-link-card i {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    .quick-link-card span {
+        font-weight: 600;
+        font-size: 0.9rem;
     }
 
-    /* Analytics Metric Card Hover Animation */
-    .analytics-metric-card {
-        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-        cursor: pointer;
-    }
-    .analytics-metric-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    .chart-box {
+        height: 300px;
+        margin-top: 20px;
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold mb-0" style="color:#532374;">📊 @Localizer["Admin Dashboard Overview"]</h3>
-    <a asp-controller="Account" asp-action="Profile" class="btn btn-warning fw-bold text-dark shadow-sm px-4">
-        <i class="bi bi-person-circle me-2"></i> @Localizer["Account Profile"]
-    </a>
-</div>
+<div class="container-fluid p-0">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-extrabold text-dark">Welcome back, Admin! 👋</h2>
+            <p class="text-muted">Here's what's happening with your store today.</p>
+        </div>
+    </div>
 
-<!-- KEY STATS (Premium Mode) -->
-<div class="row g-3 mb-5">
-    <div class="col-md">
-        <a asp-action="OrdersByStatus" asp-route-status="Delivered" class="stat-card-premium card-variant-green">
-            <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Delivered Orders"]</div>
-                <div class="stat-card-value">@Model.TotalDelivered.ToString("#,##0")</div>
+    <!-- Stat Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-delivered">
+                <div class="stat-label">Delivered Orders</div>
+                <div class="h2 fw-bold mb-0">@Model.TotalDelivered</div>
+                <i class="bi bi-check2-circle"></i>
             </div>
-            <div class="stat-card-icon"><i class="bi bi-bag-check-fill"></i></div>
-        </a>
-    </div>
-    <div class="col-md">
-        <a asp-action="OrdersByStatus" asp-route-status="Pending" class="stat-card-premium card-variant-orange">
-            <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Pending Orders"]</div>
-                <div class="stat-card-value">@Model.TotalPending.ToString("#,##0")</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-pending">
+                <div class="stat-label">Pending Orders</div>
+                <div class="h2 fw-bold mb-0">@Model.TotalPending</div>
+                <i class="bi bi-clock-history"></i>
             </div>
-            <div class="stat-card-icon"><i class="bi bi-clock-history"></i></div>
-        </a>
-    </div>
-    <div class="col-md">
-        <a asp-action="OrdersByStatus" asp-route-status="Processing" class="stat-card-premium card-variant-blue">
-            <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["In Processing"]</div>
-                <div class="stat-card-value">@Model.TotalProcessing.ToString("#,##0")</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-processing">
+                <div class="stat-label">In Processing</div>
+                <div class="h2 fw-bold mb-0">@Model.TotalProcessing</div>
+                <i class="bi bi-gear-wide-connected"></i>
             </div>
-            <div class="stat-card-icon"><i class="bi bi-gear-wide-connected"></i></div>
-        </a>
-    </div>
-    <div class="col-md">
-        <a asp-action="OrdersByStatus" asp-route-status="Shipped" class="stat-card-premium card-variant-cyan">
-            <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Shipped Orders"]</div>
-                <div class="stat-card-value">@Model.TotalShipped.ToString("#,##0")</div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-revenue">
+                <div class="stat-label">Total Revenue</div>
+                <div class="h2 fw-bold mb-0">৳@Model.TotalRevenue.ToString("#,##0")</div>
+                <i class="bi bi-cash-stack"></i>
             </div>
-            <div class="stat-card-icon"><i class="bi bi-truck"></i></div>
-        </a>
-    </div>
-    <div class="col-md">
-        <div class="stat-card-premium card-variant-purple">
-            <div class="stat-card-content">
-                <div class="stat-card-label">@Localizer["Total Revenue"]</div>
-                <div class="stat-card-value">৳@Model.TotalRevenue.ToString("#,##0")</div>
-            </div>
-            <div class="stat-card-icon"><i class="bi bi-cash-stack"></i></div>
         </div>
     </div>
-</div>
 
-
-<!-- MANAGEMENT QUICK LINKS -->
-<div class="mb-4">
-    <h5 class="fw-bold mb-3"><i class="bi bi-lightning-fill text-warning me-2"></i>@Localizer["Quick Management"]</h5>
-    <div class="row g-2 nav-shortcuts">
-        <div class="col-6 col-md-3">
-            <a asp-controller="Product" asp-action="Create" class="btn btn-warning fw-bold w-100 py-2 shadow-sm border-0">
-                <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["Add Product"]
-            </a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="ManageLandingPage" class="btn btn-primary fw-bold w-100 py-2 shadow-sm border-0">
-                <i class="bi bi-window-sidebar me-2"></i>@Localizer["Landing Page"]
-            </a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="EmployeeSalesOverview" class="btn btn-outline-primary w-100 py-2">@Localizer["Employee Goals"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="Customers" class="btn btn-outline-info w-100 py-2">@Localizer["Customers"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="EmployeeList" class="btn btn-outline-dark w-100 py-2">@Localizer["Employees"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="DeliveryMen" class="btn btn-outline-secondary w-100 py-2">@Localizer["Delivery Men"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="Reports" class="btn btn-outline-danger w-100 py-2">@Localizer["Reports"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="FooterSettings" class="btn btn-outline-warning w-100 py-2">@Localizer["Footer Settings"]</a>
-        </div>
-    </div>
-</div>
-
-@{
-    var currentYearSales = Model.MonthlyHistory.Where(m => m.Year == DateTime.Now.Year).Sum(m => m.Amount);
-    var goalPercent = Model.SalesGoal > 0 ? (int)Math.Min(100, (currentYearSales / Model.SalesGoal) * 100) : 0;
-    var goalRemaining = Model.SalesGoal - currentYearSales;
-}
-
-<!-- ===== DESCO-STYLE TOP SUMMARY BAR ===== -->
-<div class="row g-3 mb-4">
-    <!-- Metrics Box -->
-    <div class="col-lg-7">
-        <div class="row g-3 h-100">
-            <div class="col-6">
-                <div class="analytics-metric-card" style="background: linear-gradient(135deg,#6f2da8,#532374);">
-                    <div class="amc-icon"><i class="bi bi-graph-up-arrow"></i></div>
-                    <div class="amc-label">@Localizer["Total Sales"]</div>
-                    <div class="amc-value">৳@Model.TotalRevenue.ToString("#,##0")</div>
-                    <div class="amc-sub">@Localizer["All time revenue"]</div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="analytics-metric-card" style="background: linear-gradient(135deg,#1a7a6e,#138d75);">
-                    <div class="amc-icon"><i class="bi bi-currency-exchange"></i></div>
-                    <div class="amc-label">@Localizer["Total Profit (Ex. VAT)"]</div>
-                    <div class="amc-value">৳@Model.TotalProfit.ToString("#,##0")</div>
-                    <div class="amc-sub">@Localizer["After VAT deduction"]</div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="analytics-metric-card" style="background: linear-gradient(135deg,#8b4513,#a0522d);">
-                    <div class="amc-icon"><i class="bi bi-receipt-cutoff"></i></div>
-                    <div class="amc-label">@Localizer["VAT Collected"]</div>
-                    <div class="amc-value">৳@Model.TotalExpenses.ToString("#,##0")</div>
-                    <div class="amc-sub">@Localizer["Total tax revenue"]</div>
-                </div>
-            </div>
-            <div class="col-6">
-                <div class="analytics-metric-card" style="background: linear-gradient(135deg,#1565c0,#1976d2);">
-                    <div class="amc-icon"><i class="bi bi-calendar-week"></i></div>
-                    <div class="amc-label">@Localizer["Weekly Sales"]</div>
-                    <div class="amc-value">৳@Model.WeeklyRevenue.ToString("#,##0")</div>
-                    <div class="amc-sub">@Localizer["Last 7 days"]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Sales Goals Card -->
-    <div class="col-lg-5">
-        <div class="h-100 p-4 rounded-3 shadow-sm" style="background:#fff; border:1px solid #e6e2db;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex align-items-center gap-2">
-                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-trophy-fill text-warning me-2"></i>@Localizer["Sales Goal"]</h6>
-                    <div class="d-flex align-items-center border rounded-pill px-2" style="background:#f8f6f0; height:28px;">
-                        <button class="btn btn-sm p-0 border-0" onclick="updateGoalYear(-1)" style="font-size:10px;">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <span id="goalDisplayYear" class="px-2 fw-bold" style="font-size:12px; color:#532374;">@DateTime.Now.Year</span>
-                        <button class="btn btn-sm p-0 border-0" onclick="updateGoalYear(1)" style="font-size:10px;">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
+    <div class="row">
+        <!-- Quick Management -->
+        <div class="col-lg-4 mb-4">
+            <div class="table-container h-100">
+                <h4><i class="bi bi-lightning-fill text-warning"></i> Quick Actions</h4>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a asp-controller="Product" asp-action="Create" class="quick-link-card">
+                            <i class="bi bi-plus-circle text-primary"></i>
+                            <span>Add Product</span>
+                        </a>
                     </div>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#historyGoalModal" title="@Localizer["View Goal History"]">
-                        <i class="bi bi-clock-history"></i> @Localizer["History"]
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="prepareEditGoal()" title="@Localizer["Edit Selected Year Goal"]">
-                        <i class="bi bi-pencil-square"></i> @Localizer["Edit"]
-                    </button>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-6">
-                    <div class="small text-muted">@Localizer["Target"]</div>
-                    <div class="fw-bold fs-5" id="valTarget" style="color:#532374;">৳@Model.SalesGoal.ToString("#,##0")</div>
-                    <div class="small text-muted">@Localizer["Full Year Goal"]</div>
-                </div>
-                <div class="col-6 border-start">
-                    <div class="small text-muted">@Localizer["Remaining"]</div>
-                    <div class="fw-bold fs-5 text-danger" id="valRemaining">৳@(goalRemaining > 0 ? goalRemaining.ToString("#,##0") : "0")</div>
-                    <div class="small text-muted">@Localizer["To reach target"]</div>
-                </div>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <div style="position:relative; width:90px; height:90px; flex-shrink:0;">
-                    <canvas id="goalRingChart"></canvas>
-                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:#532374;" id="valPercent">@goalPercent%</div>
-                </div>
-                <div>
-                    <div class="fw-bold text-dark" id="valAchieved">৳@currentYearSales.ToString("#,##0") @Localizer["achieved"]</div>
-                    <div class="small text-muted" id="goalNote">@Localizer["Note: Goal for"] <span id="noteYear">@DateTime.Now.Year</span></div>
-                    <div class="progress mt-2" style="height:6px;">
-                        <div class="progress-bar" id="valProgressBar" style="width:@goalPercent%; background:#532374;"></div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="ManageLandingPage" class="quick-link-card">
+                            <i class="bi bi-window-sidebar text-success"></i>
+                            <span>Landing Page</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="EmployeeList" class="quick-link-card">
+                            <i class="bi bi-people text-info"></i>
+                            <span>Employees</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="Reports" class="quick-link-card">
+                            <i class="bi bi-file-earmark-bar-graph text-danger"></i>
+                            <span>Reports</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="Messages" class="quick-link-card">
+                            <i class="bi bi-chat-dots text-purple"></i>
+                            <span>Messages</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="FooterSettings" class="quick-link-card">
+                            <i class="bi bi-gear text-secondary"></i>
+                            <span>Settings</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- ===== CHART + TOP PRODUCTS ROW ===== -->
-<div class="row g-4 mb-4">
-    <!-- Line Chart - Standard Premium Card -->
-    <div class="col-lg-8">
-        <div class="shadow-sm rounded-3 h-100" style="background:#fff; border:1px solid #e6e2db;">
-            <!-- Card Header -->
-            <div class="px-4 pt-4 pb-2">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <div class="small mb-1" style="color:#6c757d; text-transform:uppercase; letter-spacing:.5px; font-size:11px;">@Localizer["Product Sales"]</div>
-                        <div id="chartHeaderAmount" class="fw-bold" style="color:#33312e; font-size:1.8rem; line-height:1;">৳0</div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-sm dropdown-toggle" id="rangeDropdownBtn"
-                                data-bs-toggle="dropdown" data-bs-display="static" style="background:#f8f6f0; color:#532374; border:1px solid #e6e2db; border-radius:8px; font-size:13px;">
-                            <span id="rangeDropdownLabel">@Localizer["Weekly"]</span>
-                        </button>
-                        <style>
-                            .light-dropdown-menu .dropdown-item {
-                                color: #33312e !important;
-                            }
-                            .light-dropdown-menu .dropdown-item:hover {
-                                background-color: #f8f6f0 !important;
-                                color: #532374 !important;
-                            }
-                        </style>
-                        <ul class="dropdown-menu dropdown-menu-end light-dropdown-menu" style="background:#fff !important; border:1px solid #e6e2db !important; min-width:150px;">
-                            <li><a class="dropdown-item chart-range-item" href="#" data-range="weekly">@Localizer["Weekly"] (@Localizer["Last 7 days"])</a></li>
-                            <li><a class="dropdown-item chart-range-item" href="#" data-range="monthly">@Localizer["Monthly"] (@Localizer["Last 30 Days"])</a></li>
-                            <li><a class="dropdown-item chart-range-item" href="#" data-range="yearly">@Localizer["Yearly"] (@DateTime.Now.Year)</a></li>
-                            <li><hr class="dropdown-divider" style="border-color:#e6e2db;"></li>
-                            <li class="dropdown-item px-3 py-2">
-                                <div class="d-flex align-items-center justify-content-between border rounded-pill px-2" style="background:#f8f6f0;">
-                                    <button class="btn btn-sm p-0 border-0" onclick="updateYear(-1); event.stopPropagation();" title="@Localizer["Previous Year"]">
-                                        <i class="bi bi-chevron-left" style="color:#532374; font-weight:bold;"></i>
-                                    </button>
-                                    <div class="chart-range-item text-center flex-grow-1 fw-bold" data-range="prevyear" style="cursor:pointer; color:#532374; font-size:12px;">
-                                        @Localizer["Year"] <span id="displayYear">@(DateTime.Now.Year - 1)</span>
-                                    </div>
-                                    <button class="btn btn-sm p-0 border-0" onclick="updateYear(1); event.stopPropagation();" title="@Localizer["Next Year"]">
-                                        <i class="bi bi-chevron-right" style="color:#532374; font-weight:bold;"></i>
-                                    </button>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+        <!-- Sales Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="table-container h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="bi bi-bar-chart-fill text-primary"></i> Sales Analytics</h4>
+                    <select class="form-select form-select-sm w-auto" id="chartRange">
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
                 </div>
-                <!-- Mini stats -->
-                <div class="row g-3 mb-3">
-                    <div class="col-4">
-                        <div class="small" style="color:#6c757d; font-size:11px;">@Localizer["Total Amount"]</div>
-                        <div class="fw-bold" id="rangeTotalAmount" style="color:#532374; font-size:1rem;">৳0</div>
-                    </div>
-                    <div class="col-4">
-                        <div class="small" style="color:#6c757d; font-size:11px;">@Localizer["Total Pieces"]</div>
-                        <div class="fw-bold" id="rangeTotalPieces" style="color:#28a745; font-size:1rem;">0</div>
-                    </div>
-                    <div class="col-4">
-                        <div class="small" style="color:#6c757d; font-size:11px;">@Localizer["Avg / Period"]</div>
-                        <div class="fw-bold" id="rangeAvgOrder" style="color:#fd7e14; font-size:1rem;">৳0</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Floating Tooltip (custom) -->
-            <div id="chartFloatTooltip" style="display:none; position:absolute; background:#532374; color:#fff; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; pointer-events:none; z-index:999; white-space:nowrap; box-shadow:0 4px 15px rgba(83,35,116,0.5);"></div>
-            <!-- Chart Canvas -->
-            <div style="position:relative; height:260px; padding:0;">
-                <canvas id="salesChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top Products -->
-    <div class="col-lg-4">
-        <div class="shadow-sm rounded-3 overflow-hidden h-100" style="background:#fff; border:1px solid #e6e2db;">
-            <div class="p-3 border-bottom" style="background:#fafafa;">
-                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-stars text-warning me-2"></i>@Localizer["Top Moving Products"]</h6>
-            </div>
-            <div class="p-2">
-                @{ int topRank = 1; }
-                @foreach (var prod in Model.TopProducts.Take(6))
-                {
-                    <a asp-controller="Admin" asp-action="ProductSalesDetail" asp-route-productId="@prod.ProductId"
-                       class="d-flex align-items-center gap-2 p-2 rounded-2 text-decoration-none top-prod-link" style="cursor:pointer;">
-                        <div class="top-prod-rank">@topRank</div>
-                        <div class="flex-grow-1" style="min-width:0;">
-                            <div class="fw-bold text-dark small text-truncate">@prod.ProductName</div>
-                            <small class="text-muted">@prod.Category</small>
-                        </div>
-                        <div class="text-end">
-                            <div class="badge rounded-pill" style="background:#532374; font-size:11px;">@prod.TotalQuantity @Localizer["Pcs"]</div>
-                            <div class="small text-success fw-bold">৳@prod.TotalRevenue.ToString("#,##0")</div>
-                        </div>
-                    </a>
-                    topRank++;
-                }
-                <div class="p-2 pt-3 border-top">
-                    <a asp-controller="Admin" asp-action="Reports" class="btn btn-sm btn-outline-secondary w-100">@Localizer["View Full Report"]</a>
+                <div class="chart-box">
+                    <canvas id="salesAnalyticsChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- ===== PIE CHART + HISTORY ROW ===== -->
-<div class="row g-4 mb-4">
-    <!-- Pie -->
-    <div class="col-lg-5">
-        <div class="shadow-sm rounded-3 overflow-hidden h-100" style="background:#fff; border:1px solid #e6e2db;">
-            <div class="p-3 border-bottom" style="background:#fafafa;">
-                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill text-info me-2"></i>@Localizer["Sales by Product Type"]</h6>
-            </div>
-            <div class="p-3" style="height:320px; position:relative;">
-                <canvas id="typePieChart"></canvas>
-            </div>
-            <div class="px-3 pb-3">
-                <div id="pieLegend" class="d-flex flex-wrap gap-2"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sales Archives -->
-    <div class="col-lg-7">
-        <div class="shadow-sm rounded-3 overflow-hidden h-100" style="background:#fff; border:1px solid #e6e2db;">
-            <div class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background:#fafafa;">
-                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-archive-fill text-danger me-2"></i>@Localizer["Full Sales Archives"]</h6>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-sm btn-outline-primary active" id="btnMonthly" onclick="toggleHistoryView('monthly')">@Localizer["Monthly View"]</button>
-                    <button type="button" class="btn btn-sm btn-outline-primary" id="btnYearly" onclick="toggleHistoryView('yearly')">@Localizer["Yearly Summary"]</button>
-                </div>
-            </div>
-
-            <!-- Monthly -->
-            <div id="historyTableMonthly" style="overflow-y:auto; max-height:350px;">
-                <table class="table table-hover align-middle mb-0" style="font-size:13px;">
-                    <thead style="background:#532374; color:#fff; position:sticky; top:0;">
-                        <tr>
-                            <th class="ps-3">@Localizer["Month / Year"]</th>
-                            <th class="text-end">@Localizer["Revenue (Inc. VAT)"]</th>
-                            <th class="text-center">@Localizer["Pieces"]</th>
-                            <th class="text-center">@Localizer["Report"]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var month in Model.MonthlyHistory.OrderByDescending(m => m.Year).ThenByDescending(m => m.Month))
-                        {
-                            <tr>
-                                <td class="ps-3 fw-bold">@month.MonthName @month.Year</td>
-                                <td class="text-end fw-bold text-success">৳@month.Amount.ToString("#,##0")</td>
-                                <td class="text-center"><span class="badge bg-light text-dark border">@month.Pieces.ToString("#,##0") @Localizer["Pcs"]</span></td>
-                                <td class="text-center"><a asp-controller="Admin" asp-action="Reports" class="btn btn-sm btn-outline-secondary px-2 py-0">@Localizer["View"]</a></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Yearly -->
-            <div id="historyTableYearly" style="display:none; overflow-y:auto; max-height:350px;">
-                <table class="table table-hover align-middle mb-0" style="font-size:13px;">
-                    <thead style="background:#532374; color:#fff; position:sticky; top:0;">
-                        <tr>
-                            <th class="ps-3">@Localizer["Fiscal Year"]</th>
-                            <th class="text-end">@Localizer["Annual Revenue"]</th>
-                            <th class="text-center">@Localizer["Items Sold"]</th>
-                            <th class="text-center">@Localizer["Avg / Month"]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var yg in Model.MonthlyHistory.GroupBy(m => m.Year).OrderByDescending(g => g.Key))
-                        {
-                            var yt = yg.Sum(y => y.Amount);
-                            var yp = yg.Sum(y => y.Pieces);
-                            <tr>
-                                <td class="ps-3 fw-bold fs-6">@yg.Key</td>
-                                <td class="text-end fw-bold text-primary">৳@yt.ToString("#,##0")</td>
-                                <td class="text-center fw-bold">@yp.ToString("#,##0") <small class="text-muted">@Localizer["Pcs"]</small></td>
-                                <td class="text-center text-muted">৳@((yt/12).ToString("#,##0"))</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* Metric Cards */
-    .analytics-metric-card { border-radius:12px; padding:16px; color:#fff; position:relative; overflow:hidden; height:100%; }
-    .analytics-metric-card .amc-icon { font-size:2rem; opacity:.25; position:absolute; right:12px; bottom:8px; }
-    .analytics-metric-card .amc-label { font-size:11px; opacity:.85; text-transform:uppercase; letter-spacing:.5px; }
-    .analytics-metric-card .amc-value { font-size:1.35rem; font-weight:700; margin:4px 0; }
-    .analytics-metric-card .amc-sub { font-size:10px; opacity:.7; }
-    /* Range Picker (pill style, kept for compatibility) */
-    .desco-range-picker .btn { border-radius:20px !important; margin:0 2px; border-color:#532374; color:#532374; }
-    .desco-range-picker .btn.active, .desco-range-picker .btn:hover { background:#532374 !important; color:#fff !important; border-color:#532374 !important; }
-    /* Dropdown item hover */
-    .chart-range-item:hover { background:#3a4560 !important; color:#fff !important; }
-    /* Top Product Links */
-    .top-prod-link { color: inherit; border-bottom: 1px solid #f1eee9; }
-    .top-prod-link:hover { background: #f8f6f0 !important; }
-    .top-prod-rank { width:26px; height:26px; border-radius:50%; background:#532374; color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-</style>
-
-<!-- History Goal Modal -->
-<div class="modal fade" id="historyGoalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="background:#f2efe9; border:none;">
-            <div class="modal-header" style="border-bottom:1px solid #e6e2db;">
-                <h5 class="modal-title fw-bold" style="color:#532374;"><i class="bi bi-clock-history me-2"></i>@Localizer["Yearly Goal Rates & Comparison"]</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
-            </div>
-            <div class="modal-body p-0">
+    <!-- Recent History -->
+    <div class="row">
+        <div class="col-12">
+            <div class="table-container">
+                <h4><i class="bi bi-clock-history text-secondary"></i> Sales History (Last 6 Months)</h4>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 text-center" style="font-size:14px; background:#fff;">
-                        <thead style="background:#532374; color:#fff;">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
                             <tr>
-                                <th>@Localizer["Year"]</th>
-                                <th>@Localizer["Actual Sales"]</th>
-                                <th>@Localizer["Target Goal"]</th>
-                                <th>@Localizer["Achievement Rate"]</th>
+                                <th>Month</th>
+                                <th>Revenue</th>
+                                <th>Pieces Sold</th>
+                                <th>Growth</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @{
-                                var years = Model.MonthlyHistory.GroupBy(m => m.Year).OrderByDescending(g => g.Key).ToList();
-                                for (int i = 0; i < years.Count; i++)
-                                {
-                                    var currentYr = years[i];
-                                    var currentYrSalesValue = currentYr.Sum(m => m.Amount);
-
-                                    decimal historicalGoal = 1000000; // Placeholder
-                                    
-                                    var achievementPct = historicalGoal > 0 ? (currentYrSalesValue / historicalGoal) * 100 : 0;
-                                    
-                                    <tr>
-                                        <td class="fw-bold">@currentYr.Key</td>
-                                        <td class="text-success fw-bold">৳@currentYrSalesValue.ToString("#,##0")</td>
-                                        <td class="text-muted">৳@historicalGoal.ToString("#,##0")</td>
-                                        <td>
-                                            <div class="d-flex align-items-center justify-content-center gap-2">
-                                                <div class="progress flex-grow-1" style="height:6px; width:70px; background:#e6e2db;">
-                                                    <div class="progress-bar @(achievementPct >= 100 ? "bg-success" : "bg-warning")" style="width:@(Math.Min(100, achievementPct))%;"></div>
-                                                </div>
-                                                <span class="fw-bold" style="color: @(achievementPct >= 100 ? "#28a745" : "#3a4560");">@achievementPct.ToString("0.0")%</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
+                            @foreach (var month in Model.MonthlyHistory.OrderByDescending(m => m.Year).ThenByDescending(m => m.Month).Take(6))
+                            {
+                                <tr>
+                                    <td class="fw-bold">@month.MonthName @month.Year</td>
+                                    <td class="text-success fw-bold">৳@month.Amount.ToString("#,##0")</td>
+                                    <td>@month.Pieces Pcs</td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-arrow-up-short"></i> Stable
+                                        </span>
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="modal-footer" style="border-top:1px solid #e6e2db;">
-                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">@Localizer["Close"]</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Goal Modal -->
-<div class="modal fade" id="editGoalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" style="color:#532374;">@Localizer["Update Sales Goal"] (<span id="modalYear">@DateTime.Now.Year</span>)</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
-            </div>
-            <form asp-controller="Admin" asp-action="UpdateSalesGoal" method="post">
-                <input type="hidden" id="editGoalYear" name="year" value="@DateTime.Now.Year" />
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="goalAmount" class="form-label">@Localizer["New Target Amount"] (৳)</label>
-                        <input type="number" class="form-control" id="goalAmount" name="goalAmount" value="@Model.SalesGoal" required min="1" step="0.01">
-                        <div class="form-text">@Localizer["Change your yearly target goal to adjust the progress charts tracking."]</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
-                    <button type="submit" class="btn text-white fw-bold" style="background-color:#532374;">@Localizer["Save New Target"]</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const fmtBDT = val => '৳' + Number(val || 0).toLocaleString('en-IN');
-        let salesChart;
-        let goalRing;
-
-        // ── Chart Data ──────────────────────────────────────────────
-        const chartData = {
-            weekly: {
-                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklySales.Select(s => s.Date.ToString("ddd, dd MMM")))),
-                amount: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklySales.Select(s => s.Amount))),
-                pieces: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.WeeklySales.Select(s => s.Pieces))),
-                totalAmount: @Model.WeeklySales.Sum(s => s.Amount),
-                totalPieces: @Model.WeeklySales.Sum(s => s.Pieces),
-                divisor: @Math.Max(1, Model.WeeklySales.Count(s => s.Amount > 0))
-            },
-            monthly: {
-                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailySales.Select(s => s.Date.ToString("dd MMM")))),
-                amount: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailySales.Select(s => s.Amount))),
-                pieces: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailySales.Select(s => s.Pieces))),
-                totalAmount: @Model.DailySales.Sum(s => s.Amount),
-                totalPieces: @Model.DailySales.Sum(s => s.Pieces),
-                divisor: @Math.Max(1, Model.DailySales.Count(s => s.Amount > 0))
-            },
-            yearly: {
-                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyHistory.OrderBy(s=>s.Year).ThenBy(s=>s.Month).Select(s => s.MonthName + " " + s.Year))),
-                amount: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyHistory.OrderBy(s=>s.Year).ThenBy(s=>s.Month).Select(s => s.Amount))),
-                pieces: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyHistory.OrderBy(s=>s.Year).ThenBy(s=>s.Month).Select(s => s.Pieces))),
-                totalAmount: @Model.MonthlyHistory.Sum(s => s.Amount),
-                totalPieces: @Model.MonthlyHistory.Sum(s => s.Pieces),
-                divisor: @Math.Max(1, Model.MonthlyHistory.Count())
-            },
-            prevyear: {
-                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PreviousYearSales.Select(s => s.MonthName + " " + s.Year))),
-                amount: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PreviousYearSales.Select(s => s.Amount))),
-                pieces: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.PreviousYearSales.Select(s => s.Pieces))),
-                totalAmount: @Model.PreviousYearSales.Sum(s => s.Amount),
-                totalPieces: @Model.PreviousYearSales.Sum(s => s.Pieces),
-                divisor: @Math.Max(1, Model.PreviousYearSales.Count(s => s.Amount > 0))
-            }
-        };
-
-        const pieLabels  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ProductTypeSales.Select(s => s.ProductTypeName)));
-        const pieAmounts = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ProductTypeSales.Select(s => s.Amount)));
-        const piePieces  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ProductTypeSales.Select(s => s.Pieces)));
-        const pieTotal   = pieAmounts.reduce((a,b) => a+b, 0);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initGoalRing();
-
-            const colors = ['#532374','#17a2b8','#f59e0b','#28a745','#dc3545','#fd7e14','#6610f2','#e83e8c'];
-
-            // ── 1. Line Chart (Standard Theme) ─────
-            const canvas = document.getElementById('salesChart');
-            if(canvas) {
-                const ctx = canvas.getContext('2d');
-
-                function makeGradient(context) {
-                    const chart = context.chart;
-                    const { ctx: c, chartArea } = chart;
-                    if (!chartArea) return 'transparent';
-                    const gradient = c.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-                    gradient.addColorStop(0, 'rgba(83,35,116,0.25)');
-                    gradient.addColorStop(1, 'rgba(83,35,116,0.0)');
-                    return gradient;
-                }
-
-                salesChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: chartData.weekly.labels,
-                        datasets: [{
-                            label: 'Revenue',
-                            data: chartData.weekly.amount,
-                            borderColor: '#532374',
-                            backgroundColor: (c) => makeGradient(c),
-                            borderWidth: 3,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#fff',
-                            pointBorderColor: '#532374',
-                            pointBorderWidth: 2,
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false,
-                                backgroundColor: '#1a1a2e',
-                                titleFont: { family: 'Inter', weight: 'bold' },
-                                bodyFont: { family: 'Inter' },
-                                callbacks: {
-                                    label: ctx => {
-                                        const range = document.querySelector('.dropdown-item.active')?.dataset.range || 'weekly';
-                                        const pieces = chartData[range]?.pieces[ctx.dataIndex] || 0;
-                                        return [
-                                            ' Revenue: ' + fmtBDT(ctx.raw),
-                                            ' Sold: ' + pieces + ' Pcs'
-                                        ];
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-                            y: {
-                                beginAtZero: true,
-                                grid: { color: 'rgba(0,0,0,0.03)' },
-                                ticks: {
-                                    font: { size: 11 },
-                                    callback: val => '৳' + (val >= 1000 ? (val / 1000) + 'k' : val)
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // ── 2. Product Type Distribution (Doughnut) ─────
-            const pieCanvas = document.getElementById('typePieChart');
-            if(pieCanvas) {
-                const pieCtx = pieCanvas.getContext('2d');
-                new Chart(pieCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: pieLabels,
-                        datasets: [{
-                            data: pieAmounts,
-                            backgroundColor: colors,
-                            hoverOffset: 20,
-                            borderColor: '#fff',
-                            borderWidth: 3
-                        }]
-                    },
-                    options: {
-                        cutout: '65%',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1a1a2e',
-                                padding: 12,
-                                cornerRadius: 8,
-                                callbacks: {
-                                    label: ctx => {
-                                        const pct = pieTotal > 0 ? ((ctx.raw / pieTotal) * 100).toFixed(1) : 0;
-                                        return ` ${ctx.label}: ${fmtBDT(ctx.raw)} (${pct}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-
-                const legend = document.getElementById('pieLegend');
-                if(legend) {
-                    pieLabels.forEach((lbl, i) => {
-                        const pct = pieTotal > 0 ? ((pieAmounts[i] / pieTotal) * 100).toFixed(1) : 0;
-                        const el = document.createElement('div');
-                        el.className = 'd-flex align-items-center gap-1';
-                        el.innerHTML = `<span style="width:10px;height:10px;border-radius:50%;background:${colors[i%colors.length]};display:inline-block;flex-shrink:0;"></span><span style="font-size:11px;">${lbl} <strong>${pct}%</strong></span>`;
-                        legend.appendChild(el);
-                    });
-                }
-            }
-        });
-
-        // ── Sales Goal Scroller ─────────────────────────────────────
-        function initGoalRing() {
-            const goalCanvas = document.getElementById('goalRingChart');
-            if(!goalCanvas) return;
-            const goalCtx = goalCanvas.getContext('2d');
-            const goalPct = @goalPercent;
-            goalRing = new Chart(goalCtx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [goalPct, 100 - goalPct],
-                        backgroundColor: ['#532374', '#f0ece6'],
-                        borderWidth: 0
-                    }]
-                },
-                options: { cutout: '72%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 1000 } }
-            });
-        }
+        const ctx = document.getElementById('salesAnalyticsChart').getContext('2d');
         
-        async function updateGoalYear(delta) {
-            const yearEl = document.getElementById('goalDisplayYear');
-            let year = parseInt(yearEl.innerText) + delta;
-            if (year < 2020) return;
-            yearEl.innerText = year;
-            
-            try {
-                const response = await fetch(`/Admin/GetYearlyGoalStats?year=${year}`);
-                const data = await response.json();
-                
-                document.getElementById('valTarget').innerText = fmtBDT(data.goal);
-                document.getElementById('valAchieved').innerText = fmtBDT(data.revenue) + ' achieved';
-                document.getElementById('valRemaining').innerText = fmtBDT(Math.max(0, data.remaining));
-                document.getElementById('valPercent').innerText = data.percent + '%';
-                document.getElementById('valProgressBar').style.width = data.percent + '%';
-                document.getElementById('noteYear').innerText = year;
-                
-                if(goalRing) {
-                    goalRing.data.datasets[0].data = [data.percent, 100 - data.percent];
-                    goalRing.update();
-                }
-            } catch (e) { console.error('Error fetching goal stats:', e); }
-        }
+        const labels = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => s.Date.ToString("MMM dd"))));
+        const data = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => s.Amount)));
 
-        // ── Chart Range Switch (dropdown + direct) ───────────────────
-        function updateChartRange(range) {
-            if(!salesChart) return;
-            salesChart.data.labels = chartData[range].labels;
-            salesChart.data.datasets[0].data = chartData[range].amount;
-            salesChart.update();
-            document.getElementById('chartHeaderAmount').innerText = fmtBDT(chartData[range].totalAmount);
-            updateDisplayStats(range);
-        }
-
-        document.querySelectorAll('.chart-range-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                const range = this.dataset.range;
-                const label = this.innerText.trim();
-                document.getElementById('rangeDropdownLabel').innerText = label;
-                
-                if (range === 'prevyear') {
-                    fetchYearData(parseInt(document.getElementById('displayYear').innerText));
-                } else {
-                    updateChartRange(range);
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (৳)',
+                    data: data,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#6366f1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f1f5f9' },
+                        ticks: { callback: val => '৳' + val.toLocaleString() }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
                 }
-            });
+            }
         });
-
-        async function updateYear(delta) {
-            const yearSpan = document.getElementById('displayYear');
-            let currentYear = parseInt(yearSpan.innerText);
-            currentYear += delta;
-            yearSpan.innerText = currentYear;
-            await fetchYearData(currentYear);
-            document.getElementById('rangeDropdownLabel').innerText = 'Year ' + currentYear;
-        }
-
-        async function fetchYearData(year) {
-            try {
-                const response = await fetch(`/Admin/GetYearlySales?year=${year}`);
-                const data = await response.json();
-                chartData.prevyear = {
-                    labels: data.map(s => s.monthName + ' ' + s.year),
-                    amount: data.map(s => s.amount),
-                    pieces: data.map(s => s.pieces),
-                    totalAmount: data.reduce((a, b) => a + b.amount, 0),
-                    totalPieces: data.reduce((a, b) => a + b.pieces, 0),
-                    divisor: Math.max(1, data.filter(s => s.amount > 0).length)
-                };
-                updateChartRange('prevyear');
-            } catch (e) { console.error('Error fetching yearly data:', e); }
-        }
-
-        function prepareEditGoal() {
-            const currentYear = document.getElementById('goalDisplayYear').innerText;
-            const currentGoal = document.getElementById('valTarget').innerText.replace('৳', '').replace(/,/g, '');
-            
-            document.getElementById('modalYear').innerText = currentYear;
-            document.getElementById('editGoalYear').value = currentYear;
-            document.getElementById('goalAmount').value = currentGoal;
-            
-            var editModal = new bootstrap.Modal(document.getElementById('editGoalModal'));
-            editModal.show();
-        }
-
-
-        function updateDisplayStats(range) {
-            const d = chartData[range];
-            if(!d) return;
-            document.getElementById('rangeTotalAmount').innerText = fmtBDT(d.totalAmount);
-            document.getElementById('rangeTotalPieces').innerText = (d.totalPieces || 0).toLocaleString('en-IN');
-            document.getElementById('rangeAvgOrder').innerText = fmtBDT(d.totalAmount / (d.divisor || 1));
-        }
-
-        function toggleHistoryView(view) {
-            const isMonthly = view === 'monthly';
-            document.getElementById('historyTableMonthly').style.display = isMonthly ? 'block' : 'none';
-            document.getElementById('historyTableYearly').style.display = isMonthly ? 'none' : 'block';
-            document.getElementById('btnMonthly').classList.toggle('active', isMonthly);
-            document.getElementById('btnYearly').classList.toggle('active', !isMonthly);
-        }
     </script>
 }
-
-<div class="row g-4">
-    <!-- RECENT ORDERS (Standardized Card) -->
-    <div class="col-lg-8">
-        <div class="dashboard-table-card">
-            <h4><i class="bi bi-cart-check"></i> @Localizer["Recent Orders Detailed View"]</h4>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th style="width: 60px;">SL</th>
-                            <th>Order Ref</th>
-                            <th>Customer</th>
-                            <th>Date & Time</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Location</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{ var sl_o = 1; }
-                        @foreach (var order in Model.RecentOrders)
-                        {
-                            <tr>
-                                <td>@(sl_o++)</td>
-                                <td><span class="fw-bold text-primary">#@order.OrderId</span></td>
-                                <td>@order.CustomerName</td>
-                                <td><small>@order.OrderDate.ToString("MMM dd, yyyy | hh:mm tt")</small></td>
-                                <td class="fw-bold">৳@order.Amount.ToString("#,##0")</td>
-                                <td>
-                                    @switch (order.Status)
-                                    {
-                                        case "Delivered": <span class="badge bg-success">@Localizer["Delivered"]</span> break;
-                                        case "Pending": <span class="badge bg-warning text-dark">@Localizer["Pending"]</span> break;
-                                        case "Processing": <span class="badge bg-info">@Localizer["Processing"]</span> break;
-                                        case "Shipped": <span class="badge bg-primary">@Localizer["Shipped"]</span> break;
-                                        default: <span class="badge bg-secondary">@order.Status</span> break;
-                                    }
-                                </td>
-                                <td><small class="text-muted">@order.ShippingAddress</small></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- EMPLOYEE PERFORMANCE (No Scroll, Full Width Column) -->
-    <div class="col-lg-4">
-        <div class="dashboard-table-card employee-stats-container">
-            <h4><i class="bi bi-people"></i> @Localizer["Employee Stats"]</h4>
-            <div class="table-responsive">
-                <table class="table table-sm table-hover align-middle" style="font-size: 11px;">
-                    <thead>
-                        <tr>
-                            <th style="width: 25px;">SL</th>
-                            <th>Name</th>
-                            <th class="text-center">Prod</th>
-                            <th class="text-center">Sold</th>
-                            <th class="text-end">Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{ var sl_e = 1; }
-                        @foreach (var emp in Model.EmployeePerformances)
-                        {
-                            <tr>
-                                <td>@(sl_e++)</td>
-                                <td>
-                                    <a asp-action="EmployeeSalesOverview" asp-route-employeeId="@emp.EmployeeId" class="text-decoration-none fw-bold text-dark">
-                                        @emp.EmployeeName
-                                    </a>
-                                </td>
-                                <td class="text-center">@emp.TotalProductsManaged</td>
-                                <td class="text-center">@emp.ProductsSold</td>
-                                <td class="text-end fw-bold text-success">৳@emp.TotalSalesValue.ToString("#,##0")</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>

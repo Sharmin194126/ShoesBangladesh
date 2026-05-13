@@ -18,6 +18,8 @@ namespace ShoesBangladesh.API.Data
             {
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Phone') BEGIN ALTER TABLE [Users] ADD [Phone] nvarchar(max) NOT NULL DEFAULT ''; END");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Address') BEGIN ALTER TABLE [Users] ADD [Address] nvarchar(max) NOT NULL DEFAULT ''; END");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroBgImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroBgImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END");
             }
             catch { /* Ignore if already exists */ }
 
