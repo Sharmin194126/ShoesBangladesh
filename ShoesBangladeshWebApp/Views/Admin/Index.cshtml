@@ -1,186 +1,270 @@
+@model ShoesBangladesh.Web.Models.AdminStatsViewModel
 @{
-    ViewData["Title"] = "Dashboard Overview";
-    Layout = "_AdminLayout";
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<style>
-    .stat-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .icon-box {
-        width: 60px;
-        height: 60px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .quick-action-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        height: 100%;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-
-    .btn-action {
-        padding: 0.75rem 1.5rem;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .notification-card {
-        background: #0f172a;
-        color: white;
-        border-radius: 20px;
-        padding: 2rem;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .notification-card::before {
-        content: '';
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 150px;
-        height: 150px;
-        background: rgba(99, 102, 241, 0.1);
-        border-radius: 50%;
-    }
-</style>
-
-<div class="row g-4">
-    <!-- Stat Cards -->
-    <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box bg-primary bg-opacity-10 text-primary">
-                <i class="bi bi-box-seam"></i>
-            </div>
-            <h6 class="text-muted mb-1 fw-semibold">Total Products</h6>
-            <h3 class="fw-bold mb-3">Inventory</h3>
-            <a asp-controller="Product" asp-action="Index" class="btn btn-sm btn-light rounded-pill px-3">
-                Manage Items <i class="bi bi-arrow-right ms-1"></i>
-            </a>
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Dashboard Overview</h2>
+            <p class="text-muted mb-0">Welcome back! Here's what's happening today.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-white shadow-sm border-0 rounded-3">
+                <i class="bi bi-download me-2"></i>Export Report
+            </button>
+            <button class="btn btn-primary shadow-sm border-0 rounded-3 px-4">
+                <i class="bi bi-plus-lg me-2"></i>Add Product
+            </button>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box bg-success bg-opacity-10 text-success">
-                <i class="bi bi-window-sidebar"></i>
+    <!-- Quick Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary">
+                            <i class="bi bi-cart-fill fs-4"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
+                            <i class="bi bi-arrow-up-short"></i>12%
+                        </span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@Model.TotalOrders</h3>
+                    <p class="text-muted small mb-0">Total Orders</p>
+                </div>
             </div>
-            <h6 class="text-muted mb-1 fw-semibold">Landing Page</h6>
-            <h3 class="fw-bold mb-3">Live Status</h3>
-            <a asp-action="ManageLandingPage" class="btn btn-sm btn-light rounded-pill px-3">
-                Configure <i class="bi bi-arrow-right ms-1"></i>
-            </a>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3 text-success">
+                            <i class="bi bi-currency-dollar fs-4"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
+                            <i class="bi bi-arrow-up-short"></i>8%
+                        </span>
+                    </div>
+                    <h3 class="fw-bold mb-1">৳@Model.TotalRevenue.ToString("N0")</h3>
+                    <p class="text-muted small mb-0">Total Revenue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning">
+                            <i class="bi bi-clock-fill fs-4"></i>
+                        </div>
+                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2">
+                            <i class="bi bi-arrow-down-short"></i>2%
+                        </span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@Model.TotalPending</h3>
+                    <p class="text-muted small mb-0">Pending Orders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="bg-info bg-opacity-10 p-3 rounded-3 text-info">
+                            <i class="bi bi-graph-up-arrow fs-4"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
+                            <i class="bi bi-arrow-up-short"></i>5%
+                        </span>
+                    </div>
+                    <h3 class="fw-bold mb-1">@Model.TotalDelivered</h3>
+                    <p class="text-muted small mb-0">Delivered Orders</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box bg-purple bg-opacity-10 text-purple" style="color: #a855f7; background-color: rgba(168, 85, 247, 0.1);">
-                <i class="bi bi-shield-check"></i>
+    <!-- Charts Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-transparent border-0 p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">Sales Analytics</h5>
+                        <select class="form-select form-select-sm w-auto border-0 bg-light rounded-3">
+                            <option>Last 30 Days</option>
+                            <option>Last 7 Days</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 350px;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
             </div>
-            <h6 class="text-muted mb-1 fw-semibold">System Access</h6>
-            <h3 class="fw-bold mb-3">Administrator</h3>
-            <span class="badge bg-dark rounded-pill px-3 py-2">Full Access</span>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-transparent border-0 p-4">
+                    <h5 class="fw-bold mb-0">Top Categories</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div style="height: 250px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div class="mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Sneakers</span>
+                            <span class="fw-bold small">45%</span>
+                        </div>
+                        <div class="progress rounded-pill mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-primary" style="width: 45%;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small">Formal Shoes</span>
+                            <span class="fw-bold small">30%</span>
+                        </div>
+                        <div class="progress rounded-pill mb-3" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: 30%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-transparent border-0 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">Recent Orders</h5>
+                <a href="#" class="btn btn-light btn-sm rounded-3">View All</a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light bg-opacity-50">
+                        <tr>
+                            <th class="ps-4 border-0 py-3">Order ID</th>
+                            <th class="border-0 py-3">Customer</th>
+                            <th class="border-0 py-3">Date</th>
+                            <th class="border-0 py-3">Amount</th>
+                            <th class="border-0 py-3">Status</th>
+                            <th class="border-0 py-3 pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-medium text-primary">#@order.OrderId</td>
+                                <td>@order.CustomerName</td>
+                                <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                <td class="fw-bold">৳@order.Amount.ToString("N0")</td>
+                                <td>
+                                    @if (order.Status == "Delivered")
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">@order.Status</span>
+                                    }
+                                    else if (order.Status == "Pending")
+                                    {
+                                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">@order.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill px-3">@order.Status</span>
+                                    }
+                                </td>
+                                <td class="pe-4">
+                                    <button class="btn btn-light btn-sm rounded-3">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4 g-4">
-    <div class="col-lg-8">
-        <div class="quick-action-card">
-            <h4 class="fw-bold mb-4">Quick Management</h4>
-            <p class="text-muted mb-4">Access the most common administrative tasks quickly from here.</p>
-            
-            <div class="d-flex flex-wrap gap-3">
-                <a asp-controller="Product" asp-action="Create" class="btn btn-primary btn-action shadow-sm">
-                    <i class="bi bi-plus-circle"></i> Add New Product
-                </a>
-                <a asp-action="ManageLandingPage" class="btn btn-outline-dark btn-action">
-                    <i class="bi bi-layout-text-window"></i> Landing Settings
-                </a>
-                <a href="/Landing" target="_blank" class="btn btn-outline-primary btn-action">
-                    <i class="bi bi-globe"></i> Visit Website
-                </a>
-            </div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sales Chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesData = @Html.Raw(Json.Serialize(Model.DailySales.Select(s => s.Amount)));
+        const salesLabels = @Html.Raw(Json.Serialize(Model.DailySales.Select(s => s.Date.ToString("dd MMM"))));
 
-            <div class="mt-5">
-                <h6 class="fw-bold text-muted text-uppercase small mb-3">Platform Overview</h6>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="border-0 rounded-start">Task</th>
-                                <th class="border-0">Status</th>
-                                <th class="border-0 rounded-end">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Product Catalog Sync</td>
-                                <td><span class="badge bg-success-subtle text-success">Healthy</span></td>
-                                <td><a href="#" class="text-primary text-decoration-none small fw-bold">Check</a></td>
-                            </tr>
-                            <tr>
-                                <td>Image Server</td>
-                                <td><span class="badge bg-success-subtle text-success">Online</span></td>
-                                <td><a href="#" class="text-primary text-decoration-none small fw-bold">Ping</a></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4">
-        <div class="notification-card">
-            <h5 class="fw-bold mb-4">Admin Insights</h5>
-            <div class="d-flex gap-3 mb-4">
-                <div class="bg-white bg-opacity-10 p-2 rounded-3 h-auto">
-                    <i class="bi bi-lightning-charge-fill text-warning"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1 fw-bold">Performance Update</h6>
-                    <p class="small text-white-50 mb-0">System speed has improved by 25% after the last patch.</p>
-                </div>
-            </div>
-            
-            <div class="bg-white bg-opacity-5 p-3 rounded-4 mb-4 border border-white border-opacity-10">
-                <p class="small mb-0">"Welcome back! You have <strong>3 new products</strong> pending review and <strong>2 orders</strong> awaiting fulfillment."</p>
-            </div>
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: salesLabels,
+                datasets: [{
+                    label: 'Revenue',
+                    data: salesData,
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5], color: '#e2e8f0' },
+                        ticks: {
+                            callback: value => '৳' + value.toLocaleString(),
+                            font: { size: 12 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 12 } }
+                    }
+                }
+            }
+        });
 
-            <hr class="border-white border-opacity-10 my-4">
-            
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="status-dot bg-success" style="width: 8px; height: 8px; border-radius: 50%;"></div>
-                    <span class="small fw-semibold">Live Traffic: Normal</span>
-                </div>
-                <i class="bi bi-graph-up-arrow"></i>
-            </div>
-        </div>
-    </div>
-</div>
+        // Category Chart
+        const catCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sneakers', 'Formal', 'Casual', 'Sandals'],
+                datasets: [{
+                    data: [45, 30, 15, 10],
+                    backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+}

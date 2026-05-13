@@ -319,9 +319,45 @@
                     </a>
                 </li>
                 <li class="nav-item-admin">
-                    <a href="#" class="nav-link-admin">
+                    <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OnlinePaymentHistory" ? "active" : "")">
+                        <i class="bi bi-credit-card-2-front-fill"></i>
+                        <span class="nav-text">Payments</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="ManageReviews" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageReviews" ? "active" : "")">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="nav-text">Reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="Messages" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "Messages" ? "active" : "")">
+                        <i class="bi bi-chat-dots-fill"></i>
+                        <span class="nav-text">Messages</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="ManageDisplaySections" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" ? "active" : "")">
+                        <i class="bi bi-layout-sidebar-inset"></i>
+                        <span class="nav-text">Display Sections</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="EmployeeSalesOverview" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeSalesOverview" ? "active" : "")">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span class="nav-text">Staff Performance</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="EmployeeList" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeList" ? "active" : "")">
                         <i class="bi bi-people-fill"></i>
-                        <span class="nav-text">Customers</span>
+                        <span class="nav-text">Staff Directory</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Admin" asp-action="FooterSettings" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "FooterSettings" ? "active" : "")">
+                        <i class="bi bi-layout-text-window-reverse"></i>
+                        <span class="nav-text">Footer</span>
                     </a>
                 </li>
             </ul>

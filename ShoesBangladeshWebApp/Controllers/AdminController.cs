@@ -19,9 +19,18 @@ namespace ShoesBangladeshWebApp.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/Stats");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var stats = JsonSerializer.Deserialize<AdminStatsViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(stats);
+            }
+            return View(new AdminStatsViewModel());
         }
 
         public async Task<IActionResult> ManageLandingPage()
@@ -50,6 +59,150 @@ namespace ShoesBangladeshWebApp.Controllers
             return RedirectToAction("ManageLandingPage");
         }
 
+        public async Task<IActionResult> OnlinePaymentHistory()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/PaymentHistory");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var history = JsonSerializer.Deserialize<List<PaymentHistoryViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(history);
+            }
+            return View(new List<PaymentHistoryViewModel>());
+        }
+
+        public async Task<IActionResult> Messages()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/Messages");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var messages = JsonSerializer.Deserialize<List<ContactMessageViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(messages);
+            }
+            return View(new List<ContactMessageViewModel>());
+        }
+
+        public async Task<IActionResult> ManageReviews()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/Reviews");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var reviews = JsonSerializer.Deserialize<List<ReviewViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(reviews);
+            }
+            return View(new List<ReviewViewModel>());
+        }
+
+        public async Task<IActionResult> FooterSettings()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/Footer");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var footer = JsonSerializer.Deserialize<FooterInfoViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(footer);
+            }
+            return View(new FooterInfoViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FooterSettings(FooterInfoViewModel model)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/Dashboard/Footer", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Footer settings updated successfully!";
+                return RedirectToAction(nameof(FooterSettings));
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> ManageDisplaySections()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/DisplaySections");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var sections = JsonSerializer.Deserialize<List<DisplaySectionViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(sections);
+            }
+            return View(new List<DisplaySectionViewModel>());
+        }
+
+        public IActionResult CreateDisplaySection() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> CreateDisplaySection(DisplaySectionViewModel model)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/Dashboard/DisplaySections", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Display Section created successfully!";
+                return RedirectToAction(nameof(ManageDisplaySections));
+            }
+            return View(model);
+        }
+
+        public async Task<IActionResult> EmployeeSalesOverview()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/EmployeeStats");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var stats = JsonSerializer.Deserialize<List<EmployeePerformanceViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(stats);
+            }
+            return View(new List<EmployeePerformanceViewModel>());
+        }
+
+        public async Task<IActionResult> EmployeeList()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Dashboard/Employees");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var employees = JsonSerializer.Deserialize<List<EmployeeViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(employees);
+            }
+            return View(new List<EmployeeViewModel>());
+        }
+
+        public async Task<IActionResult> OrdersByStatus(string status)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync($"api/Dashboard/OrdersByStatus/{status}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var orders = JsonSerializer.Deserialize<List<RecentOrderViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                ViewBag.Status = status;
+                return View(orders);
+            }
+            return View(new List<RecentOrderViewModel>());
+        }
+
     }
 }
-

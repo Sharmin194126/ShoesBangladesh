@@ -1,0 +1,83 @@
+@model List<ShoesBangladesh.Web.Models.ContactMessageViewModel>
+@{
+    ViewData["Title"] = "Customer Messages";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Customer Messages</h2>
+            <p class="text-muted mb-0">Manage and respond to customer inquiries and feedback.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <div class="btn-group rounded-3 overflow-hidden shadow-sm">
+                <button class="btn btn-primary px-3 active">All</button>
+                <button class="btn btn-white px-3">Unread</button>
+                <button class="btn btn-white px-3">Replied</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="messageList">
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var msg in Model)
+                            {
+                                <a href="#" class="list-group-item list-group-item-action p-4 border-0 border-bottom">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <h6 class="fw-bold mb-0">@msg.Name</h6>
+                                        <small class="text-muted">@msg.CreatedAt.ToString("MMM dd")</small>
+                                    </div>
+                                    <div class="text-primary small mb-2 fw-medium">@msg.Subject</div>
+                                    <p class="text-muted small mb-0 text-truncate">@msg.Message</p>
+                                    @if (msg.Status == "Replied")
+                                    {
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 mt-2" style="font-size: 0.65rem;">
+                                            <i class="bi bi-check-circle-fill me-1"></i>Replied
+                                        </span>
+                                    }
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <div class="p-5 text-center text-muted">
+                                <i class="bi bi-chat-left-dots fs-1 d-block mb-3 opacity-50"></i>
+                                No messages yet.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100" id="messageDetail">
+                <div class="card-body p-5 d-flex align-items-center justify-content-center text-muted">
+                    <div class="text-center">
+                        <img src="https://illustrations.popsy.co/amber/communication.svg" alt="Select Message" style="width: 250px; margin-bottom: 2rem;">
+                        <h4 class="fw-bold text-dark">Select a message to read</h4>
+                        <p>Click on any message from the list on the left to see full details and reply.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #messageList .list-group-item {
+        transition: all 0.2s ease;
+    }
+    #messageList .list-group-item:hover {
+        background-color: #f8fafc;
+    }
+    #messageList .list-group-item.active {
+        background-color: #f1f5f9;
+        border-left: 4px solid #6366f1 !important;
+    }
+</style>
