@@ -3,6 +3,8 @@
     ViewData["Title"] = "Register";
 }
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
 <div class="auth-container">
     <div class="auth-card">
         <div class="auth-header">
@@ -10,6 +12,7 @@
             <p>Create an account to start shopping</p>
         </div>
         <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <label asp-for="FullName"></label>
@@ -25,12 +28,22 @@
             <div class="form-row">
                 <div class="form-group">
                     <label asp-for="Password"></label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+                    <div class="password-wrapper">
+                        <input asp-for="Password" type="password" id="regPassword" class="form-control" placeholder="Password" />
+                        <button type="button" class="btn-toggle-password" onclick="togglePassword('regPassword', 'regPassIcon')">
+                            <i class="bi bi-eye-slash" id="regPassIcon"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="ConfirmPassword"></label>
-                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                    <div class="password-wrapper">
+                        <input asp-for="ConfirmPassword" type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password" />
+                        <button type="button" class="btn-toggle-password" onclick="togglePassword('confirmPassword', 'confirmPassIcon')">
+                            <i class="bi bi-eye-slash" id="confirmPassIcon"></i>
+                        </button>
+                    </div>
                     <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 </div>
             </div>
@@ -51,6 +64,26 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('bi-eye-slash');
+                toggleIcon.classList.add('bi-eye');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('bi-eye');
+                toggleIcon.classList.add('bi-eye-slash');
+            }
+        }
+    </script>
+}
+
 
 <style>
     .auth-container {
@@ -105,7 +138,30 @@
         border-radius: 10px;
         font-size: 1rem;
     }
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .btn-toggle-password {
+        position: absolute;
+        right: 15px;
+        background: none;
+        border: none;
+        color: #636e72;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+    .btn-toggle-password:hover {
+        color: #00b894;
+    }
     .btn-auth {
+
         width: 100%;
         padding: 14px;
         background: #00b894;
