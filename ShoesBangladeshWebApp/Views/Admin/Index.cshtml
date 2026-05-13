@@ -15,9 +15,9 @@
             <button class="btn btn-white shadow-sm border-0 rounded-3">
                 <i class="bi bi-download me-2"></i>Export Report
             </button>
-            <button class="btn btn-primary shadow-sm border-0 rounded-3 px-4">
+            <a asp-controller="Product" asp-action="Create" class="btn btn-primary shadow-sm border-0 rounded-3 px-4">
                 <i class="bi bi-plus-lg me-2"></i>Add Product
-            </button>
+            </a>
         </div>
     </div>
 
@@ -145,7 +145,7 @@
         <div class="card-header bg-transparent border-0 p-4">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="fw-bold mb-0">Recent Orders</h5>
-                <a href="#" class="btn btn-light btn-sm rounded-3">View All</a>
+                <a asp-controller="Admin" asp-action="OrdersByStatus" asp-route-status="All" class="btn btn-light btn-sm rounded-3">View All</a>
             </div>
         </div>
         <div class="card-body p-0">

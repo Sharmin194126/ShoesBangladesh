@@ -303,7 +303,7 @@
                     </a>
                 </li>
                 <li class="nav-item-admin">
-                    <a href="#" class="nav-link-admin">
+                    <a asp-controller="Admin" asp-action="OrdersByStatus" asp-route-status="All" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OrdersByStatus" ? "active" : "")">
                         <i class="bi bi-cart-check-fill"></i>
                         <span class="nav-text">Orders</span>
                     </a>
@@ -313,13 +313,13 @@
             <div class="nav-label mt-4">Settings</div>
             <ul class="nav-links">
                 <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="ManageLandingPage" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageLandingPage" ? "active" : "")">
+                    <a asp-controller="Admin" asp-action="ManageLandingPage" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageLandingPage" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
                         <i class="bi bi-window-sidebar"></i>
                         <span class="nav-text">Landing Page</span>
                     </a>
                 </li>
                 <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OnlinePaymentHistory" ? "active" : "")">
+                    <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OnlinePaymentHistory" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
                         <i class="bi bi-credit-card-2-front-fill"></i>
                         <span class="nav-text">Payments</span>
                     </a>

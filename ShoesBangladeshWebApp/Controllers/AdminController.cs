@@ -191,12 +191,25 @@ namespace ShoesBangladeshWebApp.Controllers
         public async Task<IActionResult> OrdersByStatus(string status)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
-            var response = await client.GetAsync($"api/Dashboard/OrdersByStatus/{status}");
+            
+            string url = status == "All" ? "api/Dashboard/Stats" : $"api/Dashboard/OrdersByStatus/{status}";
+            var response = await client.GetAsync(url);
             
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var orders = JsonSerializer.Deserialize<List<RecentOrderViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                List<RecentOrderViewModel> orders;
+                
+                if (status == "All")
+                {
+                    var stats = JsonSerializer.Deserialize<AdminStatsViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    orders = stats?.RecentOrders ?? new List<RecentOrderViewModel>();
+                }
+                else
+                {
+                    orders = JsonSerializer.Deserialize<List<RecentOrderViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<RecentOrderViewModel>();
+                }
+                
                 ViewBag.Status = status;
                 return View(orders);
             }
