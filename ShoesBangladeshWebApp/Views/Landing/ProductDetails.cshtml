@@ -1,4 +1,4 @@
-@model ShoesBangladesh.API.ViewModels.ProductDTO
+@model ProductDTO
 
 @{
     ViewData["Title"] = Model.Name + " | Shoes Bangladesh";
@@ -187,7 +187,7 @@
         color: #475569;
     }
 
-    @media (max-width: 991px) {
+    @@media (max-width: 991px) {
         .product-details-content { padding-left: 0; margin-top: 3rem; }
         .product-title-large { font-size: 2.5rem; }
     }
@@ -206,18 +206,18 @@
                     </nav>
 
                     <div class="main-img-box">
-                        <img id="activeImg" src="http://localhost:5190@Model.ImageUrl" alt="@Model.Name" 
+                         <img id="activeImg" src="http://localhost:5190@(Model.ImageUrl)" alt="@Model.Name" 
                              onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'">
                     </div>
 
                     <div class="thumb-strip">
-                        <div class="thumb-item active" onclick="changeImage('http://localhost:5190@Model.ImageUrl', this)">
-                            <img src="http://localhost:5190@Model.ImageUrl" onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'">
+                        <div class="thumb-item active" onclick="changeImage('http://localhost:5190@(Model.ImageUrl)', this)">
+                            <img src="http://localhost:5190@(Model.ImageUrl)" onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'">
                         </div>
                         @if (Model.AdditionalImages != null) {
                             @foreach (var img in Model.AdditionalImages) {
-                                <div class="thumb-item" onclick="changeImage('http://localhost:5190@img', this)">
-                                    <img src="http://localhost:5190@img">
+                                <div class="thumb-item" onclick="changeImage('http://localhost:5190@(img)', this)">
+                                    <img src="http://localhost:5190@(img)">
                                 </div>
                             }
                         }
@@ -241,7 +241,7 @@
                         @if (Model.DiscountPrice.HasValue) {
                             <span class="price-now">৳@Model.DiscountPrice</span>
                             <span class="price-was">৳@Model.Price</span>
-                            <span class="badge bg-danger rounded-pill px-3 py-2">Save @(Math.Round((1 - (double)Model.DiscountPrice.Value / Model.Price) * 100))%</span>
+                            <span class="badge bg-danger rounded-pill px-3 py-2">Save @(Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100))%</span>
                         } else {
                             <span class="price-now">৳@Model.Price</span>
                         }
