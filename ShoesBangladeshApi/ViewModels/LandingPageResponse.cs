@@ -21,7 +21,10 @@ namespace ShoesBangladesh.API.ViewModels
         public DateTime EidOfferEndTime { get; set; }
         public bool IsOfferActive { get; set; }
         public string CompanyName { get; set; } = string.Empty;
+        public string CompanyDescription { get; set; } = string.Empty;
+        public string ProductSectionDescription { get; set; } = string.Empty;
         public string FacebookPageLink { get; set; } = string.Empty;
+
     }
 
     public class ProductDTO

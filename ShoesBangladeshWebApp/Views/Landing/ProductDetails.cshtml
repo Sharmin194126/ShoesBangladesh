@@ -18,13 +18,13 @@
         <div class="col-lg-7">
             <div class="gallery-wrapper">
                 <div class="main-image">
-                    <img id="mainProductImg" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-4 shadow-sm" />
+                    <img id="mainProductImg" src="http://localhost:5190@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-4 shadow-sm" onerror="this.src='https://placehold.co/600x500?text=No+Image'" />
                 </div>
                 <div class="thumbnail-grid mt-3">
-                    <img src="@Model.ImageUrl" onclick="updateMainImage(this.src)" class="thumb active" />
+                    <img src="http://localhost:5190@Model.ImageUrl" onclick="updateMainImage(this.src)" class="thumb active" onerror="this.src='https://placehold.co/80x80?text=IMG'" />
                     @foreach (var img in Model.AdditionalImages)
                     {
-                        <img src="@img" onclick="updateMainImage(this.src)" class="thumb" />
+                        <img src="http://localhost:5190@img" onclick="updateMainImage(this.src)" class="thumb" onerror="this.src='https://placehold.co/80x80?text=IMG'" />
                     }
                 </div>
             </div>

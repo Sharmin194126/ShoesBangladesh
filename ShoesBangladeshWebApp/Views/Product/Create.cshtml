@@ -1,67 +1,109 @@
 @model ShoesBangladesh.API.ViewModels.ProductDTO
 
-
 @{
     ViewData["Title"] = "Add New Product";
+    Layout = "_AdminLayout";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-primary text-white p-4">
-            <h2 class="mb-0">Add New Product</h2>
-        </div>
-        <div class="card-body p-4">
-            <form asp-action="Create" method="post">
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-admin">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0"><i class="bi bi-plus-circle me-2 text-primary"></i>Add New Product</h5>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Products
+                </a>
+            </div>
+
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
                 <div class="row g-4">
-                    <div class="col-md-8">
-                        <div class="form-group mb-3">
-                            <label asp-for="Name" class="form-label fw-bold"></label>
-                            <input asp-for="Name" class="form-control" placeholder="Product Name" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                    <!-- Left Column: Details -->
+                    <div class="col-md-7">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label small fw-bold">Product Name</label>
+                            <input asp-for="Name" class="form-control rounded-3" placeholder="e.g. Premium Leather Oxford" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="Description" class="form-label fw-bold"></label>
-                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Detailed description..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label small fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control rounded-3" rows="5" placeholder="Describe the product material, style, comfort..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-3">
-                            <label asp-for="Price" class="form-label fw-bold">Base Price (৳)</label>
-                            <input asp-for="Price" type="number" class="form-control" />
-                            <span asp-validation-for="Price" class="text-danger"></span>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label asp-for="Price" class="form-label small fw-bold">Regular Price (৳)</label>
+                                <input asp-for="Price" type="number" class="form-control rounded-3" placeholder="0.00" />
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6">
+                                <label asp-for="DiscountPrice" class="form-label small fw-bold">Discount Price (৳)</label>
+                                <input asp-for="DiscountPrice" type="number" class="form-control rounded-3" placeholder="Optional" />
+                            </div>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price (৳)</label>
-                            <input asp-for="DiscountPrice" type="number" class="form-control" placeholder="Optional" />
-                        </div>
-                        <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Main Image URL</label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
-                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+
+                        <div class="mt-4 p-3 bg-light rounded-3">
+                            <label class="form-label small fw-bold mb-3">Visibility & Labels</label>
+                            <div class="form-check form-switch mb-2">
+                                <input asp-for="IsEidOffer" class="form-check-input" type="checkbox" id="isEidOffer">
+                                <label class="form-check-label small" for="isEidOffer">
+                                    <i class="bi bi-star-fill text-warning me-1"></i> Mark as Eid Special Offer
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input asp-for="IsFeatured" class="form-check-input" type="checkbox" id="isFeatured">
+                                <label class="form-check-label small" for="isFeatured">
+                                    <i class="bi bi-lightning-fill text-primary me-1"></i> Show in Featured Section
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <hr />
-
-                    <div class="col-md-6">
-                        <h5 class="mb-3">Visibility & Offers</h5>
-                        <div class="form-check form-switch mb-2">
-                            <input asp-for="IsEidOffer" class="form-check-input" type="checkbox">
-                            <label class="form-check-label fw-bold">Mark as Eid Special Offer</label>
+                    <!-- Right Column: Image Upload -->
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold">Product Image</label>
+                        <div class="border-2 border-dashed rounded-3 p-4 text-center bg-light" style="border: 2px dashed #dee2e6; min-height: 280px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                            <div id="imagePreviewWrapper">
+                                <i class="bi bi-cloud-upload fs-1 text-muted mb-3 d-block"></i>
+                                <p class="text-muted small mb-2">Upload from your Desktop</p>
+                                <p class="text-muted" style="font-size:0.75rem;">JPG, PNG, WEBP supported</p>
+                            </div>
+                            <img id="imagePreview" src="" alt="Preview" class="img-fluid rounded-3 mb-3 d-none" style="max-height: 220px; object-fit: cover;" />
+                            <label for="imageFile" class="btn btn-outline-primary btn-sm rounded-pill mt-2 px-4">
+                                <i class="bi bi-folder2-open me-2"></i> Browse Files
+                            </label>
+                            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="d-none" onchange="previewImage(this)" />
                         </div>
-                        <div class="form-check form-switch">
-                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox">
-                            <label class="form-check-label fw-bold">Show in Featured Section</label>
-                        </div>
+                        <p class="text-muted mt-2" style="font-size: 0.75rem;">
+                            <i class="bi bi-info-circle me-1"></i> Image will be saved to the server automatically on upload.
+                        </p>
                     </div>
+                </div>
 
-                    <div class="col-md-12 mt-5 text-end">
-                        <a asp-action="Index" class="btn btn-outline-secondary px-5 me-2">Cancel</a>
-                        <button type="submit" class="btn btn-primary px-5">SAVE PRODUCT</button>
-                    </div>
+                <div class="border-top pt-4 mt-4 d-flex justify-content-end gap-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-3">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 rounded-3 fw-bold">
+                        <i class="bi bi-save me-2"></i> Save Product
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        const wrapper = document.getElementById('imagePreviewWrapper');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+                wrapper.style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+}

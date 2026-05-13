@@ -24,8 +24,10 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
+app.UseStaticFiles(); // Serve uploaded images from wwwroot/uploads
 
 app.MapControllers();
+
 
 var summaries = new[]
 {

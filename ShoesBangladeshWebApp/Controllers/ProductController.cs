@@ -2,13 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoesBangladesh.API.ViewModels;
 using ShoesBangladesh.Web.Models;
-
-
 using System.Text;
 using System.Text.Json;
 
 namespace ShoesBangladeshWebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -34,17 +33,34 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(new List<ProductDTO>());
         }
 
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            return View(new ProductDTO());
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(ProductDTO product)
+        public async Task<IActionResult> Create(ProductDTO product, IFormFile? imageFile)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
+
+            // Upload image from desktop if provided
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = imageFile.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+                form.Add(streamContent, "file", imageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? "";
+                }
+            }
+
             var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/products", content);
 
@@ -52,7 +68,6 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
@@ -68,10 +83,28 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(ProductDTO product)
+        public async Task<IActionResult> Edit(ProductDTO product, IFormFile? imageFile)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
+
+            // Upload new image from desktop if provided
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = imageFile.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+                form.Add(streamContent, "file", imageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? product.ImageUrl;
+                }
+            }
+
             var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"api/products/{product.Id}", content);
 
@@ -79,8 +112,6 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(product);
         }
 
-
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
@@ -89,4 +120,3 @@ namespace ShoesBangladeshWebApp.Controllers
         }
     }
 }
-

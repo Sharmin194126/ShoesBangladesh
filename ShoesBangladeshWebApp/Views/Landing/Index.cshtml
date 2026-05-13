@@ -35,18 +35,21 @@
 
             <div class="hero-actions">
                 <a href="#collection" class="btn-premium">Shop Now</a>
-                <a href="#collection" class="btn-outline-white">View Collection</a>
+                <a href="#collection" class="btn-outline-white">Explore Collection</a>
             </div>
+
         </div>
     </section>
 
     <!-- Product Section -->
     <section id="collection" class="collection-section">
         <div class="container">
-            <div class="section-header">
+            <div class="section-header text-center mb-5">
                 <h2>Our Premium Collection</h2>
+                <p class="text-muted mx-auto" style="max-width: 650px;">@Model.Settings.ProductSectionDescription</p>
                 <div class="divider"></div>
             </div>
+
 
             <div class="product-grid">
                 @foreach (var product in Model.Products)
@@ -57,7 +60,8 @@
                             <div class="card-badge">Eid Offer</div>
                         }
                         <div class="card-img-wrapper">
-                            <img src="@product.ImageUrl" alt="@product.Name" loading="lazy" />
+                            <img src="http://localhost:5190@product.ImageUrl" alt="@product.Name" loading="lazy" onerror="this.src='https://placehold.co/400x300?text=No+Image'" />
+
                             <div class="card-overlay">
                                 <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-quick-view">Quick View</a>
                             </div>
@@ -98,7 +102,7 @@
             <div class="footer-grid">
                 <div class="footer-info">
                     <img src="/images/logo-white.png" alt="Logo" class="footer-logo" onerror="this.src='https://via.placeholder.com/150x50?text=SHOES+BD'"/>
-                    <p>@Model.Settings.CompanyName is your trusted destination for premium fashion and quality footwear in Bangladesh.</p>
+                    <p>@Model.Settings.CompanyDescription</p>
                     <div class="social-links">
                         <a href="@Model.Settings.FacebookPageLink" target="_blank"><i class="bi bi-facebook"></i></a>
                         <a href="#"><i class="bi bi-instagram"></i></a>

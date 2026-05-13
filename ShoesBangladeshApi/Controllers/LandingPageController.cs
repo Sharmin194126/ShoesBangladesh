@@ -39,8 +39,11 @@ namespace ShoesBangladesh.API.Controllers
                         EidOfferEndTime = settings?.EidOfferEndTime ?? DateTime.Now.AddDays(7),
                         IsOfferActive = settings?.IsOfferActive ?? true,
                         CompanyName = settings?.CompanyName ?? "Shoes Bangladesh",
+                        CompanyDescription = settings?.CompanyDescription ?? "Your trusted destination for premium footwear in Bangladesh.",
+                        ProductSectionDescription = settings?.ProductSectionDescription ?? "Discover our latest and most exclusive footwear collection.",
                         FacebookPageLink = settings?.FacebookPageLink ?? "#"
                     },
+
                     Categories = categories.Select(c => new CategoryDTO { Id = c.Id, Name = c.Name }).ToList(),
                     Products = products.Select(p => new ProductDTO
                     {
@@ -81,6 +84,9 @@ namespace ShoesBangladesh.API.Controllers
             existing.EidOfferEndTime = settings.EidOfferEndTime;
             existing.DiscountPercentage = settings.DiscountPercentage;
             existing.IsOfferActive = settings.IsOfferActive;
+            existing.CompanyName = settings.CompanyName;
+            existing.CompanyDescription = settings.CompanyDescription;
+            existing.ProductSectionDescription = settings.ProductSectionDescription;
             existing.FacebookPageLink = settings.FacebookPageLink;
 
             await _context.SaveChangesAsync();

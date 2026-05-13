@@ -1,75 +1,125 @@
 @model ShoesBangladesh.API.ViewModels.ProductDTO
 
-
 @{
-    ViewData["Title"] = "Edit Product - " + Model.Name;
+    ViewData["Title"] = "Edit Product";
+    Layout = "_AdminLayout";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-sm border-0 rounded-4">
-        <div class="card-header bg-dark text-white p-4">
-            <h2 class="mb-0">Edit Product</h2>
-        </div>
-        <div class="card-body p-4">
-            <form asp-action="Edit" method="post">
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-admin">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Product</h5>
+                <a asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Products
+                </a>
+            </div>
+
+            <form asp-action="Edit" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="Id" />
+
                 <div class="row g-4">
-                    <div class="col-md-8">
-                        <div class="form-group mb-3">
-                            <label asp-for="Name" class="form-label fw-bold"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                    <!-- Left Column: Details -->
+                    <div class="col-md-7">
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label small fw-bold">Product Name</label>
+                            <input asp-for="Name" class="form-control rounded-3" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
-                        <div class="form-group mb-3">
-                            <label asp-for="Description" class="form-label fw-bold"></label>
-                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                            <span asp-validation-for="Description" class="text-danger"></span>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label small fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control rounded-3" rows="5"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <label class="form-label fw-bold d-block mb-3">Current Image</label>
-                        <img src="@Model.ImageUrl" class="img-thumbnail mb-3" style="max-height: 200px;" onerror="this.src='https://placehold.co/200x200?text=Invalid+URL'" />
-                        <div class="form-group mb-3 text-start">
-                            <label class="form-label fw-bold">Update Image URL</label>
-                            <input asp-for="ImageUrl" class="form-control" />
-                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label asp-for="Price" class="form-label small fw-bold">Regular Price (৳)</label>
+                                <input asp-for="Price" type="number" class="form-control rounded-3" />
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6">
+                                <label asp-for="DiscountPrice" class="form-label small fw-bold">Discount Price (৳)</label>
+                                <input asp-for="DiscountPrice" type="number" class="form-control rounded-3" />
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-light rounded-3">
+                            <label class="form-label small fw-bold mb-3">Visibility & Labels</label>
+                            <div class="form-check form-switch mb-2">
+                                <input asp-for="IsEidOffer" class="form-check-input" type="checkbox" id="isEidOffer">
+                                <label class="form-check-label small" for="isEidOffer">
+                                    <i class="bi bi-star-fill text-warning me-1"></i> Mark as Eid Special Offer
+                                </label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input asp-for="IsFeatured" class="form-check-input" type="checkbox" id="isFeatured">
+                                <label class="form-check-label small" for="isFeatured">
+                                    <i class="bi bi-lightning-fill text-primary me-1"></i> Show in Featured Section
+                                </label>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
-                        <div class="form-group mb-3">
-                            <label asp-for="Price" class="form-label fw-bold">Base Price (৳)</label>
-                            <input asp-for="Price" type="number" class="form-control" />
-                            <span asp-validation-for="Price" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-3">
-                            <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price (৳)</label>
-                            <input asp-for="DiscountPrice" type="number" class="form-control" />
-                        </div>
-                    </div>
+                    <!-- Right Column: Image -->
+                    <div class="col-md-5">
+                        <label class="form-label small fw-bold">Product Image</label>
 
-                    <hr />
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="mb-3 text-center">
+                                <p class="small text-muted mb-1">Current Image:</p>
+                                <img id="imagePreview"
+                                     src="http://localhost:5190@Model.ImageUrl"
+                                     alt="Current"
+                                     class="img-fluid rounded-3"
+                                     style="max-height: 200px; object-fit: cover; width: 100%;"
+                                     onerror="this.src='https://placehold.co/300x200?text=No+Image'" />
+                            </div>
+                        }
+                        else
+                        {
+                            <img id="imagePreview" src="" alt="Preview" class="img-fluid rounded-3 mb-3 d-none" style="max-height: 200px; object-fit: cover; width: 100%;" />
+                        }
 
-                    <div class="col-md-6">
-                        <h5 class="mb-3">Visibility & Offers</h5>
-                        <div class="form-check form-switch mb-2">
-                            <input asp-for="IsEidOffer" class="form-check-input" type="checkbox">
-                            <label class="form-check-label fw-bold">Mark as Eid Special Offer</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox">
-                            <label class="form-check-label fw-bold">Show in Featured Section</label>
-                        </div>
-                    </div>
+                        <input type="hidden" asp-for="ImageUrl" />
 
-                    <div class="col-md-12 mt-5 text-end border-top pt-4">
-                        <a asp-action="Index" class="btn btn-outline-secondary px-5 me-2">Cancel</a>
-                        <button type="submit" class="btn btn-dark px-5">UPDATE PRODUCT</button>
+                        <div class="border-2 rounded-3 p-3 text-center bg-light" style="border: 2px dashed #dee2e6;">
+                            <p class="text-muted small mb-2">Upload a new image to replace the current one</p>
+                            <label for="imageFile" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                                <i class="bi bi-folder2-open me-2"></i> Browse from Desktop
+                            </label>
+                            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="d-none" onchange="previewNewImage(this)" />
+                        </div>
+
+                        <p class="text-muted mt-2" style="font-size: 0.75rem;">
+                            <i class="bi bi-info-circle me-1"></i> Leave blank to keep the current image.
+                        </p>
                     </div>
+                </div>
+
+                <div class="border-top pt-4 mt-4 d-flex justify-content-end gap-3">
+                    <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-3">Cancel</a>
+                    <button type="submit" class="btn btn-warning px-5 rounded-3 fw-bold text-dark">
+                        <i class="bi bi-arrow-repeat me-2"></i> Update Product
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    function previewNewImage(input) {
+        const preview = document.getElementById('imagePreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+}

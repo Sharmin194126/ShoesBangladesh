@@ -13,7 +13,10 @@ namespace ShoesBangladesh.API.Models
         public DateTime EidOfferEndTime { get; set; } = DateTime.Now.AddDays(10);
         public bool IsOfferActive { get; set; } = true;
         public string CompanyName { get; set; } = "Shoes Bangladesh";
+        public string CompanyDescription { get; set; } = "Your trusted destination for premium fashion and quality footwear in Bangladesh.";
+        public string ProductSectionDescription { get; set; } = "Discover our latest and most exclusive footwear collection designed for comfort and style.";
         public string ContactEmail { get; set; } = "info@shoesbangladesh.com";
+
         public string Phone { get; set; } = "+880 1234 56789";
         public string FacebookPageLink { get; set; } = "https://facebook.com/shoesbangladesh";
     }
