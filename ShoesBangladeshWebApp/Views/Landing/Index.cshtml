@@ -9,28 +9,28 @@
     /* Typography */
     .font-luxury { font-family: 'Playfair Display', serif; }
     
+    /* Luxury Placeholder Style */
+    .image-placeholder {
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+        border: 2px dashed rgba(212, 175, 55, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,255,255,0.3);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+    }
+
     /* Hero Section */
     .hero-luxury {
         position: relative;
         height: 100vh;
         display: flex;
         align-items: center;
-        background: linear-gradient(135deg, rgba(139, 0, 0, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%), 
-                    url('/images/hero-bg.png');
-        background-size: cover;
-        background-position: center;
+        background: linear-gradient(135deg, #4a0000 0%, #0a0a0a 100%); /* Solid Gradient Placeholder */
         overflow: hidden;
-    }
-
-    .hero-luxury-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0.5;
-        z-index: 1;
     }
 
     .hero-container {
@@ -69,20 +69,17 @@
         text-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 
-    /* Floating Shoe Image */
-    .hero-shoe-wrapper {
+    /* Hero Image Placeholder */
+    .hero-shoe-placeholder {
         position: absolute;
         right: 5%;
         top: 50%;
         transform: translateY(-50%);
         width: 45%;
+        height: 500px;
         z-index: 15;
         animation: float 4s ease-in-out infinite;
-    }
-
-    .hero-shoe-img {
-        width: 100%;
-        filter: drop-shadow(0 30px 50px rgba(0,0,0,0.5));
+        border-radius: 40px;
     }
 
     /* Countdown Timer */
@@ -103,23 +100,11 @@
         transition: var(--transition);
     }
 
-    .timer-box:hover {
-        background: rgba(212, 175, 55, 0.1);
-        transform: translateY(-5px);
-    }
-
     .timer-val {
         font-size: 2.5rem;
         font-weight: 900;
         display: block;
         color: var(--gold-accent);
-    }
-
-    .timer-label {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: rgba(255,255,255,0.6);
     }
 
     /* Shop Now Button */
@@ -141,12 +126,6 @@
         animation: floatButton 3s ease-in-out infinite;
     }
 
-    .btn-luxury-shop:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 50px rgba(208, 0, 0, 0.6);
-        color: var(--gold-accent);
-    }
-
     /* Banner Section */
     .banner-grid {
         padding: 8rem 4rem;
@@ -163,21 +142,9 @@
         transition: var(--transition);
     }
 
-    .sale-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--gold-accent);
-    }
-
-    .sale-card-img {
+    .banner-image-placeholder {
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        opacity: 0.6;
-        transition: transform 1s ease;
-    }
-
-    .sale-card:hover .sale-card-img {
-        transform: scale(1.1);
     }
 
     .sale-content {
@@ -187,17 +154,6 @@
         padding: 2.5rem;
         width: 100%;
         background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    }
-
-    .sale-badge {
-        background: var(--premium-red);
-        color: white;
-        padding: 5px 15px;
-        border-radius: 100px;
-        font-weight: 700;
-        font-size: 0.8rem;
-        margin-bottom: 1rem;
-        display: inline-block;
     }
 
     /* Product Section */
@@ -215,27 +171,12 @@
         height: 100%;
     }
 
-    .luxury-card:hover {
-        background: #222;
-        border-color: var(--premium-red);
-        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-    }
-
-    .luxury-card-img {
+    .product-image-placeholder {
         width: 100%;
         height: 250px;
-        object-fit: contain;
-        background: #000;
         border-radius: 20px;
         margin-bottom: 1.5rem;
-        transition: var(--transition);
     }
-
-    .luxury-card:hover .luxury-card-img {
-        transform: scale(1.05) rotate(-3deg);
-    }
-
-    .rating-stars { color: var(--gold-accent); font-size: 0.8rem; }
 
     .btn-shop-mini {
         width: 100%;
@@ -252,35 +193,12 @@
         margin-top: 1rem;
     }
 
-    .luxury-card:hover .btn-shop-mini {
-        background: var(--premium-red);
-        border-color: var(--premium-red);
-    }
-
     /* Footer */
     .luxury-footer {
         background: #4a0000;
         padding: 6rem 4rem 2rem;
         border-top: 2px solid var(--gold-accent);
     }
-
-    .footer-title {
-        color: var(--gold-accent);
-        font-weight: 800;
-        text-transform: uppercase;
-        margin-bottom: 2rem;
-        font-size: 1.2rem;
-    }
-
-    .footer-link {
-        color: rgba(255,255,255,0.6);
-        text-decoration: none;
-        display: block;
-        margin-bottom: 0.8rem;
-        transition: var(--transition);
-    }
-
-    .footer-link:hover { color: white; padding-left: 10px; }
 
     /* Animations */
     @@keyframes float {
@@ -301,7 +219,7 @@
     /* Responsive */
     @@media (max-width: 1200px) {
         .hero-headline { font-size: 4rem; }
-        .hero-shoe-wrapper { display: none; }
+        .hero-shoe-placeholder { display: none; }
     }
 
     @@media (max-width: 768px) {
@@ -314,7 +232,6 @@
 <div class="landing-v3">
     <!-- Hero Section -->
     <section class="hero-luxury">
-        <img src="/images/hero-bg.png" class="hero-luxury-bg" alt="Luxury Background">
         <div class="hero-container">
             <span class="hero-tagline">Premium Footwear Experience</span>
             <h1 class="hero-headline font-luxury">@Model.Settings.EidOfferTitle</h1>
@@ -340,8 +257,9 @@
             <a href="#featured" class="btn-luxury-shop">Shop Now</a>
         </div>
 
-        <div class="hero-shoe-wrapper">
-            <img src="/images/hero-shoe.png" class="hero-shoe-img" alt="Luxury Shoe">
+        <!-- Hero Image Placeholder -->
+        <div class="hero-shoe-placeholder image-placeholder">
+            Hero Product Image Placeholder
         </div>
     </section>
 
@@ -350,7 +268,9 @@
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="sale-card">
-                    <img src="/images/banner-shoe.png" class="sale-card-img" alt="Sale">
+                    <div class="banner-image-placeholder image-placeholder">
+                        Classic Red Series Image Placeholder
+                    </div>
                     <div class="sale-content">
                         <span class="sale-badge">LIMITED EDITION</span>
                         <h2 class="font-luxury fs-1">Classic Red Series</h2>
@@ -387,10 +307,10 @@
             {
                 <div class="col-xl-3 col-lg-4 col-md-6">
                     <div class="luxury-card">
-                        <img src="http://localhost:5190@(product.ImageUrl)" 
-                             class="luxury-card-img" 
-                             alt="@product.Name"
-                             onerror="this.src='https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=1000&auto=format&fit=crop'">
+                        <!-- Product Image Placeholder -->
+                        <div class="product-image-placeholder image-placeholder">
+                            Product Image
+                        </div>
                         
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-white-50 small">@product.CategoryName</span>
@@ -427,9 +347,10 @@
                 <div class="brand-logo-container mb-4">Logo Placeholder</div>
                 <p class="text-white-50">Premium footwear destination in Bangladesh. Quality that walks with you.</p>
                 <div class="d-flex gap-3 mt-4">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" height="20" class="opacity-50">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" height="20" class="opacity-50">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" height="20" class="opacity-50">
+                    <!-- Payment icons could be font-awesome or small placeholders -->
+                    <div class="bg-white bg-opacity-10 p-2 rounded small">VISA</div>
+                    <div class="bg-white bg-opacity-10 p-2 rounded small">MASTER</div>
+                    <div class="bg-white bg-opacity-10 p-2 rounded small">BKASH</div>
                 </div>
             </div>
             <div class="col-6 col-lg-2 ms-auto">

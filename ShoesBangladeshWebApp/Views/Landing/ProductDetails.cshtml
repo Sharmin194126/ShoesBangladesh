@@ -6,6 +6,20 @@
 }
 
 <style>
+    /* Luxury Placeholder Style */
+    .image-placeholder {
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+        border: 2px dashed rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0, 0, 0, 0.2);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.8rem;
+    }
+
     .details-page {
         padding-top: 4rem;
         background: white;
@@ -19,17 +33,9 @@
     .main-img-box {
         background: #f8fafc;
         border-radius: 40px;
-        padding: 3rem;
+        height: 500px;
         margin-bottom: 1.5rem;
-        text-align: center;
         overflow: hidden;
-    }
-
-    .main-img-box img {
-        width: 100%;
-        max-height: 500px;
-        object-fit: contain;
-        transition: transform 0.5s ease;
     }
 
     .thumb-strip {
@@ -41,9 +47,7 @@
     .thumb-item {
         width: 80px;
         height: 80px;
-        background: #f8fafc;
         border-radius: 16px;
-        padding: 0.5rem;
         cursor: pointer;
         border: 2px solid transparent;
         transition: all 0.3s;
@@ -51,25 +55,10 @@
 
     .thumb-item.active {
         border-color: #6366f1;
-        background: white;
-    }
-
-    .thumb-item img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
     }
 
     .product-details-content {
         padding-left: 2rem;
-    }
-
-    .breadcrumb-custom {
-        margin-bottom: 2rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
     }
 
     .product-title-large {
@@ -80,62 +69,10 @@
         margin-bottom: 1.5rem;
     }
 
-    .price-display {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 2.5rem;
-    }
-
     .price-now {
         font-size: 2.5rem;
         font-weight: 800;
         color: #0f172a;
-    }
-
-    .price-was {
-        font-size: 1.25rem;
-        color: #94a3b8;
-        text-decoration: line-through;
-    }
-
-    .promo-badge {
-        background: #fef3c7;
-        color: #92400e;
-        padding: 6px 16px;
-        border-radius: 100px;
-        font-weight: 700;
-        font-size: 0.8rem;
-    }
-
-    .option-title {
-        font-weight: 700;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 1rem;
-        display: block;
-    }
-
-    .size-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 60px;
-        height: 60px;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        font-weight: 700;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .size-pill:hover, .size-pill.active {
-        border-color: #0f172a;
-        background: #0f172a;
-        color: white;
     }
 
     .btn-buy-primary {
@@ -151,40 +88,11 @@
         justify-content: center;
         gap: 12px;
         width: 100%;
-        margin-bottom: 1rem;
     }
 
     .btn-buy-primary:hover {
         background: #6366f1;
         transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
-    }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-top: 3rem;
-    }
-
-    .info-item {
-        background: #f8fafc;
-        padding: 1.5rem;
-        border-radius: 24px;
-        text-align: center;
-    }
-
-    .info-item i {
-        font-size: 1.5rem;
-        color: #6366f1;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .info-item span {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #475569;
     }
 
     @@media (max-width: 991px) {
@@ -196,31 +104,23 @@
 <div class="details-page">
     <div class="container">
         <div class="row">
-            <!-- Left: Gallery -->
+            <!-- Left: Gallery Placeholder -->
             <div class="col-lg-7">
                 <div class="gallery-container">
-                    <nav class="breadcrumb-custom">
+                    <nav class="breadcrumb-custom mb-4">
                         <a asp-action="Index" class="text-muted text-decoration-none">Collection</a>
                         <span class="mx-2">/</span>
                         <span class="text-dark">@Model.Name</span>
                     </nav>
 
-                    <div class="main-img-box">
-                         <img id="activeImg" src="http://localhost:5190@(Model.ImageUrl)" alt="@Model.Name" 
-                             onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="main-img-box image-placeholder">
+                        Main Product Image Placeholder
                     </div>
 
                     <div class="thumb-strip">
-                        <div class="thumb-item active" onclick="changeImage('http://localhost:5190@(Model.ImageUrl)', this)">
-                            <img src="http://localhost:5190@(Model.ImageUrl)" onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'">
-                        </div>
-                        @if (Model.AdditionalImages != null) {
-                            @foreach (var img in Model.AdditionalImages) {
-                                <div class="thumb-item" onclick="changeImage('http://localhost:5190@(img)', this)">
-                                    <img src="http://localhost:5190@(img)">
-                                </div>
-                            }
-                        }
+                        <div class="thumb-item active image-placeholder">P1</div>
+                        <div class="thumb-item image-placeholder">P2</div>
+                        <div class="thumb-item image-placeholder">P3</div>
                     </div>
                 </div>
             </div>
@@ -229,86 +129,24 @@
             <div class="col-lg-5">
                 <div class="product-details-content">
                     <div class="d-flex align-items-center gap-2 mb-3">
-                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold" style="font-size: 0.7rem;">NEW ARRIVAL</span>
-                        @if (Model.IsEidOffer) {
-                            <span class="promo-badge"><i class="bi bi-stars me-1"></i> EID SPECIAL OFFER</span>
-                        }
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-bold">NEW ARRIVAL</span>
                     </div>
 
                     <h1 class="product-title-large">@Model.Name</h1>
                     
-                    <div class="price-display">
-                        @if (Model.DiscountPrice.HasValue) {
-                            <span class="price-now">৳@Model.DiscountPrice</span>
-                            <span class="price-was">৳@Model.Price</span>
-                            <span class="badge bg-danger rounded-pill px-3 py-2">Save @(Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100))%</span>
-                        } else {
-                            <span class="price-now">৳@Model.Price</span>
-                        }
+                    <div class="price-display mb-4">
+                        <span class="price-now">৳@(Model.DiscountPrice ?? Model.Price)</span>
                     </div>
 
-                    <p class="text-muted mb-5 leading-relaxed" style="font-size: 1.1rem;">
-                        @Model.Description
-                    </p>
-
-                    <div class="mb-5">
-                        <span class="option-title">Select Size (EU)</span>
-                        <div class="d-flex flex-wrap">
-                            <div class="size-pill active">39</div>
-                            <div class="size-pill">40</div>
-                            <div class="size-pill">41</div>
-                            <div class="size-pill">42</div>
-                            <div class="size-pill">43</div>
-                            <div class="size-pill">44</div>
-                        </div>
-                    </div>
+                    <p class="text-muted mb-5 leading-relaxed">@Model.Description</p>
 
                     <div class="d-grid gap-3">
                         <button class="btn-buy-primary btn-lg">
                             <i class="bi bi-bag-plus-fill"></i> ADD TO SHOPPING BAG
                         </button>
-                        <a asp-action="OrderNow" asp-route-productId="@Model.Id" class="btn btn-outline-dark rounded-pill py-3 fw-bold">
-                            BUY IT NOW
-                        </a>
-                    </div>
-
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <i class="bi bi-truck"></i>
-                            <span>FREE SHIPPING</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="bi bi-shield-check"></i>
-                            <span>GENUINE QUALITY</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="bi bi-arrow-repeat"></i>
-                            <span>7-DAY RETURNS</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="bi bi-chat-dots"></i>
-                            <span>24/7 SUPPORT</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 pt-5 border-top">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="bi bi-lock-fill text-muted"></i>
-                            <span class="small text-muted fw-600">Secure checkout. Your data is protected.</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        function changeImage(src, el) {
-            document.getElementById('activeImg').src = src;
-            document.querySelectorAll('.thumb-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
-        }
-    </script>
-}
