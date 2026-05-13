@@ -1,0 +1,74 @@
+@model ShoesBangladeshWebApp.ViewModels.ProductDTO
+
+@{
+    ViewData["Title"] = "Edit Product - " + Model.Name;
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-dark text-white p-4">
+            <h2 class="mb-0">Edit Product</h2>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="form-group mb-3">
+                            <label asp-for="Name" class="form-label fw-bold"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <label class="form-label fw-bold d-block mb-3">Current Image</label>
+                        <img src="@Model.ImageUrl" class="img-thumbnail mb-3" style="max-height: 200px;" onerror="this.src='https://placehold.co/200x200?text=Invalid+URL'" />
+                        <div class="form-group mb-3 text-start">
+                            <label class="form-label fw-bold">Update Image URL</label>
+                            <input asp-for="ImageUrl" class="form-control" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="Price" class="form-label fw-bold">Base Price (৳)</label>
+                            <input asp-for="Price" type="number" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price (৳)</label>
+                            <input asp-for="DiscountPrice" type="number" class="form-control" />
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Visibility & Offers</h5>
+                        <div class="form-check form-switch mb-2">
+                            <input asp-for="IsEidOffer" class="form-check-input" type="checkbox">
+                            <label class="form-check-label fw-bold">Mark as Eid Special Offer</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input asp-for="IsFeatured" class="form-check-input" type="checkbox">
+                            <label class="form-check-label fw-bold">Show in Featured Section</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mt-5 text-end border-top pt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary px-5 me-2">Cancel</a>
+                        <button type="submit" class="btn btn-dark px-5">UPDATE PRODUCT</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

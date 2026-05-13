@@ -11,7 +11,8 @@
             <h2>Join Us</h2>
             <p>Create an account to start shopping</p>
         </div>
-        <form asp-action="Register" method="post">
+        <form asp-action="Register" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-row">
                 <div class="form-group col-md-12">

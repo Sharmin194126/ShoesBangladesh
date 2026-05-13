@@ -1,13 +1,20 @@
-@model IEnumerable<ShoesBangladesh.Web.Models.Product>
+@model IEnumerable<ShoesBangladeshWebApp.ViewModels.ProductDTO>
+
 
 @{
     ViewData["Title"] = "Our Collection";
 }
 
 <div class="container mt-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary">Shoes Bangladesh Collection</h1>
-        <p class="lead text-muted">Premium footwear for every occasion, fetched via API.</p>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="display-4 fw-bold text-primary">Shoes Collection</h1>
+            <p class="lead text-muted">Premium footwear for every occasion.</p>
+        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-success btn-lg"><i class="fas fa-plus"></i> Add New Product</a>
+        }
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
@@ -16,18 +23,47 @@
             @foreach (var item in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm hover-shadow transition">
+                    <div class="card h-100 shadow-sm hover-shadow transition position-relative">
+                        @if (item.IsEidOffer)
+                        {
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-3 z-index-1">Eid Offer</span>
+                        }
+                        @if (item.IsFeatured)
+                        {
+                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 z-index-1">Featured</span>
+                        }
+                        
                         <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/600x400?text=No+Image" : item.ImageUrl)" class="card-img-top" alt="@item.Name">
+                        
                         <div class="card-body">
                             <h5 class="card-title fw-bold">@item.Name</h5>
                             <p class="card-text text-muted text-truncate">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fs-5 fw-bold text-success">৳@item.Price</span>
-                                <span class="badge bg-info text-dark">@item.Category?.Name</span>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    @if (item.DiscountPrice.HasValue)
+                                    {
+                                        <span class="fs-5 fw-bold text-success">৳@item.DiscountPrice</span>
+                                        <small class="text-decoration-line-through text-muted ms-2">৳@item.Price</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="fs-5 fw-bold text-success">৳@item.Price</span>
+                                    }
+                                </div>
+                                <span class="badge bg-info text-dark">@item.CategoryName</span>
                             </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-0 pb-3">
-                            <button class="btn btn-outline-primary w-100">View Details</button>
+                            
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Landing" asp-action="ProductDetails" asp-route-id="@item.Id" class="btn btn-outline-primary">View Details</a>
+                                
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="btn-group w-100">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -37,7 +73,7 @@
         {
             <div class="col-12 text-center">
                 <div class="alert alert-info">
-                    No products found. Make sure the API is running and the database has data.
+                    No products found.
                 </div>
             </div>
         }
@@ -52,4 +88,6 @@
     .transition {
         transition: all 0.3s ease;
     }
+    .z-index-1 { z-index: 1; }
 </style>
+

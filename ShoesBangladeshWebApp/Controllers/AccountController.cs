@@ -17,93 +17,78 @@ namespace ShoesBangladeshWebApp.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
             if (User.Identity.IsAuthenticated)
             {
+                if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
                 if (User.IsInRole("Admin")) return RedirectToAction("Index", "Admin");
                 return RedirectToAction("Index", "Customer");
             }
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
-        public IActionResult Register()
+        public IActionResult Register(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginRequest request)
+        public async Task<IActionResult> Login(LoginRequest request, string? returnUrl = null)
         {
             if (!ModelState.IsValid) return View(request);
 
-            try
-            {
-                var client = _httpClientFactory.CreateClient("ShoesAPI");
-                var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("api/auth/login", content);
+            var response = await client.PostAsync("api/auth/login", content);
+            if (response.IsSuccessStatusCode)
+            {
                 var responseData = await response.Content.ReadAsStringAsync();
+                var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (response.IsSuccessStatusCode)
+                if (authResponse != null && authResponse.IsSuccess)
                 {
-                    if (responseData.Trim().StartsWith("{"))
-                    {
-                        var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        if (authResponse != null && authResponse.IsSuccess)
-                        {
-                            await PerformSignIn(authResponse.User);
-                            if (authResponse.User.Role == "Admin") return RedirectToAction("Index", "Admin");
-                            return RedirectToAction("Index", "Customer");
-                        }
-                    }
+                    await PerformSignIn(authResponse.User);
+
+                    if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
+                    if (authResponse.User.Role == "Admin") return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Index", "Customer");
                 }
-                
-                ModelState.AddModelError("", "Invalid email or password.");
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Connection error: " + ex.Message);
-            }
+
+            ModelState.AddModelError("", "Invalid email or password.");
             return View(request);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request, string? returnUrl = null)
         {
             if (!ModelState.IsValid) return View(request);
 
-            try
-            {
-                var client = _httpClientFactory.CreateClient("ShoesAPI");
-                var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
-                var response = await client.PostAsync("api/auth/register", content);
-                var responseData = await response.Content.ReadAsStringAsync();
+            var response = await client.PostAsync("api/auth/register", content);
+            var responseData = await response.Content.ReadAsStringAsync();
+            var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                if (responseData.Trim().StartsWith("{"))
-                {
-                    var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    if (response.IsSuccessStatusCode && authResponse != null && authResponse.IsSuccess)
-                    {
-                        await PerformSignIn(authResponse.User);
-                        TempData["SuccessMessage"] = "Successfully Signed Up!";
-                        if (authResponse.User.Role == "Admin") return RedirectToAction("Index", "Admin");
-                        return RedirectToAction("Index", "Customer");
-                    }
-                    ModelState.AddModelError("", authResponse?.Message ?? "Registration failed.");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Server Error: " + responseData);
-                }
-            }
-            catch (Exception ex)
+            if (response.IsSuccessStatusCode && authResponse != null && authResponse.IsSuccess)
             {
-                ModelState.AddModelError("", "Connection error: " + ex.Message);
+                await PerformSignIn(authResponse.User);
+                TempData["SuccessMessage"] = "Successfully Signed Up!";
+
+                if (!string.IsNullOrEmpty(returnUrl)) return LocalRedirect(returnUrl);
+                if (authResponse.User.Role == "Admin") return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Index", "Customer");
             }
+            
+            ModelState.AddModelError("", authResponse?.Message ?? "Registration failed.");
             return View(request);
         }
+
 
 
         private async Task PerformSignIn(UserResponse user)

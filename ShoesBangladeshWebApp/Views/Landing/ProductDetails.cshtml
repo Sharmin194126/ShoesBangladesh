@@ -1,0 +1,169 @@
+@model ShoesBangladeshWebApp.ViewModels.ProductDTO
+
+@{
+    ViewData["Title"] = Model.Name + " - Product Details";
+}
+
+<div class="product-details-container container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Landing</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Image Gallery -->
+        <div class="col-lg-7">
+            <div class="gallery-wrapper">
+                <div class="main-image">
+                    <img id="mainProductImg" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-4 shadow-sm" />
+                </div>
+                <div class="thumbnail-grid mt-3">
+                    <img src="@Model.ImageUrl" onclick="updateMainImage(this.src)" class="thumb active" />
+                    @foreach (var img in Model.AdditionalImages)
+                    {
+                        <img src="@img" onclick="updateMainImage(this.src)" class="thumb" />
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-5">
+            <div class="product-info-card">
+                @if (Model.IsEidOffer)
+                {
+                    <span class="badge bg-warning text-dark mb-2"><i class="bi bi-stars"></i> Eid Special</span>
+                }
+                <h1 class="product-title">@Model.Name</h1>
+                <p class="category-tag">Category: @Model.CategoryName</p>
+
+                <div class="price-section my-4">
+                    @if (Model.DiscountPrice.HasValue)
+                    {
+                        <h2 class="current-price">৳@Model.DiscountPrice</h2>
+                        <span class="original-price">৳@Model.Price</span>
+                        <span class="discount-badge">Save @(Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100))%</span>
+                    }
+                    else
+                    {
+                        <h2 class="current-price">৳@Model.Price</h2>
+                    }
+                </div>
+
+                <div class="selection-group my-4">
+                    <label class="fw-bold mb-2">Select Size</label>
+                    <div class="size-options">
+                        <button class="btn btn-outline-dark active">39</button>
+                        <button class="btn btn-outline-dark">40</button>
+                        <button class="btn btn-outline-dark">41</button>
+                        <button class="btn btn-outline-dark">42</button>
+                        <button class="btn btn-outline-dark">43</button>
+                    </div>
+                </div>
+
+                <div class="selection-group my-4">
+                    <label class="fw-bold mb-2">Select Color</label>
+                    <div class="color-options">
+                        <span class="color-dot active" style="background: black;"></span>
+                        <span class="color-dot" style="background: navy;"></span>
+                        <span class="color-dot" style="background: brown;"></span>
+                    </div>
+                </div>
+
+                <div class="action-buttons d-grid gap-3 mt-5">
+                    <button class="btn btn-dark btn-lg py-3 fw-bold">ADD TO CART</button>
+                    <button class="btn btn-primary btn-lg py-3 fw-bold">BUY IT NOW</button>
+                </div>
+
+                <div class="product-usp mt-5 p-4 bg-light rounded-4">
+                    <div class="usp-item mb-3">
+                        <i class="bi bi-truck fs-4 me-3"></i>
+                        <span>Free delivery on orders over ৳5000</span>
+                    </div>
+                    <div class="usp-item mb-3">
+                        <i class="bi bi-arrow-repeat fs-4 me-3"></i>
+                        <span>7 Days easy return policy</span>
+                    </div>
+                    <div class="usp-item">
+                        <i class="bi bi-shield-check fs-4 me-3"></i>
+                        <span>100% Authentic product guaranteed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description & Reviews -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <ul class="nav nav-tabs custom-tabs" id="productTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#desc">Description</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#spec">Specifications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#rev">Reviews (12)</a>
+                </li>
+            </ul>
+            <div class="tab-content p-4 border border-top-0 rounded-bottom-4">
+                <div class="tab-pane fade show active" id="desc">
+                    <p class="text-muted leading-relaxed">@Model.Description</p>
+                    <p>Experience unparalleled comfort and style with the @Model.Name. Designed for the modern trendsetter, these shoes combine premium materials with expert craftsmanship to deliver a product that stands out in any crowd.</p>
+                </div>
+                <div class="tab-pane fade" id="spec">
+                    <table class="table">
+                        <tr><td>Material</td><td>Premium Genuine Leather</td></tr>
+                        <tr><td>Sole</td><td>Durable Rubber</td></tr>
+                        <tr><td>Inner</td><td>Breathable Textile</td></tr>
+                        <tr><td>Weight</td><td>Lightweight (350g)</td></tr>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="rev">
+                    <div class="review-item mb-4 pb-4 border-bottom">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="rating me-3"><i class="bi bi-star-fill text-warning"></i> 5.0</div>
+                            <strong>Hasan Ahmed</strong>
+                        </div>
+                        <p class="text-muted">Great quality shoes! Highly recommended for anyone looking for comfort and style.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-details-container { padding: 40px 20px; }
+    .product-title { font-size: 2.8rem; font-weight: 800; color: #1a1a1a; margin-top: 10px; }
+    .category-tag { color: #666; font-size: 1.1rem; }
+    .current-price { font-size: 2.5rem; font-weight: 800; color: #000; margin-bottom: 0; }
+    .original-price { text-decoration: line-through; color: #999; font-size: 1.5rem; margin-right: 15px; }
+    .discount-badge { background: #e74c3c; color: white; padding: 5px 12px; border-radius: 5px; font-weight: 600; }
+    
+    .thumbnail-grid { display: flex; gap: 15px; }
+    .thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
+    .thumb:hover, .thumb.active { border-color: #000; }
+    
+    .size-options { display: flex; gap: 10px; flex-wrap: wrap; }
+    .size-options .btn { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+    .size-options .btn.active { background: #000; color: #fff; }
+    
+    .color-dot { width: 30px; height: 30px; border-radius: 50%; display: inline-block; margin-right: 10px; cursor: pointer; border: 2px solid #fff; outline: 1px solid #ddd; }
+    .color-dot.active { outline-color: #000; outline-width: 2px; }
+    
+    .custom-tabs .nav-link { border: none; color: #666; font-weight: 600; padding: 15px 30px; }
+    .custom-tabs .nav-link.active { color: #000; border-bottom: 3px solid #000; }
+    .leading-relaxed { line-height: 1.8; }
+</style>
+
+<script>
+    function updateMainImage(src) {
+        document.getElementById('mainProductImg').src = src;
+        document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+</script>

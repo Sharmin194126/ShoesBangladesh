@@ -9,11 +9,13 @@
         </div>
         <ul class="sidebar-menu">
             <li><a href="#" class="active"><i class="fas fa-chart-line"></i> Statistics</a></li>
+            <li><a asp-action="ManageLandingPage"><i class="fas fa-bullhorn"></i> Manage Landing Page</a></li>
             <li><a asp-controller="Product" asp-action="Index"><i class="fas fa-box"></i> Manage Products</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
             <li><a href="#"><i class="fas fa-shopping-cart"></i> Orders</a></li>
             <li><a asp-controller="Account" asp-action="Logout" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
+
     </div>
     <div class="main-content">
         @if (TempData["SuccessMessage"] != null)

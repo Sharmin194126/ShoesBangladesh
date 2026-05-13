@@ -35,7 +35,15 @@ namespace ShoesBangladesh.API.Data
             context.Categories.AddRange(categories);
             context.SaveChanges();
 
+            // Seed SystemSettings
+            if (!context.SystemSettings.Any())
+            {
+                context.SystemSettings.Add(new SystemSettings());
+                context.SaveChanges();
+            }
+
             // Seed Users
+
             if (!context.Users.Any())
             {
                 var users = new User[]
