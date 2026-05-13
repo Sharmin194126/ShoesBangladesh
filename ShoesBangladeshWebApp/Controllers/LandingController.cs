@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using ShoesBangladeshWebApp.ViewModels;
+using ShoesBangladesh.API.ViewModels;
+using ShoesBangladesh.Web.Models;
+
 using System.Text.Json;
+
+
 
 namespace ShoesBangladeshWebApp.Controllers
 {
@@ -20,8 +24,12 @@ namespace ShoesBangladeshWebApp.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                return View("Error");
+                var errorBody = await response.Content.ReadAsStringAsync();
+                ViewBag.ErrorMessage = $"API Request Failed: {errorBody}";
+                return View("Error", new ErrorViewModel { RequestId = response.StatusCode.ToString() });
             }
+
+
 
             var json = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

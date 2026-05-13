@@ -1,4 +1,4 @@
-@model ShoesBangladeshWebApp.ViewModels.LandingPageResponse
+@model ShoesBangladesh.API.ViewModels.LandingPageResponse
 
 @{
     ViewData["Title"] = "Eid Special Collection";
@@ -11,7 +11,7 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="offer-badge pulse">
-                <span class="discount-text">@Model.Settings.DiscountPercentage% OFF</span>
+                <span class="discount-text">@(Model.Settings.DiscountPercentage)% OFF</span>
                 <span class="eid-text">Eid Special</span>
             </div>
             <h1 class="glow-text">@Model.Settings.EidOfferTitle</h1>
@@ -122,7 +122,7 @@
                 </div>
             </div>
             <div class="copyright">
-                &copy; @DateTime.Now.Year @Model.Settings.CompanyName. All Rights Reserved.
+                &copy; @DateTime.Now.Year @(Model.Settings.CompanyName). All Rights Reserved.
             </div>
         </div>
     </footer>
@@ -130,182 +130,35 @@
 
 @section Scripts {
     <script>
-        // Countdown Timer Logic
         const countdownEl = document.getElementById('countdown');
-        const endTimeStr = countdownEl.getAttribute('data-endtime');
-        const endTime = new Date(endTimeStr).getTime();
+        if (countdownEl) {
+            const endTimeStr = countdownEl.getAttribute('data-endtime');
+            const endTime = new Date(endTimeStr).getTime();
 
-        const updateCountdown = () => {
-            const now = new Date().getTime();
-            const distance = endTime - now;
+            const updateCountdown = () => {
+                const now = new Date().getTime();
+                const distance = endTime - now;
 
-            if (distance < 0) {
-                countdownEl.innerHTML = "<h4>Offer Expired</h4>";
-                return;
-            }
+                if (distance < 0) {
+                    countdownEl.innerHTML = "<h4>Offer Expired</h4>";
+                    return;
+                }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            document.getElementById('days').innerText = days.toString().padStart(2, '0');
-            document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
-        };
+                document.getElementById('days').innerText = days.toString().padStart(2, '0');
+                document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').innerText = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+            };
 
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+        }
     </script>
 }
 
-<style>
-    :root {
-        --primary-gold: #ffd700;
-        --eid-purple: #4a148c;
-        --eid-gold: #ffc107;
-        --premium-black: #1a1a1a;
-    }
 
-    .hero-eid {
-        position: relative;
-        min-height: 90vh;
-        background: url('https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1600') center/cover;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: white;
-        padding-top: 80px;
-    }
-
-    .hero-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(74, 20, 140, 0.8) 0%, rgba(26, 26, 26, 0.7) 100%);
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        max-width: 800px;
-    }
-
-    .offer-badge {
-        display: inline-block;
-        background: var(--eid-gold);
-        color: black;
-        padding: 10px 25px;
-        border-radius: 50px;
-        font-weight: 800;
-        margin-bottom: 25px;
-        box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
-    }
-
-    .pulse { animation: pulse 2s infinite; }
-    @@keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    .glow-text {
-        font-size: 4rem;
-        font-weight: 900;
-        margin-bottom: 15px;
-        text-shadow: 0 0 20px rgba(255,255,255,0.3);
-    }
-
-    .countdown-container {
-        margin: 40px 0;
-        background: rgba(255,255,255,0.1);
-        padding: 20px;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-    }
-
-    #countdown {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .time-box {
-        display: flex;
-        flex-direction: column;
-        min-width: 80px;
-    }
-
-    .time-box span {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--eid-gold);
-    }
-
-    .btn-premium {
-        background: var(--eid-gold);
-        color: black;
-        padding: 15px 40px;
-        border-radius: 10px;
-        font-weight: 700;
-        text-decoration: none;
-        font-size: 1.2rem;
-        transition: 0.3s;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-
-    .btn-premium:hover { background: #ffca28; transform: translateY(-3px); }
-
-    .collection-section { padding: 80px 0; background: #fdfdfd; }
-
-    .product-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 30px;
-        margin-top: 50px;
-    }
-
-    .product-card {
-        background: white;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        transition: 0.4s;
-        position: relative;
-    }
-
-    .highlighted-card {
-        border: 2px solid var(--eid-gold);
-        transform: scale(1.02);
-        box-shadow: 0 15px 40px rgba(255, 193, 7, 0.2);
-    }
-
-    .btn-order {
-        display: block;
-        width: 100%;
-        background: linear-gradient(45deg, #00b894, #00d2d3);
-        color: white;
-        text-align: center;
-        padding: 12px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 700;
-        margin-top: 15px;
-        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-    }
-
-    .floating-btn { animation: float 3s ease-in-out infinite; }
-    @@keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-
-    .premium-footer { background: var(--premium-black); color: #ccc; padding: 80px 0 30px; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
-    .footer-logo { height: 40px; margin-bottom: 20px; filter: brightness(0) invert(1); }
-    .footer-links ul { list-style: none; padding: 0; }
-    .footer-links a { color: #888; text-decoration: none; transition: 0.3s; }
-    .footer-links a:hover { color: white; }
-    .copyright { text-align: center; border-top: 1px solid #333; padding-top: 30px; font-size: 0.9rem; }
-</style>
