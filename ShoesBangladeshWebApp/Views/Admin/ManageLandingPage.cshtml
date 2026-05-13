@@ -71,10 +71,13 @@
                 </a>
             </div>
 
-            <form asp-action="UpdateSettings" method="post">
-                <!-- Hero Section Offer -->
+            <form asp-action="UpdateSettings" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="HeroImageUrl" />
+                <input type="hidden" asp-for="HeroBgImageUrl" />
+
+                <!-- Campaign & Offers -->
                 <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Campaign & Offers</h6>
-                <div class="row g-4">
+                <div class="row g-4 mb-4">
                     <div class="col-md-8">
                         <label class="form-label">Main Offer Title</label>
                         <input asp-for="EidOfferTitle" class="form-control" placeholder="e.g. Eid-ul-Adha Special" />
@@ -99,6 +102,41 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Hero Assets -->
+                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Visual Assets (Hero Section)</h6>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">Hero Shoe Image (Desktop Upload)</label>
+                        <div class="info-box p-3 mb-2 text-center">
+                            <img src="@(string.IsNullOrEmpty(Model.HeroImageUrl) ? "/images/hero-shoe.png" : Model.HeroImageUrl)" id="heroPreview" style="max-height: 120px; object-fit: contain;" class="mb-3">
+                            <input type="file" name="heroImage" class="form-control" onchange="previewImage(this, 'heroPreview')" accept="image/*" />
+                        </div>
+                        <small class="text-muted">Recommended: Transparent PNG, 800x800px</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Hero Background (Desktop Upload)</label>
+                        <div class="info-box p-3 mb-2 text-center">
+                            <img src="@(string.IsNullOrEmpty(Model.HeroBgImageUrl) ? "/images/hero-bg.png" : Model.HeroBgImageUrl)" id="bgPreview" style="max-height: 120px; width: 100%; object-fit: cover; border-radius: 8px;" class="mb-3">
+                            <input type="file" name="bgImage" class="form-control" onchange="previewImage(this, 'bgPreview')" accept="image/*" />
+                        </div>
+                        <small class="text-muted">Recommended: High-res Gradient or Lifestyle Image</small>
+                    </div>
+                </div>
+
+                <script>
+                    function previewImage(input, previewId) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                document.getElementById(previewId).setAttribute('src', e.target.result);
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+                </script>
 
                 <div class="section-divider"></div>
 

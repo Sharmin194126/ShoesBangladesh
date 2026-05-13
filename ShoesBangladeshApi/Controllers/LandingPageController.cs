@@ -41,7 +41,9 @@ namespace ShoesBangladesh.API.Controllers
                         CompanyName = settings?.CompanyName ?? "Shoes Bangladesh",
                         CompanyDescription = settings?.CompanyDescription ?? "Your trusted destination for premium footwear in Bangladesh.",
                         ProductSectionDescription = settings?.ProductSectionDescription ?? "Discover our latest and most exclusive footwear collection.",
-                        FacebookPageLink = settings?.FacebookPageLink ?? "#"
+                        FacebookPageLink = settings?.FacebookPageLink ?? "#",
+                        HeroImageUrl = settings?.HeroImageUrl ?? "/images/hero-shoe.png",
+                        HeroBgImageUrl = settings?.HeroBgImageUrl ?? "/images/hero-bg.png"
                     },
 
                     Categories = categories.Select(c => new CategoryDTO { Id = c.Id, Name = c.Name }).ToList(),
@@ -88,6 +90,8 @@ namespace ShoesBangladesh.API.Controllers
             existing.CompanyDescription = settings.CompanyDescription;
             existing.ProductSectionDescription = settings.ProductSectionDescription;
             existing.FacebookPageLink = settings.FacebookPageLink;
+            existing.HeroImageUrl = settings.HeroImageUrl ?? existing.HeroImageUrl;
+            existing.HeroBgImageUrl = settings.HeroBgImageUrl ?? existing.HeroBgImageUrl;
 
             await _context.SaveChangesAsync();
             return Ok(new { IsSuccess = true, Message = "Settings updated successfully." });

@@ -382,6 +382,22 @@
                 </li>
             </ul>
 
+            <div class="nav-label mt-4">Inventory</div>
+            <ul class="nav-links">
+                <li class="nav-item-admin">
+                    <a asp-controller="Product" asp-action="Index" class="nav-link-admin @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="bi bi-box-seam-fill"></i>
+                        <span class="nav-text">Product List</span>
+                    </a>
+                </li>
+                <li class="nav-item-admin">
+                    <a asp-controller="Product" asp-action="Create" class="nav-link-admin @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")">
+                        <i class="bi bi-plus-square-fill"></i>
+                        <span class="nav-text">Add New Product</span>
+                    </a>
+                </li>
+            </ul>
+
             <div class="nav-label mt-4">Settings</div>
             <ul class="nav-links">
                 <li class="nav-item-admin">

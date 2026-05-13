@@ -74,11 +74,47 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings)
+        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
+
+            // 1. Handle Hero Image Upload
+            if (heroImage != null && heroImage.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = heroImage.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(heroImage.ContentType);
+                form.Add(streamContent, "file", heroImage.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    settings.HeroImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.HeroImageUrl;
+                }
+            }
+
+            // 2. Handle Background Image Upload
+            if (bgImage != null && bgImage.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = bgImage.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(bgImage.ContentType);
+                form.Add(streamContent, "file", bgImage.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    settings.HeroBgImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.HeroBgImageUrl;
+                }
+            }
+
             var content = new StringContent(JsonSerializer.Serialize(settings), Encoding.UTF8, "application/json");
-            
             await client.PostAsync("api/LandingPage/UpdateSettings", content);
             
             TempData["SuccessMessage"] = "Landing Page settings updated successfully!";

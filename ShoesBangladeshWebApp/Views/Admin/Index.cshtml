@@ -113,6 +113,16 @@
     <h5 class="fw-bold mb-3"><i class="bi bi-lightning-fill text-warning me-2"></i>@Localizer["Quick Management"]</h5>
     <div class="row g-2 nav-shortcuts">
         <div class="col-6 col-md-3">
+            <a asp-controller="Product" asp-action="Create" class="btn btn-warning fw-bold w-100 py-2 shadow-sm border-0">
+                <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["Add Product"]
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-controller="Admin" asp-action="ManageLandingPage" class="btn btn-primary fw-bold w-100 py-2 shadow-sm border-0">
+                <i class="bi bi-window-sidebar me-2"></i>@Localizer["Landing Page"]
+            </a>
+        </div>
+        <div class="col-6 col-md-3">
             <a asp-controller="Admin" asp-action="EmployeeSalesOverview" class="btn btn-outline-primary w-100 py-2">@Localizer["Employee Goals"]</a>
         </div>
         <div class="col-6 col-md-3">
@@ -130,14 +140,7 @@
         <div class="col-6 col-md-3">
             <a asp-controller="Admin" asp-action="FooterSettings" class="btn btn-outline-warning w-100 py-2">@Localizer["Footer Settings"]</a>
         </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="PaymentMethods" class="btn btn-outline-dark w-100 py-2">@Localizer["Payment Methods"]</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="btn btn-outline-primary w-100 py-2">@Localizer["Online Payment History"]</a>
-        </div>
     </div>
-
 </div>
 
 @{
