@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace ShoesBangladesh.Web.Models
+namespace ShoesBangladesh.API.ViewModels
 {
-    // Reusing the same structure as API for easy deserialization
     public class AdminStatsViewModel
     {
         public int TotalDelivered { get; set; }

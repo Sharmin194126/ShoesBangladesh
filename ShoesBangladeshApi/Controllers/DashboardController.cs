@@ -22,9 +22,9 @@ namespace ShoesBangladesh.API.Controllers
         }
 
         [HttpGet("Stats")]
-        public async Task<ActionResult<AdminStatsDTO>> GetStats()
+        public async Task<ActionResult<AdminStatsViewModel>> GetStats()
         {
-            var stats = new AdminStatsDTO();
+            var stats = new AdminStatsViewModel();
 
             var orders = await _context.Orders
                 .Include(o => o.OrderDetails)
@@ -58,7 +58,7 @@ namespace ShoesBangladesh.API.Controllers
             stats.TotalExpenses = totalVat;
 
             // Recent Orders
-            stats.RecentOrders = orders.OrderByDescending(o => o.OrderDate).Take(10).Select(o => new RecentOrderDTO
+            stats.RecentOrders = orders.OrderByDescending(o => o.OrderDate).Take(10).Select(o => new RecentOrderViewModel
             {
                 OrderId = o.Id,
                 CustomerName = users.FirstOrDefault(u => u.Id == o.UserId)?.FullName ?? "Unknown",
@@ -74,7 +74,7 @@ namespace ShoesBangladesh.API.Controllers
             foreach (var emp in employees)
             {
                 var ordersAssigned = orders.Where(o => o.AssignedEmployeeId == emp.Id && o.Status == "Delivered").ToList();
-                stats.EmployeePerformances.Add(new EmployeePerformanceDTO
+                stats.EmployeePerformances.Add(new EmployeePerformanceViewModel
                 {
                     EmployeeId = emp.Id,
                     EmployeeName = emp.Name,
@@ -89,7 +89,7 @@ namespace ShoesBangladesh.API.Controllers
             {
                 var date = last30Days.AddDays(i);
                 var dayOrders = deliveredOrders.Where(o => o.OrderDate.Date == date).ToList();
-                stats.DailySales.Add(new DailySalesDTO
+                stats.DailySales.Add(new DailySalesViewModel
                 {
                     Date = date,
                     Amount = dayOrders.Sum(o => o.TotalAmount),
@@ -102,7 +102,7 @@ namespace ShoesBangladesh.API.Controllers
                 .Include(od => od.Product)
                 .Where(od => od.Order.Status == "Delivered" || od.Order.PaymentStatus == "Paid")
                 .GroupBy(od => new { od.ProductId, od.Product.Name })
-                .Select(g => new ProductSalesSummaryDTO
+                .Select(g => new ProductSalesSummaryViewModel
                 {
                     ProductId = g.Key.ProductId,
                     ProductName = g.Key.Name,
@@ -121,32 +121,65 @@ namespace ShoesBangladesh.API.Controllers
         }
 
         [HttpGet("PaymentHistory")]
-        public async Task<ActionResult<List<PaymentHistory>>> GetPaymentHistory()
+        public async Task<ActionResult<List<PaymentHistoryViewModel>>> GetPaymentHistory()
         {
-            return await _context.PaymentHistories
+            var history = await _context.PaymentHistories
                 .Include(p => p.Order)
                 .OrderByDescending(p => p.PaymentDate)
                 .ToListAsync();
+
+            return history.Select(p => new PaymentHistoryViewModel
+            {
+                Id = p.Id,
+                OrderId = p.OrderId,
+                TransactionId = p.TransactionId,
+                Amount = p.Amount,
+                GatewayName = p.GatewayName,
+                Status = p.Status,
+                PaymentDate = p.PaymentDate
+            }).ToList();
         }
 
         [HttpGet("Messages")]
-        public async Task<ActionResult<List<ContactMessage>>> GetMessages()
+        public async Task<ActionResult<List<ContactMessageViewModel>>> GetMessages()
         {
-            return await _context.ContactMessages
+            var messages = await _context.ContactMessages
                 .OrderByDescending(m => m.CreatedAt)
                 .ToListAsync();
+
+            return messages.Select(m => new ContactMessageViewModel
+            {
+                Id = m.Id,
+                Name = m.Name,
+                Email = m.Email,
+                Subject = m.Subject,
+                Message = m.Message,
+                MessageType = m.MessageType,
+                Status = m.Status,
+                CreatedAt = m.CreatedAt
+            }).ToList();
         }
 
         [HttpGet("Reviews")]
-        public async Task<ActionResult<List<Review>>> GetReviews()
+        public async Task<ActionResult<List<ReviewViewModel>>> GetReviews()
         {
-            return await _context.Reviews
-                 .OrderByDescending(r => r.CreatedAt)
-                 .ToListAsync();
+            var reviews = await _context.Reviews
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            return reviews.Select(r => new ReviewViewModel
+            {
+                Id = r.Id,
+                ProductId = r.ProductId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                Status = r.Status,
+                CreatedAt = r.CreatedAt
+            }).ToList();
         }
 
         [HttpGet("Footer")]
-        public async Task<ActionResult<FooterInfo>> GetFooter()
+        public async Task<ActionResult<FooterInfoViewModel>> GetFooter()
         {
             var footer = await _context.FooterInfos.FirstOrDefaultAsync();
             if (footer == null)
@@ -155,11 +188,21 @@ namespace ShoesBangladesh.API.Controllers
                 _context.FooterInfos.Add(footer);
                 await _context.SaveChangesAsync();
             }
-            return footer;
+            return new FooterInfoViewModel
+            {
+                Id = footer.Id,
+                Address = footer.Address,
+                ContactNumber = footer.ContactNumber,
+                Email = footer.Email,
+                FacebookUrl = footer.FacebookUrl,
+                TwitterUrl = footer.TwitterUrl,
+                InstagramUrl = footer.InstagramUrl,
+                LastUpdated = footer.LastUpdated
+            };
         }
 
         [HttpPost("Footer")]
-        public async Task<ActionResult> UpdateFooter(FooterInfo model)
+        public async Task<ActionResult> UpdateFooter(FooterInfoViewModel model)
         {
             var existing = await _context.FooterInfos.FirstOrDefaultAsync();
             if (existing != null)
@@ -177,56 +220,87 @@ namespace ShoesBangladesh.API.Controllers
         }
 
         [HttpGet("DisplaySections")]
-        public async Task<ActionResult<List<DisplaySection>>> GetDisplaySections()
+        public async Task<ActionResult<List<DisplaySectionViewModel>>> GetDisplaySections()
         {
-            return await _context.DisplaySections
+            var sections = await _context.DisplaySections
                 .OrderBy(s => s.DisplayOrder)
                 .ToListAsync();
+
+            return sections.Select(s => new DisplaySectionViewModel
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Subtitle = s.Subtitle,
+                SectionType = s.SectionType,
+                IsActive = s.IsActive,
+                DisplayOrder = s.DisplayOrder
+            }).ToList();
         }
 
         [HttpPost("DisplaySections")]
-        public async Task<ActionResult> CreateDisplaySection(DisplaySection section)
+        public async Task<ActionResult> CreateDisplaySection(DisplaySectionViewModel model)
         {
+            var section = new DisplaySection
+            {
+                Title = model.Title,
+                Subtitle = model.Subtitle,
+                SectionType = model.SectionType,
+                IsActive = model.IsActive,
+                DisplayOrder = model.DisplayOrder
+            };
             _context.DisplaySections.Add(section);
             await _context.SaveChangesAsync();
             return Ok();
         }
 
         [HttpPut("DisplaySections/{id}")]
-        public async Task<ActionResult> EditDisplaySection(int id, DisplaySection section)
+        public async Task<ActionResult> EditDisplaySection(int id, DisplaySectionViewModel model)
         {
             var existing = await _context.DisplaySections.FindAsync(id);
             if (existing == null) return NotFound();
 
-            existing.Title = section.Title;
-            existing.Subtitle = section.Subtitle;
-            existing.SectionType = section.SectionType;
-            existing.IsActive = section.IsActive;
-            existing.DisplayOrder = section.DisplayOrder;
+            existing.Title = model.Title;
+            existing.Subtitle = model.Subtitle;
+            existing.SectionType = model.SectionType;
+            existing.IsActive = model.IsActive;
+            existing.DisplayOrder = model.DisplayOrder;
 
             await _context.SaveChangesAsync();
             return Ok();
         }
 
         [HttpGet("Employees")]
-        public async Task<ActionResult<List<Employee>>> GetEmployees()
+        public async Task<ActionResult<List<EmployeeViewModel>>> GetEmployees()
         {
-            return await _context.Employees
+            var employees = await _context.Employees
                 .Include(e => e.User)
                 .ToListAsync();
+
+            return employees.Select(e => new EmployeeViewModel
+            {
+                Id = e.Id,
+                UserId = e.UserId,
+                Name = e.Name,
+                Email = e.Email,
+                PhoneNumber = e.PhoneNumber,
+                Designation = e.Designation,
+                JoiningDate = e.JoiningDate,
+                Salary = e.Salary,
+                Status = e.Status
+            }).ToList();
         }
 
         [HttpGet("EmployeeStats")]
-        public async Task<ActionResult<List<EmployeePerformanceDTO>>> GetEmployeeStats()
+        public async Task<ActionResult<List<EmployeePerformanceViewModel>>> GetEmployeeStats()
         {
             var employees = await _context.Employees.ToListAsync();
             var orders = await _context.Orders.Include(o => o.OrderDetails).ToListAsync();
-            var stats = new List<EmployeePerformanceDTO>();
+            var stats = new List<EmployeePerformanceViewModel>();
 
             foreach (var emp in employees)
             {
                 var ordersAssigned = orders.Where(o => o.AssignedEmployeeId == emp.Id && o.Status == "Delivered").ToList();
-                stats.Add(new EmployeePerformanceDTO
+                stats.Add(new EmployeePerformanceViewModel
                 {
                     EmployeeId = emp.Id,
                     EmployeeName = emp.Name,
@@ -238,14 +312,24 @@ namespace ShoesBangladesh.API.Controllers
         }
 
         [HttpGet("OrdersByStatus/{status}")]
-        public async Task<ActionResult<List<Order>>> GetOrdersByStatus(string status)
+        public async Task<ActionResult<List<RecentOrderViewModel>>> GetOrdersByStatus(string status)
         {
-            return await _context.Orders
+            var orders = await _context.Orders
                 .Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.Product)
                 .Where(o => o.Status == status)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
+
+            return orders.Select(o => new RecentOrderViewModel
+            {
+                OrderId = o.Id,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                Amount = o.TotalAmount,
+                PaymentStatus = o.PaymentStatus,
+                PaymentMethod = o.PaymentMethod,
+                ShippingAddress = o.ShippingAddress
+            }).ToList();
         }
     }
 }

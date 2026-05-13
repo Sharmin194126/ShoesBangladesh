@@ -1,6 +1,6 @@
 using System;
 
-namespace ShoesBangladesh.Web.Models
+namespace ShoesBangladesh.API.ViewModels
 {
     public class EmployeeViewModel
     {

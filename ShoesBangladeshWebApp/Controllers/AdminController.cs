@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoesBangladesh.API.ViewModels;
-using ShoesBangladesh.Web.Models;
 
 
 using System.Text.Json;
