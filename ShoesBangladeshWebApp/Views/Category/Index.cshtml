@@ -8,7 +8,7 @@
     .page-header { margin-bottom: 1.75rem; }
     .page-title { font-size: 1.5rem; font-weight: 800; color: #1F1F1F; margin: 0; }
     .page-subtitle { font-size: 0.82rem; color: #9E9E9E; margin: 3px 0 0; }
-    .breadcrumb-item a { color: #532374; text-decoration: none; }
+    .breadcrumb-item a { color: #C40000; text-decoration: none; }
     .breadcrumb-item.active { color: #9E9E9E; }
 
     .table-card {
@@ -34,23 +34,23 @@
         max-width: 280px;
         width: 100%;
     }
-    .search-input-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #532374; font-size: 0.85rem; }
+    .search-input-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #C40000; font-size: 0.85rem; }
     .search-input-box input {
         width: 100%;
         padding: 0.5rem 1rem 0.5rem 2.2rem;
         border-radius: 8px;
-        border: 1.5px solid #d1c4e9;
-        background: #f3e5f5;
+        border: 1.5px solid #FECACA;
+        background: #FFEBEE;
         font-size: 0.82rem;
         font-family: 'Inter', sans-serif;
         outline: none;
         transition: 0.2s;
     }
-    .search-input-box input:focus { border-color: #532374; background: #FFF5F5; }
-    .search-input-box input::placeholder { color: #9575cd; }
+    .search-input-box input:focus { border-color: #C40000; background: #FFF5F5; }
+    .search-input-box input::placeholder { color: #E57373; }
 
     .btn-create {
-        background: linear-gradient(135deg, #532374 0%, #3a1852 100%);
+        background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%);
         color: white;
         border: none;
         padding: 0.55rem 1.25rem;
@@ -64,7 +64,7 @@
         transition: all 0.2s;
         box-shadow: 0 3px 12px rgba(196,0,0,0.25);
     }
-    .btn-create:hover { background: linear-gradient(135deg, #3a1852 0%, #250f35 100%); color: white; transform: translateY(-1px); text-decoration: none; }
+    .btn-create:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); color: white; transform: translateY(-1px); text-decoration: none; }
 
     .btn-back {
         background: #F5F5F5;
@@ -84,7 +84,7 @@
 
     .category-table { width: 100%; border-collapse: collapse; }
     .category-table thead th {
-        background: #532374 !important;
+        background: #C40000 !important;
         color: rgba(255,255,255,0.85);
         font-size: 0.68rem;
         font-weight: 700;
@@ -101,7 +101,7 @@
         color: #2B2B2B;
         vertical-align: middle;
     }
-    .category-table tbody tr:hover td { background: #f3e5f5; }
+    .category-table tbody tr:hover td { background: #FFEBEE; }
     .category-table tbody tr:last-child td { border-bottom: none; }
 
     .cat-icon {
@@ -112,7 +112,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #532374;
+        color: #C40000;
         font-size: 1.2rem;
         flex-shrink: 0;
     }
@@ -135,10 +135,10 @@
     }
     .btn-view   { background: #E3F2FD; color: #1565C0; }
     .btn-edit   { background: #FFF8E1; color: #F57F17; }
-    .btn-del    { background: #fbe9e7; color: #d32f2f; }
+    .btn-del    { background: #FFEBEE; color: #C40000; }
     .btn-view:hover { background: #1565C0; color: white; }
     .btn-edit:hover { background: #F57F17; color: white; }
-    .btn-del:hover  { background: #d32f2f; color: white; }
+    .btn-del:hover  { background: #C40000; color: white; }
 
     .empty-state {
         text-align: center;
@@ -154,7 +154,7 @@
         justify-content: center;
         margin: 0 auto 1rem;
         font-size: 2rem;
-        color: #532374;
+        color: #C40000;
     }
 
     .alert-success-custom {
@@ -188,7 +188,7 @@
 <div class="page-header">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
         <div>
-            <h1 class="page-title"><i class="bi bi-tags me-2" style="color:#532374;"></i>Category Management</h1>
+            <h1 class="page-title"><i class="bi bi-tags me-2 text-danger"></i>Category Management</h1>
             <nav aria-label="breadcrumb" class="mt-1">
                 <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
                     <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index">Dashboard</a></li>
@@ -281,7 +281,7 @@
                                 }
                                 else
                                 {
-                                    <span class="badge-count" style="background:#fbe9e7;color:#d32f2f;"><i class="bi bi-x-circle-fill me-1" style="font-size: 0.6rem;"></i>Inactive</span>
+                                    <span class="badge-count" style="background:#FFEBEE;color:#C62828;"><i class="bi bi-x-circle-fill me-1" style="font-size: 0.6rem;"></i>Inactive</span>
                                 }
                             </td>
                             <td>
@@ -336,7 +336,7 @@
                 html: `Are you sure you want to delete <strong>${name}</strong>?<br><span style="font-size:0.8rem;color:#9E9E9E;">This action cannot be undone.</span>`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#532374',
+                confirmButtonColor: '#C40000',
                 cancelButtonColor: '#9E9E9E',
                 confirmButtonText: '<i class="bi bi-trash me-1"></i> Yes, Delete',
                 cancelButtonText: 'Cancel',

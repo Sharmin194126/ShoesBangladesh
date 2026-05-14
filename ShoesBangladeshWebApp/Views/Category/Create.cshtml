@@ -19,11 +19,11 @@
         transition: 0.2s;
         background: #FAFAFA;
     }
-    .form-control-custom:focus { border-color: #532374; background: #fff; box-shadow: 0 0 0 3px rgba(83,35,116,0.08); }
-    .form-control-custom.is-invalid { border-color: #d32f2f; }
-    .field-error { font-size: 0.75rem; color: #d32f2f; margin-top: 4px; font-weight: 600; }
+    .form-control-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
+    .form-control-custom.is-invalid { border-color: #C40000; }
+    .field-error { font-size: 0.75rem; color: #C40000; margin-top: 4px; font-weight: 600; }
     .btn-submit {
-        background: linear-gradient(135deg, #532374 0%, #3a1852 100%);
+        background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%);
         color: white;
         border: none;
         padding: 0.65rem 2rem;
@@ -34,7 +34,7 @@
         transition: all 0.2s;
         box-shadow: 0 3px 12px rgba(196,0,0,0.25);
     }
-    .btn-submit:hover { background: linear-gradient(135deg, #3a1852 0%, #250f35 100%); transform: translateY(-1px); text-decoration: none; }
+    .btn-submit:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); transform: translateY(-1px); text-decoration: none; }
     .btn-cancel {
         background: #F5F5F5;
         color: #2B2B2B;
@@ -51,11 +51,11 @@
 </style>
 
 <div class="mb-4">
-    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle me-2" style="color:#532374;"></i>Create New Category</h1>
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle me-2 text-danger"></i>Create New Category</h1>
     <nav aria-label="breadcrumb" class="mt-1">
         <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
-            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#532374; text-decoration:none;">Dashboard</a></li>
-            <li class="breadcrumb-item"><a asp-action="Index" style="color:#532374; text-decoration:none;">Categories</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Categories</a></li>
             <li class="breadcrumb-item active" style="color:#9E9E9E;">Create</li>
         </ol>
     </nav>
