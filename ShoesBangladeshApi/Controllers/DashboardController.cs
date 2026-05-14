@@ -243,5 +243,86 @@ namespace ShoesBangladesh.API.Controllers
                 ShippingAddress = o.ShippingAddress
             }).ToList();
         }
+        [HttpGet("DisplaySections")]
+        public async Task<ActionResult<List<DisplaySectionViewModel>>> GetDisplaySections()
+        {
+            var sections = await _context.DisplaySections
+                .OrderBy(s => s.DisplayOrder)
+                .Select(s => new DisplaySectionViewModel
+                {
+                    Id = s.Id,
+                    Title = s.Title,
+                    Subtitle = s.Subtitle,
+                    SectionType = s.SectionType,
+                    IsActive = s.IsActive,
+                    DisplayOrder = s.DisplayOrder
+                }).ToListAsync();
+            return sections;
+        }
+
+        [HttpGet("DisplaySections/{id}")]
+        public async Task<ActionResult<DisplaySectionViewModel>> GetDisplaySection(int id)
+        {
+            var section = await _context.DisplaySections.FindAsync(id);
+            if (section == null) return NotFound();
+
+            return new DisplaySectionViewModel
+            {
+                Id = section.Id,
+                Title = section.Title,
+                Subtitle = section.Subtitle,
+                SectionType = section.SectionType,
+                IsActive = section.IsActive,
+                DisplayOrder = section.DisplayOrder
+            };
+        }
+
+        [HttpPost("DisplaySections")]
+        public async Task<ActionResult<DisplaySectionViewModel>> CreateDisplaySection(DisplaySectionViewModel model)
+        {
+            var section = new DisplaySection
+            {
+                Title = model.Title,
+                Subtitle = model.Subtitle,
+                SectionType = model.SectionType,
+                IsActive = model.IsActive,
+                DisplayOrder = model.DisplayOrder
+            };
+
+            _context.DisplaySections.Add(section);
+            await _context.SaveChangesAsync();
+
+            model.Id = section.Id;
+            return CreatedAtAction(nameof(GetDisplaySection), new { id = section.Id }, model);
+        }
+
+        [HttpPut("DisplaySections/{id}")]
+        public async Task<IActionResult> UpdateDisplaySection(int id, DisplaySectionViewModel model)
+        {
+            if (id != model.Id) return BadRequest();
+
+            var section = await _context.DisplaySections.FindAsync(id);
+            if (section == null) return NotFound();
+
+            section.Title = model.Title;
+            section.Subtitle = model.Subtitle;
+            section.SectionType = model.SectionType;
+            section.IsActive = model.IsActive;
+            section.DisplayOrder = model.DisplayOrder;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpDelete("DisplaySections/{id}")]
+        public async Task<IActionResult> DeleteDisplaySection(int id)
+        {
+            var section = await _context.DisplaySections.FindAsync(id);
+            if (section == null) return NotFound();
+
+            _context.DisplaySections.Remove(section);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

@@ -1,13 +1,13 @@
 @model ShoesBangladesh.API.ViewModels.DisplaySectionViewModel
 @{
-    ViewData["Title"] = "Add New Section";
+    ViewData["Title"] = "Create Display Section";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    .form-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2.5rem; max-width: 800px; margin: 0 auto; }
+    .form-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2.5rem; max-width: 600px; margin: 0 auto; }
     .form-label-custom { font-size: 0.85rem; font-weight: 700; color: #1F1F1F; margin-bottom: 8px; display: block; }
-    .form-control-custom, .form-select-custom {
+    .form-control-custom {
         width: 100%;
         padding: 0.75rem 1rem;
         border: 1.5px solid #FECACA;
@@ -19,9 +19,7 @@
         transition: 0.2s;
         background: #FAFAFA;
     }
-    .form-control-custom:focus, .form-select-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
-    
-    .section-title { font-size: 1.1rem; font-weight: 800; color: #1F1F1F; border-bottom: 2px solid #F5F5F5; padding-bottom: 0.6rem; margin-bottom: 1.8rem; }
+    .form-control-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
     
     .btn-submit { background: #C40000; color: white; border: none; padding: 0.75rem 2.5rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(196,0,0,0.1); }
     .btn-submit:hover { background: #8B0000; transform: translateY(-1px); color: white; text-decoration: none; }
@@ -30,7 +28,7 @@
 </style>
 
 <div class="mb-4">
-    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle-fill me-2" style="color: #C40000;"></i>Add New Display Section</h1>
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle-fill me-2 text-danger"></i>Create Display Section</h1>
     <nav aria-label="breadcrumb" class="mt-1">
         <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
             <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
@@ -41,49 +39,30 @@
 </div>
 
 <div class="form-card">
-    <h4 class="section-title">Section Information</h4>
     <form asp-action="CreateDisplaySection" method="post">
         @Html.AntiForgeryToken()
         
-        <div class="mb-4">
-            <label class="form-label-custom">Section Title <span class="text-danger">*</span></label>
-            <input asp-for="Title" class="form-control-custom" placeholder="e.g. Featured Products" required />
+        <div class="mb-3">
+            <label class="form-label-custom">Section Name <span class="text-danger">*</span></label>
+            <input asp-for="Title" class="form-control-custom" required placeholder="e.g. Featured Items" />
             <span asp-validation-for="Title" class="text-danger small"></span>
         </div>
 
-        <div class="mb-4">
-            <label class="form-label-custom">Subtitle</label>
-            <input asp-for="Subtitle" class="form-control-custom" placeholder="e.g. Trends of the week" />
-            <span asp-validation-for="Subtitle" class="text-danger small"></span>
+        <div class="mb-3">
+            <label class="form-label-custom">Display Order</label>
+            <input asp-for="DisplayOrder" type="number" class="form-control-custom" value="0" />
+            <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
+            <small class="text-muted">Lower numbers appear first on homepage sidebar.</small>
         </div>
 
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <label class="form-label-custom">Section Type</label>
-                <select asp-for="SectionType" class="form-select-custom">
-                    <option value="Grid">Product Grid</option>
-                    <option value="Slider">Product Slider</option>
-                    <option value="Banner">Promo Banner</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label-custom">Display Order</label>
-                <input asp-for="DisplayOrder" type="number" class="form-control-custom" value="0" min="0" required />
-            </div>
+        <div class="form-check form-switch mb-4">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck" checked style="background-color: #C40000; border-color: #C40000;">
+            <label class="form-check-label fw-bold" for="isActiveCheck" style="font-size: 0.9rem; margin-left: 0.5rem;">Active / Visible on Homepage</label>
         </div>
 
-        <div class="mb-4">
-            <div class="form-check form-switch">
-                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck" checked style="background-color: #C40000; border-color: #C40000;">
-                <label class="form-check-label fw-bold" for="isActiveCheck" style="font-size: 0.9rem; margin-left: 0.5rem;">Active / Visible on Homepage</label>
-            </div>
-        </div>
-
-        <hr style="border-color: #F5F5F5; margin: 2rem 0;">
-
-        <div class="d-flex align-items-center justify-content-between">
-            <a asp-action="ManageDisplaySections" class="btn-cancel">Cancel</a>
-            <button type="submit" class="btn-submit"><i class="bi bi-save me-2"></i>Create Section</button>
+        <div class="d-flex justify-content-between align-items-center">
+            <a asp-action="ManageDisplaySections" class="btn-cancel">Back to List</a>
+            <button type="submit" class="btn-submit"><i class="bi bi-check2-circle me-1"></i> Create Section</button>
         </div>
     </form>
 </div>
