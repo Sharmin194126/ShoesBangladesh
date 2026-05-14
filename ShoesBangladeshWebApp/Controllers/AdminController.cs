@@ -287,5 +287,51 @@ namespace ShoesBangladeshWebApp.Controllers
             TempData["SuccessMessage"] = $"Sales goal for {year} updated to {goalAmount}!";
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> EditDisplaySection(int id)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync($"api/Dashboard/DisplaySections/{id}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var section = JsonSerializer.Deserialize<DisplaySectionViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(section);
+            }
+            return RedirectToAction(nameof(ManageDisplaySections));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditDisplaySection(DisplaySectionViewModel model)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"api/Dashboard/DisplaySections/{model.Id}", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Display Section updated successfully!";
+                return RedirectToAction(nameof(ManageDisplaySections));
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDisplaySection(int id)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.DeleteAsync($"api/Dashboard/DisplaySections/{id}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Display Section deleted successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to delete display section.";
+            }
+            return RedirectToAction(nameof(ManageDisplaySections));
+        }
     }
 }

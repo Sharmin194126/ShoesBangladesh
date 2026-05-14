@@ -1,6 +1,6 @@
 @model ShoesBangladesh.API.ViewModels.DisplaySectionViewModel
 @{
-    ViewData["Title"] = "Add New Section";
+    ViewData["Title"] = "Edit Display Section";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -30,20 +30,21 @@
 </style>
 
 <div class="mb-4">
-    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle-fill me-2" style="color: #532374;"></i>Add New Display Section</h1>
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-pencil-square me-2" style="color: #532374;"></i>Edit Display Section</h1>
     <nav aria-label="breadcrumb" class="mt-1">
         <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
             <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#532374; text-decoration:none;">Dashboard</a></li>
             <li class="breadcrumb-item"><a asp-action="ManageDisplaySections" style="color:#532374; text-decoration:none;">Homepage Sections</a></li>
-            <li class="breadcrumb-item active" style="color:#9E9E9E;">Create</li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Edit</li>
         </ol>
     </nav>
 </div>
 
 <div class="form-card">
     <h4 class="section-title">Section Information</h4>
-    <form asp-action="CreateDisplaySection" method="post">
+    <form asp-action="EditDisplaySection" method="post">
         @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
         
         <div class="mb-4">
             <label class="form-label-custom">Section Title <span class="text-danger">*</span></label>
@@ -68,13 +69,13 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label-custom">Display Order</label>
-                <input asp-for="DisplayOrder" type="number" class="form-control-custom" value="0" min="0" required />
+                <input asp-for="DisplayOrder" type="number" class="form-control-custom" min="0" required />
             </div>
         </div>
 
         <div class="mb-4">
             <div class="form-check form-switch">
-                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck" checked>
+                <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck">
                 <label class="form-check-label fw-bold" for="isActiveCheck" style="font-size: 0.9rem; margin-left: 0.5rem;">Active / Visible on Homepage</label>
             </div>
         </div>
@@ -83,7 +84,7 @@
 
         <div class="d-flex align-items-center justify-content-between">
             <a asp-action="ManageDisplaySections" class="btn-cancel">Cancel</a>
-            <button type="submit" class="btn-submit"><i class="bi bi-save me-2"></i>Create Section</button>
+            <button type="submit" class="btn-submit"><i class="bi bi-check2-circle me-2"></i>Update Section</button>
         </div>
     </form>
 </div>

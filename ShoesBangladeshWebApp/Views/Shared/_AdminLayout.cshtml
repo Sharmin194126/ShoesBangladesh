@@ -12,11 +12,11 @@
 
     <style>
         :root {
-            --red-primary: #C40000;
-            --red-soft: #E53E3E;
-            --red-muted: #FF5A5A;
-            --red-glow: rgba(196, 0, 0, 0.15);
-            --red-tint: rgba(196, 0, 0, 0.06);
+            --red-primary: #532374;
+            --red-soft: #3a1852;
+            --red-muted: #6b2e95;
+            --red-glow: rgba(83, 35, 116, 0.15);
+            --red-tint: rgba(83, 35, 116, 0.06);
 
             --charcoal-dark: #1F1F1F;
             --charcoal: #2B2B2B;
@@ -37,7 +37,7 @@
             --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
             --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
-            --shadow-red: 0 4px 20px rgba(196,0,0,0.18);
+            --shadow-red: 0 4px 20px rgba(83,35,116,0.18);
 
             --sidebar-width: 255px;
             --topbar-height: 62px;
@@ -87,7 +87,7 @@
             width: 42px;
             height: 42px;
             border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--red-primary), #7A0000);
+            background: linear-gradient(135deg, var(--red-primary), #250f35);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -297,8 +297,8 @@
             width: 100%;
             padding: 0.5rem 1rem 0.5rem 2.2rem;
             border-radius: var(--radius-sm);
-            border: 1.5px solid #FECACA;
-            background: #FFEBEE;
+            border: 1.5px solid #d1c4e9;
+            background: #f3e5f5;
             font-size: 0.82rem;
             color: var(--gray-900);
             font-family: 'Inter', sans-serif;
@@ -306,7 +306,7 @@
             transition: 0.2s;
         }
 
-        .search-input::placeholder { color: #E57373; }
+        .search-input::placeholder { color: #9575cd; }
         .search-input:focus { border-color: var(--red-primary); background: #FFF5F5; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
 
         /* Topbar elements */
@@ -442,9 +442,9 @@
 
         <!-- Admin Profile Section -->
         <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); text-align: center; background: var(--gray-100);">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff"
+            <img src="https://ui-avatars.com/api/?name=Admin&background=532374&color=fff"
                  alt="Admin"
-                 style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #FECACA; margin-bottom: 6px;">
+                 style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #d1c4e9; margin-bottom: 6px;">
             <div style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900);">@(User.Identity?.Name?.Split('@')[0] ?? "Admin")</div>
             <div style="font-size: 0.62rem; color: var(--gray-500); font-weight: 500;">System Administrator</div>
         </div>
