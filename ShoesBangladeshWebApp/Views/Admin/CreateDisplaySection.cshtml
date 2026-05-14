@@ -54,12 +54,44 @@
             <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
             <small class="text-muted">Lower numbers appear first on homepage sidebar.</small>
         </div>
-
-        <div class="form-check form-switch mb-4">
-            <input asp-for="IsActive" class="form-check-input" type="checkbox" id="isActiveCheck" checked style="background-color: #C40000; border-color: #C40000;">
-            <label class="form-check-label fw-bold" for="isActiveCheck" style="font-size: 0.9rem; margin-left: 0.5rem;">Active / Visible on Homepage</label>
+        <div class="mb-4">
+            <label class="form-label-custom">Status</label>
+            <div class="form-check form-switch custom-switch-wrapper">
+                <input asp-for="IsActive" class="form-check-input custom-switch" type="checkbox" id="isActiveCheck" checked>
+                <label class="form-check-label fw-bold ms-2" for="isActiveCheck" id="statusLabel">Active</label>
+            </div>
         </div>
 
+        <style>
+            .custom-switch-wrapper { display: flex; align-items: center; padding: 0.5rem 0; }
+            .custom-switch { width: 3rem !important; height: 1.5rem !important; cursor: pointer; }
+            .custom-switch:checked { background-color: #2E7D32 !important; border-color: #2E7D32 !important; }
+            .custom-switch:not(:checked) { background-color: #fff !important; border-color: #D9D9D9 !important; }
+            #statusLabel { font-size: 0.95rem; transition: 0.2s; }
+            .status-active { color: #2E7D32; }
+            .status-inactive { color: #9E9E9E; }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const check = document.getElementById('isActiveCheck');
+                const label = document.getElementById('statusLabel');
+                
+                function updateLabel() {
+                    if(check.checked) {
+                        label.innerText = 'Active';
+                        label.className = 'form-check-label fw-bold ms-2 status-active';
+                    } else {
+                        label.innerText = 'Inactive / Hidden';
+                        label.className = 'form-check-label fw-bold ms-2 status-inactive';
+                    }
+                }
+                
+                check.addEventListener('change', updateLabel);
+                updateLabel(); // Initial state
+            });
+        </script>
+        
         <div class="d-flex justify-content-between align-items-center">
             <a asp-action="ManageDisplaySections" class="btn-cancel">Back to List</a>
             <button type="submit" class="btn-submit"><i class="bi bi-check2-circle me-1"></i> Create Section</button>

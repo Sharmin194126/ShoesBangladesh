@@ -451,9 +451,8 @@
             </div>
         </div>
 
-        <!-- Admin Profile Section -->
         <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); text-align: center; background: var(--gray-100);">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=532374&color=fff"
+            <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff"
                  alt="Admin"
                  style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #d1c4e9; margin-bottom: 6px;">
             <div style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900);">@(User.Identity?.Name?.Split('@')[0] ?? "Admin")</div>
@@ -463,15 +462,40 @@
         <div class="sidebar-scroll">
             <ul class="nav-list">
                 <li><a href="/" class="nav-link-item"><i class="bi bi-arrow-left-circle"></i> Back to Website</a></li>
-                <li><a asp-controller="Admin" asp-action="Index" class="nav-link-item active"><i class="bi bi-grid"></i> Dashboard</a></li>
+                <li>
+                    <a asp-controller="Admin" asp-action="Index" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="bi bi-grid"></i> Dashboard
+                    </a>
+                </li>
             </ul>
 
             <div class="nav-group-title">Catalogue</div>
             <ul class="nav-list">
-                <li><a asp-controller="Category" asp-action="Index" class="nav-link-item"><i class="bi bi-tags"></i> Categories</a></li>
-                <li><a asp-controller="ProductType" asp-action="Index" class="nav-link-item"><i class="bi bi-collection"></i> Product Types</a></li>
-                <li><a asp-controller="Product" asp-action="Index" class="nav-link-item"><i class="bi bi-box-seam"></i> Products</a></li>
-                <li><a asp-controller="Admin" asp-action="ManageDisplaySections" class="nav-link-item"><i class="bi bi-house-door"></i> Homepage Sections</a></li>
+                <li>
+                    <a asp-controller="Category" asp-action="Index" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Category" ? "active" : "")">
+                        <i class="bi bi-tags"></i> Categories
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="ProductType" asp-action="Index" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductType" ? "active" : "")">
+                        <i class="bi bi-collection"></i> Product Types
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Product" asp-action="Index" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")">
+                        <i class="bi bi-box-seam"></i> Products
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="ManageDisplaySections" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" || ViewContext.RouteData.Values["action"]?.ToString().Contains("DisplaySection") == true ? "active" : "")">
+                        <i class="bi bi-house-door"></i> Homepage Sections
+                    </a>
+                </li>
             </ul>
 
             <div class="nav-group-title">Operations</div>

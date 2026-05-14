@@ -16,7 +16,8 @@
     .btn-create { background: #C40000; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(196,0,0,0.2); }
     .btn-create:hover { background: #A00000; color: white; transform: translateY(-1px); text-decoration: none; }
     
-    .action-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; text-decoration: none; border: 1px solid #ECECEC; background: #fff; margin-right: 4px; }
+    .action-btn { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; transition: 0.2s; text-decoration: none; border: 1px solid #ECECEC; background: #fff; margin-right: 6px; }
+    .action-btn i { font-size: 1.15rem; }
     .btn-edit { color: #FBC02D; }
     .btn-edit:hover { background: #FBC02D; color: #fff; border-color: #FBC02D; }
     .btn-delete { color: #C40000; }
@@ -50,7 +51,7 @@
         <table class="table-custom">
             <thead>
                 <tr>
-                    <th style="width: 70px; text-align: center;">SL No</th>
+                    <th style="width: 50px; text-align: center;">#</th>
                     <th style="width: 80px; text-align: center;">Order</th>
                     <th>Section Name</th>
                     <th>Status</th>
@@ -105,13 +106,5 @@
                 }
             </tbody>
         </table>
-    </div>
-</div>
-
-<div class="mt-4">
-    <div class="alert alert-info small rounded-3">
-        <i class="bi bi-info-circle me-1"></i> 
-        <strong>Note:</strong> These sections define the dynamic categories on the homepage sidebar and product grids. 
-        Products must have their "Home Display Section" set to match these names exactly.
     </div>
 </div>

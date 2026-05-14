@@ -119,6 +119,7 @@
         outline: none;
     }
     .filter-input:focus { border-color: #C40000; background: #fff; }
+    .badge-count { background: #FFEBEE; color: #C40000; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; margin-left: 10px; vertical-align: middle; }
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -131,7 +132,7 @@
 
 <div class="page-card">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="mb-0 fw-bold" style="color: #1F1F1F;">All Products</h5>
+        <h5 class="mb-0 fw-bold" style="color: #1F1F1F;">All Products <span class="badge-count">@Model.Count() Items</span></h5>
         <a asp-action="Create" class="btn-custom-primary">
             <i class="bi bi-plus-circle me-1"></i> Add New Product
         </a>
