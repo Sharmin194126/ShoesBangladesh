@@ -1,0 +1,135 @@
+@model ShoesBangladeshWebApp.Controllers.CategoryViewModel
+@{
+    ViewData["Title"] = "Category Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .detail-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #ECECEC;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        overflow: hidden;
+        max-width: 680px;
+    }
+    .detail-card-header {
+        background: linear-gradient(135deg, #1F1F1F 0%, #2B2B2B 100%);
+        padding: 3rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.25rem;
+    }
+    .detail-icon {
+        width: 120px;
+        height: 120px;
+        border-radius: 20px;
+        background: rgba(255,255,255,0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .detail-body { padding: 2rem; }
+    .detail-row {
+        display: flex;
+        align-items: flex-start;
+        padding: 1rem 0;
+        border-bottom: 1px solid #F5F5F5;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label { font-size: 0.72rem; font-weight: 700; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; width: 140px; flex-shrink: 0; margin-top: 2px; }
+    .detail-value { font-size: 0.9rem; font-weight: 600; color: #1F1F1F; flex: 1; }
+    .detail-desc  { font-size: 0.85rem; color: #616161; line-height: 1.6; }
+    .badge-active { background: #E8F5E9; color: #2E7D32; padding: 5px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-inactive { background: #FFEBEE; color: #C62828; padding: 5px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .badge-count  { background: #FFEBEE; color: #C40000; padding: 5px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+    .btn-edit {
+        background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%);
+        color: white;
+        border: none;
+        padding: 0.6rem 2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: 0.2s;
+        box-shadow: 0 3px 12px rgba(196,0,0,0.25);
+    }
+    .btn-edit:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); color: white; }
+    .btn-back { background: #F5F5F5; color: #2B2B2B; border: 1px solid #ECECEC; padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: 0.2s; }
+    .btn-back:hover { background: #ECECEC; color: #1F1F1F; }
+</style>
+
+<div class="mb-4">
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-info-circle me-2 text-primary"></i>Category Details</h1>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Categories</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Details</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="detail-card">
+    <div class="detail-card-header">
+        @if(!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Name" style="width: 120px; height: 120px; border-radius: 20px; object-fit: cover; border: 3px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.2);">
+        }
+        else
+        {
+            <div class="detail-icon"><i class="bi bi-tag-fill"></i></div>
+        }
+        <div>
+            <h2 style="color: white; font-weight: 800; font-size: 1.6rem; margin: 0 0 4px 0;">@Model.Name</h2>
+            <span style="color: rgba(255,255,255,0.6); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px;">CATEGORY ID: #@Model.Id</span>
+        </div>
+    </div>
+
+    <div class="detail-body">
+        <div class="detail-row">
+            <span class="detail-label">Category Name</span>
+            <span class="detail-value">@Model.Name</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Description</span>
+            <span class="detail-value detail-desc">@Model.Description</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Products</span>
+            <span class="detail-value"><span class="badge-count"><i class="bi bi-box-seam me-1"></i>@Model.ProductCount Products</span></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value">
+                @if (Model.Status == "Active")
+                {
+                    <span class="badge-active"><i class="bi bi-check-circle-fill me-1" style="font-size: 0.6rem;"></i>Active</span>
+                }
+                else
+                {
+                    <span class="badge-inactive"><i class="bi bi-x-circle-fill me-1" style="font-size: 0.6rem;"></i>Inactive</span>
+                }
+            </span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Created On</span>
+            <span class="detail-value text-muted"><i class="bi bi-calendar3 me-2"></i>@Model.CreatedDate.ToString("MMMM dd, yyyy 'at' hh:mm tt")</span>
+        </div>
+    </div>
+
+    <div class="px-4 pb-4 pt-2 d-flex gap-3 justify-content-center border-top pt-4" style="border-color: #F5F5F5 !important;">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit"><i class="bi bi-pencil-square me-2"></i> Update Details</a>
+        <a asp-action="Index" class="btn-back"><i class="bi bi-arrow-left me-1"></i> Back to List</a>
+    </div>
+</div>

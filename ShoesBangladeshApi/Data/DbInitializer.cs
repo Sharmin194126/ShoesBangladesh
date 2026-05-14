@@ -14,14 +14,13 @@ namespace ShoesBangladesh.API.Data
             context.Database.EnsureCreated();
 
             // Manually add columns if they don't exist (Fix for migration issues)
-            try
-            {
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Phone') BEGIN ALTER TABLE [Users] ADD [Phone] nvarchar(max) NOT NULL DEFAULT ''; END");
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Address') BEGIN ALTER TABLE [Users] ADD [Address] nvarchar(max) NOT NULL DEFAULT ''; END");
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END");
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroBgImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroBgImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END");
-            }
-            catch { /* Ignore if already exists */ }
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Phone') BEGIN ALTER TABLE [Users] ADD [Phone] nvarchar(max) NOT NULL DEFAULT ''; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Users]') AND name = 'Address') BEGIN ALTER TABLE [Users] ADD [Address] nvarchar(max) NOT NULL DEFAULT ''; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[SystemSettings]') AND name = 'HeroBgImageUrl') BEGIN ALTER TABLE [SystemSettings] ADD [HeroBgImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Categories]') AND name = 'ImageUrl') BEGIN ALTER TABLE [Categories] ADD [ImageUrl] nvarchar(max) NOT NULL DEFAULT ''; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Categories]') AND name = 'Status') BEGIN ALTER TABLE [Categories] ADD [Status] nvarchar(max) NOT NULL DEFAULT 'Active'; END"); } catch {}
+            try { context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[Categories]') AND name = 'CreatedDate') BEGIN ALTER TABLE [Categories] ADD [CreatedDate] datetime2 NOT NULL DEFAULT GETDATE(); END"); } catch {}
 
             // 1. Seed Categories
             if (!context.Categories.Any())

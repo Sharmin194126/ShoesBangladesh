@@ -441,12 +441,12 @@
         </div>
 
         <!-- Admin Profile Section -->
-        <div class="sidebar-admin-profile">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff" alt="Admin">
-            <div>
-                <div class="admin-name-text">@User.Identity?.Name?.Split('@')[0] ?? "Admin"</div>
-                <div class="admin-role-text">System Administrator</div>
-            </div>
+        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-200); text-align: center; background: var(--gray-100);">
+            <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff"
+                 alt="Admin"
+                 style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #FECACA; margin-bottom: 6px;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900);">@(User.Identity?.Name?.Split('@')[0] ?? "Admin")</div>
+            <div style="font-size: 0.62rem; color: var(--gray-500); font-weight: 500;">System Administrator</div>
         </div>
 
         <div class="sidebar-scroll">
@@ -457,7 +457,7 @@
 
             <div class="nav-group-title">Catalogue</div>
             <ul class="nav-list">
-                <li><a href="#" class="nav-link-item"><i class="bi bi-tags"></i> Categories</a></li>
+                <li><a asp-controller="Category" asp-action="Index" class="nav-link-item"><i class="bi bi-tags"></i> Categories</a></li>
                 <li><a href="#" class="nav-link-item"><i class="bi bi-box-seam"></i> Products</a></li>
                 <li><a href="#" class="nav-link-item"><i class="bi bi-collection"></i> Product Types</a></li>
                 <li><a href="#" class="nav-link-item"><i class="bi bi-house-door"></i> Homepage Sections</a></li>

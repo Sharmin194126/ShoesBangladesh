@@ -1,0 +1,145 @@
+@model ShoesBangladeshWebApp.Controllers.CategoryViewModel
+@{
+    ViewData["Title"] = "Edit Category";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .form-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2rem; max-width: 900px; margin: 0 auto; }
+    .form-label-custom { font-size: 0.8rem; font-weight: 700; color: #1F1F1F; margin-bottom: 6px; display: block; }
+    .form-control-custom {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border: 1.5px solid #ECECEC;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+        color: #1F1F1F;
+        outline: none;
+        transition: 0.2s;
+        background: #FAFAFA;
+    }
+    .form-control-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
+    .form-control-custom.is-invalid { border-color: #C40000; }
+    .field-error { font-size: 0.75rem; color: #C40000; margin-top: 4px; font-weight: 600; }
+    .btn-submit {
+        background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%);
+        color: white;
+        border: none;
+        padding: 0.65rem 2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 3px 12px rgba(196,0,0,0.25);
+    }
+    .btn-submit:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); transform: translateY(-1px); }
+    .btn-cancel { background: #F5F5F5; color: #2B2B2B; border: 1px solid #ECECEC; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: 0.2s; }
+    .btn-cancel:hover { background: #ECECEC; color: #1F1F1F; }
+    .edit-badge { background: #FFF8E1; color: #F57F17; padding: 4px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
+</style>
+
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Category</h1>
+        <span class="edit-badge">ID: @Model.Id</span>
+    </div>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Categories</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Edit</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="form-card">
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row gx-5">
+            <!-- Left Column: Details -->
+            <div class="col-md-7">
+                <div class="mb-4">
+                    <label class="form-label-custom">Category Name <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control-custom @(ViewData.ModelState["Name"]?.Errors.Any() == true ? "is-invalid" : "")"
+                           placeholder="e.g. Running Shoes..." maxlength="100" />
+                    <span asp-validation-for="Name" class="field-error d-block"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Description <span class="text-danger">*</span></label>
+                    <textarea asp-for="Description" class="form-control-custom @(ViewData.ModelState["Description"]?.Errors.Any() == true ? "is-invalid" : "")"
+                              rows="5" placeholder="Write a short description..." maxlength="500"></textarea>
+                    <span asp-validation-for="Description" class="field-error d-block"></span>
+                </div>
+            </div>
+
+            <!-- Right Column: Settings & Image -->
+            <div class="col-md-5">
+                <div class="mb-4">
+                    <label class="form-label-custom">Status <span class="text-danger">*</span></label>
+                    <select asp-for="Status" class="form-control-custom">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label-custom">Category Image</label>
+                    <input type="hidden" asp-for="ImageUrl" />
+                    <div id="imagePreviewContainer" style="width: 100%; height: 180px; border-radius: 12px; border: 2px dashed #ECECEC; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #FAFAFA; margin-bottom: 12px;">
+                        @if(!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img id="imagePreview" src="@Model.ImageUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                            <div class="text-center" id="imagePreviewIcon" style="display: none;">
+                                <i class="bi bi-cloud-arrow-up text-muted fs-1 mb-2"></i>
+                                <div style="font-size: 0.8rem; color: #9E9E9E;">Click to upload</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <img id="imagePreview" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                            <div class="text-center" id="imagePreviewIcon">
+                                <i class="bi bi-cloud-arrow-up text-muted fs-1 mb-2"></i>
+                                <div style="font-size: 0.8rem; color: #9E9E9E;">Click to upload</div>
+                            </div>
+                        }
+                    </div>
+                    <input type="file" name="imageFile" id="imageFile" class="form-control-custom" accept="image/*" onchange="previewImage(this)" />
+                    <p class="text-muted mt-2" style="font-size: 0.75rem;">Leave empty to keep the existing image. Upload a square image (e.g. 500x500). Max file size: 2MB.</p>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border-color: #F5F5F5; margin: 1.5rem 0;">
+
+        <div class="d-flex align-items-center gap-3">
+            <button type="submit" class="btn-submit"><i class="bi bi-check2 me-2"></i>Save Changes</button>
+            <a asp-action="Index" class="btn-cancel">Cancel</a>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn-cancel" style="margin-left: auto;"><i class="bi bi-eye me-1"></i>View</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const icon = document.getElementById('imagePreviewIcon');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    icon.style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // If they cancel selection, we don't clear the old image in UI easily, so just do nothing.
+            }
+        }
+    </script>
+}

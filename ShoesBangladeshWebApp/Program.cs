@@ -1,3 +1,4 @@
+using ShoesBangladesh.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.AddHttpClient("ShoesAPI", client =>
 {
     client.BaseAddress = new Uri("http://localhost:5190/");
 });
+
+builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
 
 var app = builder.Build();
 
