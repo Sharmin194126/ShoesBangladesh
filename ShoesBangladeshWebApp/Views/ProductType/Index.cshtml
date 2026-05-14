@@ -1,0 +1,120 @@
+@model IEnumerable<ShoesBangladesh.API.ViewModels.ProductTypeViewModel>
+@{
+    ViewData["Title"] = "Product Types";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .page-card { background: #ffffff; border-radius: 12px; border: 1px solid #ECECEC; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 1.5rem; }
+    .table-custom { width: 100%; border-collapse: separate; border-spacing: 0; }
+    .table-custom thead th { background: #1F1F1F; color: #FFFFFF; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 1.1rem 1rem; white-space: nowrap; }
+    .table-custom thead th:first-child { border-top-left-radius: 12px; }
+    .table-custom thead th:last-child { border-top-right-radius: 12px; }
+    .table-custom tbody tr { transition: 0.2s; border-bottom: 1px solid #F5F5F5; }
+    .table-custom tbody tr:hover { background-color: #FAFAFA; }
+    .table-custom td { padding: 1rem; vertical-align: middle; color: #2B2B2B; font-size: 0.88rem; border-bottom: 1px solid #F5F5F5; }
+    
+    .badge-active { background: #E8F5E9; color: #2E7D32; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.72rem; }
+    .badge-inactive { background: #FFEBEE; color: #C62828; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.72rem; }
+    .badge-approved { background: #E3F2FD; color: #1565C0; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.72rem; }
+    .badge-pending { background: #FFF3E0; color: #E65100; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.72rem; }
+
+    .action-btn { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; text-decoration: none; border: 1px solid #ECECEC; background: #fff; margin-right: 4px; }
+    .btn-view { color: #1F1F1F; }
+    .btn-view:hover { background: #1F1F1F; color: #fff; border-color: #1F1F1F; }
+    .btn-edit { color: #FBC02D; }
+    .btn-edit:hover { background: #FBC02D; color: #fff; border-color: #FBC02D; }
+    .btn-delete { color: #C40000; }
+    .btn-delete:hover { background: #C40000; color: #fff; border-color: #C40000; }
+
+    .btn-add-new { background: #C40000; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(196,0,0,0.2); }
+    .btn-add-new:hover { background: #A00000; color: white; transform: translateY(-1px); }
+    
+    .theme-back-btn { background: #F5F5F5; color: #1F1F1F; border: 1px solid #ECECEC; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: 0.2s; }
+    .theme-back-btn:hover { background: #ECECEC; color: #000; }
+</style>
+
+<div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-tags-fill me-2 text-danger"></i>Product Types</h1>
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+                    <li class="breadcrumb-item active" style="color:#9E9E9E;">Product Types</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <a href="javascript:history.back()" class="theme-back-btn"><i class="bi bi-arrow-left me-2"></i>Back</a>
+            <a asp-action="Create" class="btn-add-new"><i class="bi bi-plus-lg me-2"></i>Add New Type</a>
+        </div>
+    </div>
+</div>
+
+<div class="page-card">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 10px; background: #E8F5E9; color: #2E7D32;">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">SL No</th>
+                    <th>Type Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Approval</th>
+                    <th style="width: 150px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int sl = 1; }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No product types found. Click "Add New Type" to get started.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold text-muted">#@(sl++)</td>
+                            <td class="fw-bold" style="color: #1F1F1F;">@item.Name</td>
+                            <td class="text-muted" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@item.Description</td>
+                            <td>
+                                <span class="@(item.Status == "Active" ? "badge-active" : "badge-inactive")">@item.Status</span>
+                            </td>
+                            <td>
+                                <span class="@(item.IsApproved ? "badge-approved" : "badge-pending")">@(item.IsApproved ? "Approved" : "Pending")</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="action-btn btn-view" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn btn-edit" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn btn-delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

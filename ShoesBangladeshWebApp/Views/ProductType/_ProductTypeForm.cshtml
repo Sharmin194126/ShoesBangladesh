@@ -1,0 +1,75 @@
+@model ShoesBangladesh.API.ViewModels.ProductTypeViewModel
+
+<style>
+    .form-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2.5rem; max-width: 800px; margin: 0 auto; }
+    .form-label-custom { font-size: 0.85rem; font-weight: 700; color: #1F1F1F; margin-bottom: 8px; display: block; }
+    .form-control-custom, .form-select-custom {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid #ECECEC;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+        color: #1F1F1F;
+        outline: none;
+        transition: 0.2s;
+        background: #FAFAFA;
+    }
+    .form-control-custom:focus, .form-select-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
+    .field-error { font-size: 0.75rem; color: #C40000; margin-top: 5px; font-weight: 600; }
+    
+    .section-title { font-size: 1.1rem; font-weight: 800; color: #1F1F1F; border-bottom: 2px solid #F5F5F5; padding-bottom: 0.6rem; margin-bottom: 1.8rem; }
+    
+    .btn-submit { background: #1F1F1F; color: white; border: none; padding: 0.75rem 2.5rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .btn-submit:hover { background: #000; transform: translateY(-1px); color: white; }
+    .btn-cancel { background: #F5F5F5; color: #616161; border: 1px solid #ECECEC; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+    .btn-cancel:hover { background: #ECECEC; color: #1F1F1F; }
+    .theme-back-btn { background: #C40000; color: white; border: none; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(196,0,0,0.2); display: inline-flex; align-items: center; justify-content: center; }
+    .theme-back-btn:hover { background: #A00000; color: white; transform: translateY(-1px); }
+
+    .form-check-custom .form-check-input { width: 1.4rem; height: 1.4rem; border-color: #ECECEC; cursor: pointer; }
+    .form-check-custom .form-check-input:checked { background-color: #C40000; border-color: #C40000; }
+    .form-check-custom .form-check-label { font-size: 0.9rem; font-weight: 600; margin-left: 0.7rem; margin-top: 3px; cursor: pointer; }
+</style>
+
+<div class="form-card">
+    <h4 class="section-title">Product Type Information</h4>
+    
+    <div class="mb-4">
+        <label class="form-label-custom">Type Name <span class="text-danger">*</span></label>
+        <input asp-for="Name" class="form-control-custom" placeholder="e.g. Luxury, Casual, Seasonal" />
+        <span asp-validation-for="Name" class="field-error"></span>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label-custom">Description</label>
+        <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="Brief description of this product type..."></textarea>
+        <span asp-validation-for="Description" class="field-error"></span>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label class="form-label-custom">Status</label>
+            <select asp-for="Status" class="form-select-custom">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-6 d-flex align-items-end pb-2">
+            <div class="form-check form-check-custom">
+                <input asp-for="IsApproved" class="form-check-input" type="checkbox" id="isApprovedCheck">
+                <label class="form-check-label" for="isApprovedCheck">Approved</label>
+            </div>
+        </div>
+    </div>
+
+    <hr style="border-color: #F5F5F5; margin: 2rem 0;">
+
+    <div class="d-flex align-items-center justify-content-between">
+        <a asp-action="Index" class="btn-cancel">Cancel</a>
+        <div class="d-flex gap-3 align-items-center">
+            <button type="submit" class="btn-submit"><i class="bi bi-check2-circle me-2"></i>Save Type</button>
+            <a href="javascript:history.back()" class="theme-back-btn"><i class="bi bi-arrow-left me-2"></i>Back</a>
+        </div>
+    </div>
+</div>

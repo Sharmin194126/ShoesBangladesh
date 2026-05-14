@@ -1,0 +1,71 @@
+@model ShoesBangladesh.API.ViewModels.ProductTypeViewModel
+@{
+    ViewData["Title"] = "Product Type Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .details-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2.5rem; max-width: 800px; margin: 0 auto; }
+    .info-label { font-size: 0.85rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 6px; }
+    .info-value { font-size: 1.05rem; color: #1F1F1F; font-weight: 600; margin-bottom: 1.8rem; }
+    
+    .badge-status { padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; }
+    .badge-active { background: #E8F5E9; color: #2E7D32; }
+    .badge-inactive { background: #FFEBEE; color: #C62828; }
+    .badge-approved { background: #E3F2FD; color: #1565C0; }
+    .badge-pending { background: #FFF3E0; color: #E65100; }
+
+    .theme-back-btn { background: #F5F5F5; color: #616161; border: 1px solid #ECECEC; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+    .theme-back-btn:hover { background: #ECECEC; color: #1F1F1F; }
+    .btn-edit-custom { background: #1F1F1F; color: white; border: none; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; text-decoration: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .btn-edit-custom:hover { background: #000; color: white; transform: translateY(-1px); }
+</style>
+
+<div class="mb-4">
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-info-circle-fill me-2 text-primary"></i>Product Type Details</h1>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Product Types</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Details</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="details-card">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="info-label">Type Name</div>
+            <div class="info-value">@Model.Name</div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-label">Created Date</div>
+            <div class="info-value">@Model.CreatedDate.ToString("MMMM dd, yyyy")</div>
+        </div>
+        
+        <div class="col-12">
+            <div class="info-label">Description</div>
+            <div class="info-value" style="white-space: pre-wrap;">@(string.IsNullOrEmpty(Model.Description) ? "No description provided." : Model.Description)</div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="info-label">Status</div>
+            <div class="info-value">
+                <span class="badge-status @(Model.Status == "Active" ? "badge-active" : "badge-inactive")">@Model.Status</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-label">Approval</div>
+            <div class="info-value">
+                <span class="badge-status @(Model.IsApproved ? "badge-approved" : "badge-pending")">@(Model.IsApproved ? "Approved" : "Pending")</span>
+            </div>
+        </div>
+    </div>
+
+    <hr style="border-color: #F5F5F5; margin: 2rem 0;">
+
+    <div class="d-flex justify-content-between align-items-center">
+        <a asp-action="Index" class="theme-back-btn">Back to List</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit-custom"><i class="bi bi-pencil-square me-2"></i>Edit Type</a>
+    </div>
+</div>

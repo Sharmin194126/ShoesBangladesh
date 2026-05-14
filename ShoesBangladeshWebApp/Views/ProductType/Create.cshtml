@@ -1,0 +1,25 @@
+@model ShoesBangladesh.API.ViewModels.ProductTypeViewModel
+@{
+    ViewData["Title"] = "Create Product Type";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="mb-4">
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-plus-circle-fill me-2 text-danger"></i>Add New Product Type</h1>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Product Types</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Create</li>
+        </ol>
+    </nav>
+</div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <partial name="_ProductTypeForm" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

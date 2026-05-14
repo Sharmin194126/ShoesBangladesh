@@ -1,0 +1,59 @@
+@model ShoesBangladesh.API.ViewModels.ProductTypeViewModel
+@{
+    ViewData["Title"] = "Delete Product Type";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .delete-card { background: #fff; border-radius: 16px; border: 1px solid #FECACA; box-shadow: 0 2px 12px rgba(196,0,0,0.05); padding: 2.5rem; max-width: 600px; margin: 0 auto; text-align: center; }
+    .warning-icon { font-size: 3.5rem; color: #C40000; margin-bottom: 1.2rem; display: block; }
+    .delete-title { font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin-bottom: 0.8rem; }
+    .delete-subtitle { font-size: 0.95rem; color: #616161; margin-bottom: 2rem; }
+    
+    .type-preview { background: #FAFAFA; border-radius: 12px; padding: 1.5rem; margin-bottom: 2.5rem; text-align: left; border: 1px solid #ECECEC; }
+    .preview-label { font-size: 0.75rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; }
+    .preview-value { font-size: 1rem; color: #1F1F1F; font-weight: 600; margin-bottom: 1rem; }
+    .preview-value:last-child { margin-bottom: 0; }
+
+    .btn-delete-confirm { background: #C40000; color: white; border: none; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; transition: 0.2s; box-shadow: 0 4px 12px rgba(196,0,0,0.2); }
+    .btn-delete-confirm:hover { background: #A00000; color: white; transform: translateY(-1px); }
+    .btn-cancel-delete { background: #F5F5F5; color: #616161; border: 1px solid #ECECEC; padding: 0.75rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: 0.2s; }
+    .btn-cancel-delete:hover { background: #ECECEC; color: #1F1F1F; }
+</style>
+
+<div class="mb-4">
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-trash-fill me-2 text-danger"></i>Delete Product Type</h1>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Product Types</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Delete</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="delete-card">
+    <i class="bi bi-exclamation-triangle-fill warning-icon"></i>
+    <h2 class="delete-title">Are you sure?</h2>
+    <p class="delete-subtitle">You are about to permanently delete this product type. This action cannot be undone.</p>
+
+    <div class="type-preview">
+        <div class="preview-label">Type Name</div>
+        <div class="preview-value">@Model.Name</div>
+        
+        <div class="preview-label">Status</div>
+        <div class="preview-value">@Model.Status</div>
+
+        <div class="preview-label">Approval</div>
+        <div class="preview-value">@(Model.IsApproved ? "Approved" : "Pending")</div>
+    </div>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-action="Index" class="btn-cancel-delete">Cancel, Keep it</a>
+            <button type="submit" class="btn-delete-confirm">Yes, Delete Type</button>
+        </div>
+    </form>
+</div>

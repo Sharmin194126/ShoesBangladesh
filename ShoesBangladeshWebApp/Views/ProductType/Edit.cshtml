@@ -1,0 +1,29 @@
+@model ShoesBangladesh.API.ViewModels.ProductTypeViewModel
+@{
+    ViewData["Title"] = "Edit Product Type";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-3">
+        <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-pencil-square me-2 text-warning"></i>Edit Product Type</h1>
+        <span class="badge bg-light text-dark border">ID: @Model.Id</span>
+    </div>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Product Types</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Edit</li>
+        </ol>
+    </nav>
+</div>
+
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <partial name="_ProductTypeForm" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
