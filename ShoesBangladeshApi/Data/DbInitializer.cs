@@ -46,7 +46,7 @@ namespace ShoesBangladesh.API.Data
             if (!context.Users.Any())
             {
                 context.Users.AddRange(
-                    new User { FullName = "Admin User", Email = "admin@shoes.com", Password = "123", Role = "Admin", Phone = "01700000000", Address = "Dhaka, Bangladesh" },
+                    new User { FullName = "Admin User", Email = "admin@gmail.com", Password = "123", Role = "Admin", Phone = "01700000000", Address = "Dhaka, Bangladesh" },
                     new User { FullName = "Karim Ahmed", Email = "karim@example.com", Password = "123", Role = "Customer", Phone = "01812345678", Address = "Dhanmondi, Dhaka" }
                 );
                 context.SaveChanges();
