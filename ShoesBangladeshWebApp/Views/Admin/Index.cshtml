@@ -1,224 +1,325 @@
 @model ShoesBangladesh.API.ViewModels.AdminStatsViewModel
 @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard Overview";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    .stat-card {
-        padding: 20px;
-        border-radius: 15px;
+    .analytics-card {
+        padding: 1.5rem;
+        border-radius: 24px;
         color: white;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        transition: transform 0.3s ease;
-        display: block;
-        text-decoration: none;
         position: relative;
         overflow: hidden;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        color: white;
-    }
-    .bg-delivered { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
-    .bg-pending { background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); color: #333 !important; }
-    .bg-processing { background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%); }
-    .bg-revenue { background: linear-gradient(135deg, #532374 0%, #3a1852 100%); }
-    
-    .stat-card i {
-        position: absolute;
-        right: 15px;
-        bottom: 10px;
-        font-size: 3rem;
-        opacity: 0.2;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        display: block;
+        text-decoration: none;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
-    .table-container {
-        background: white;
-        padding: 25px;
-        border-radius: 20px;
-        margin-top: 20px;
-        border: 1px solid #eef2f7;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    .analytics-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        color: white;
+        box-shadow: 0 20px 40px rgba(196, 0, 0, 0.2);
     }
-    .table-container h4 {
-        color: #333;
-        margin-bottom: 20px;
+
+    .bg-gradient-red { background: linear-gradient(135deg, #C40000 0%, #7A0000 100%); }
+    .bg-gradient-dark { background: linear-gradient(135deg, #450000 0%, #1a0000 100%); }
+    .bg-gradient-bright { background: linear-gradient(135deg, #FF1E1E 0%, #C40000 100%); }
+    .bg-gradient-glass { 
+        background: rgba(255, 255, 255, 0.9); 
+        color: #1e293b; 
+        border: 1px solid rgba(196, 0, 0, 0.1);
+    }
+    .bg-gradient-glass:hover { color: #1e293b; }
+
+    .analytics-icon {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        font-size: 5rem;
+        opacity: 0.15;
+        transform: rotate(-15deg);
+        transition: all 0.4s ease;
+    }
+
+    .analytics-card:hover .analytics-icon {
+        transform: rotate(0deg) scale(1.1);
+        opacity: 0.25;
+    }
+
+    .card-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .card-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .trend-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
         font-weight: 700;
+        margin-top: 1rem;
+        background: rgba(255,255,255,0.2);
+    }
+
+    .table-premium {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .table-premium h4 {
+        font-weight: 800;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        color: #0f172a;
     }
-    
-    .quick-link-card {
+
+    .table-premium h4 i {
+        color: var(--primary-red);
+    }
+
+    .custom-table thead th {
         background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 15px;
-        text-align: center;
-        transition: all 0.3s ease;
-        height: 100%;
+        border: none;
+        padding: 1.2rem 1rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .custom-table tbody td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.95rem;
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .chart-container {
+        height: 350px;
+        margin-top: 1rem;
+    }
+
+    .quick-action-btn {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-decoration: none;
+        padding: 1.5rem;
+        border-radius: 20px;
+        background: #fff;
+        border: 1px solid #eef2f7;
         color: #475569;
-    }
-    .quick-link-card:hover {
-        background: white;
-        border-color: #6366f1;
-        color: #6366f1;
-        transform: translateY(-3px);
-        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
-    }
-    .quick-link-card i {
-        font-size: 1.5rem;
-        margin-bottom: 8px;
-    }
-    .quick-link-card span {
-        font-weight: 600;
-        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        height: 100%;
     }
 
-    .chart-box {
-        height: 300px;
-        margin-top: 20px;
+    .quick-action-btn:hover {
+        background: var(--primary-red);
+        color: white;
+        border-color: var(--primary-red);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(196, 0, 0, 0.15);
+    }
+
+    .quick-action-btn i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .quick-action-btn span {
+        font-weight: 700;
+        font-size: 0.9rem;
     }
 </style>
 
 <div class="container-fluid p-0">
     <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="fw-extrabold text-dark">Welcome back, Admin! 👋</h2>
-            <p class="text-muted">Here's what's happening with your store today.</p>
+    <div class="dashboard-header d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h1><i class="bi bi-grid-fill"></i> Admin Dashboard Overview</h1>
+            <p>Welcome back, Admin! Here's a snapshot of your store's performance.</p>
+        </div>
+        <div class="d-none d-md-block">
+            <button class="btn btn-outline-danger border-2 fw-bold px-4 py-2 rounded-pill">
+                <i class="bi bi-download me-2"></i> Export Report
+            </button>
         </div>
     </div>
 
-    <!-- Stat Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stat-card bg-delivered">
-                <div class="stat-label">Delivered Orders</div>
-                <div class="h2 fw-bold mb-0">@Model.TotalDelivered</div>
-                <i class="bi bi-check2-circle"></i>
-            </div>
+    <!-- Analytics Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-xl-3 col-md-6">
+            <a href="#" class="analytics-card bg-gradient-red">
+                <div class="card-label">Total Revenue</div>
+                <div class="card-value">৳@Model.TotalRevenue.ToString("#,##0")</div>
+                <div class="trend-indicator"><i class="bi bi-graph-up"></i> +12.5%</div>
+                <i class="bi bi-cash-stack analytics-icon"></i>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-pending">
-                <div class="stat-label">Pending Orders</div>
-                <div class="h2 fw-bold mb-0">@Model.TotalPending</div>
-                <i class="bi bi-clock-history"></i>
-            </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="#" class="analytics-card bg-gradient-dark">
+                <div class="card-label">Delivered Orders</div>
+                <div class="card-value">@Model.TotalDelivered</div>
+                <div class="trend-indicator"><i class="bi bi-check-circle"></i> Completed</div>
+                <i class="bi bi-cart-check analytics-icon"></i>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-processing">
-                <div class="stat-label">In Processing</div>
-                <div class="h2 fw-bold mb-0">@Model.TotalProcessing</div>
-                <i class="bi bi-gear-wide-connected"></i>
-            </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="#" class="analytics-card bg-gradient-bright">
+                <div class="card-label">Pending Processing</div>
+                <div class="card-value">@Model.TotalPending</div>
+                <div class="trend-indicator"><i class="bi bi-clock-history"></i> Needs Action</div>
+                <i class="bi bi-hourglass-split analytics-icon"></i>
+            </a>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card bg-revenue">
-                <div class="stat-label">Total Revenue</div>
-                <div class="h2 fw-bold mb-0">৳@Model.TotalRevenue.ToString("#,##0")</div>
-                <i class="bi bi-cash-stack"></i>
-            </div>
+        <div class="col-xl-3 col-md-6">
+            <a href="#" class="analytics-card bg-gradient-glass">
+                <div class="card-label">Active Users</div>
+                <div class="card-value">2,450</div>
+                <div class="trend-indicator" style="background: rgba(196, 0, 0, 0.1); color: var(--primary-red);"><i class="bi bi-people-fill"></i> Online Now</div>
+                <i class="bi bi-people analytics-icon" style="color: var(--primary-red);"></i>
+            </a>
         </div>
     </div>
 
-    <div class="row">
-        <!-- Quick Management -->
-        <div class="col-lg-4 mb-4">
-            <div class="table-container h-100">
-                <h4><i class="bi bi-lightning-fill text-warning"></i> Quick Actions</h4>
-                <div class="row g-3">
-                    <div class="col-6">
-                        <a asp-controller="Product" asp-action="Create" class="quick-link-card">
-                            <i class="bi bi-plus-circle text-primary"></i>
-                            <span>Add Product</span>
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a asp-controller="Admin" asp-action="ManageLandingPage" class="quick-link-card">
-                            <i class="bi bi-window-sidebar text-success"></i>
-                            <span>Landing Page</span>
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a asp-controller="Admin" asp-action="EmployeeList" class="quick-link-card">
-                            <i class="bi bi-people text-info"></i>
-                            <span>Employees</span>
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a asp-controller="Admin" asp-action="Reports" class="quick-link-card">
-                            <i class="bi bi-file-earmark-bar-graph text-danger"></i>
-                            <span>Reports</span>
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a asp-controller="Admin" asp-action="Messages" class="quick-link-card">
-                            <i class="bi bi-chat-dots text-purple"></i>
-                            <span>Messages</span>
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a asp-controller="Admin" asp-action="FooterSettings" class="quick-link-card">
-                            <i class="bi bi-gear text-secondary"></i>
-                            <span>Settings</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="row g-4">
         <!-- Sales Chart -->
-        <div class="col-lg-8 mb-4">
-            <div class="table-container h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4><i class="bi bi-bar-chart-fill text-primary"></i> Sales Analytics</h4>
-                    <select class="form-select form-select-sm w-auto" id="chartRange">
-                        <option value="weekly">Weekly</option>
-                        <option value="monthly">Monthly</option>
-                    </select>
+        <div class="col-lg-8">
+            <div class="table-premium h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4><i class="bi bi-bar-chart-fill"></i> Sales Analytics</h4>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-danger active">Weekly</button>
+                        <button class="btn btn-outline-danger">Monthly</button>
+                    </div>
                 </div>
-                <div class="chart-box">
+                <div class="chart-container">
                     <canvas id="salesAnalyticsChart"></canvas>
                 </div>
             </div>
         </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4">
+            <div class="table-premium h-100">
+                <h4><i class="bi bi-lightning-charge-fill"></i> Quick Actions</h4>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a asp-controller="Product" asp-action="Create" class="quick-action-btn">
+                            <i class="bi bi-plus-circle text-danger"></i>
+                            <span>Add Product</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="ManageLandingPage" class="quick-action-btn">
+                            <i class="bi bi-window-sidebar text-primary"></i>
+                            <span>Edit Banners</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="OrdersByStatus" asp-route-status="Pending" class="quick-action-btn">
+                            <i class="bi bi-bag-check text-success"></i>
+                            <span>New Orders</span>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-controller="Admin" asp-action="Messages" class="quick-action-btn">
+                            <i class="bi bi-chat-text text-warning"></i>
+                            <span>Support</span>
+                        </a>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <div class="p-4 rounded-4 bg-light border border-dashed border-2 text-center">
+                            <p class="mb-2 text-muted small fw-bold">SYSTEM STATUS</p>
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                <span class="spinner-grow spinner-grow-sm text-success"></span>
+                                <span class="fw-bold text-success">All Systems Operational</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Recent History -->
-    <div class="row">
+    <!-- Recent History Table -->
+    <div class="row mt-4">
         <div class="col-12">
-            <div class="table-container">
-                <h4><i class="bi bi-clock-history text-secondary"></i> Sales History (Last 6 Months)</h4>
+            <div class="table-premium">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4><i class="bi bi-clock-history"></i> Recent Sales Performance</h4>
+                    <a href="#" class="btn btn-link text-danger fw-bold text-decoration-none p-0">View All History <i class="bi bi-arrow-right"></i></a>
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table custom-table table-hover align-middle">
+                        <thead>
                             <tr>
-                                <th>Month</th>
-                                <th>Revenue</th>
-                                <th>Pieces Sold</th>
-                                <th>Growth</th>
+                                <th>Month Period</th>
+                                <th>Gross Revenue</th>
+                                <th>Units Sold</th>
+                                <th>Performance</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var month in Model.MonthlyHistory.OrderByDescending(m => m.Year).ThenByDescending(m => m.Month).Take(6))
+                            @foreach (var month in Model.MonthlyHistory.OrderByDescending(m => m.Year).ThenByDescending(m => m.Month).Take(5))
                             {
                                 <tr>
-                                    <td class="fw-bold">@month.MonthName @month.Year</td>
-                                    <td class="text-success fw-bold">৳@month.Amount.ToString("#,##0")</td>
-                                    <td>@month.Pieces Pcs</td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                            <i class="bi bi-arrow-up-short"></i> Stable
-                                        </span>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="bg-light p-2 rounded-3">
+                                                <i class="bi bi-calendar-event text-danger"></i>
+                                            </div>
+                                            <span class="fw-bold text-dark">@month.MonthName @month.Year</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="fw-extrabold text-dark">৳@month.Amount.ToString("#,##0")</span></td>
+                                    <td><span class="badge bg-danger-subtle text-danger px-3 py-2 rounded-pill fw-bold">@month.Pieces Pcs</span></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 6px; width: 100px;">
+                                                <div class="progress-bar bg-danger" style="width: 85%"></div>
+                                            </div>
+                                            <span class="text-success small fw-bold"><i class="bi bi-caret-up-fill"></i> 12%</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-light btn-sm rounded-pill px-3 fw-bold border">Details</button>
                                     </td>
                                 </tr>
                             }
@@ -238,6 +339,10 @@
         const labels = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => s.Date.ToString("MMM dd"))));
         const data = @Html.Raw(Json.Serialize(Model.WeeklySales.Select(s => s.Amount)));
 
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(196, 0, 0, 0.4)');
+        gradient.addColorStop(1, 'rgba(196, 0, 0, 0)');
+
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -245,29 +350,51 @@
                 datasets: [{
                     label: 'Revenue (৳)',
                     data: data,
-                    borderColor: '#6366f1',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                    borderWidth: 3,
+                    borderColor: '#C40000',
+                    backgroundColor: gradient,
+                    borderWidth: 4,
                     fill: true,
                     tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#6366f1'
+                    pointRadius: 6,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#C40000',
+                    pointBorderWidth: 3,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#C40000',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 3
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        padding: 12,
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Revenue: ৳' + context.parsed.y.toLocaleString();
+                            }
+                        }
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: '#f1f5f9' },
-                        ticks: { callback: val => '৳' + val.toLocaleString() }
+                        grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
+                        ticks: { 
+                            padding: 10,
+                            callback: val => '৳' + (val / 1000) + 'k' 
+                        }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { display: false },
+                        ticks: { padding: 10 }
                     }
                 }
             }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Shoes BD Admin</title>
+    <title>@ViewData["Title"] - Shoes BD Premium Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,24 +12,33 @@
     
     <style>
         :root {
+            --primary-red: #C40000;
+            --dark-red: #7A0000;
+            --bright-red: #FF1E1E;
+            --soft-white: #F8F8F8;
+            --bg-light: #F3F4F6;
             --sidebar-width: 280px;
-            --sidebar-collapsed-width: 80px;
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --sidebar-bg: #0f172a;
-            --sidebar-hover: #1e293b;
-            --accent-color: #6366f1;
-            --text-muted: #94a3b8;
-            --body-bg: #f8fafc;
-            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-collapsed-width: 85px;
+            --sidebar-gradient: linear-gradient(180deg, #7A0000 0%, #300000 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --card-shadow: 0 10px 30px rgba(196, 0, 0, 0.08);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-soft: rgba(196, 0, 0, 0.1);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--body-bg);
+            background-color: var(--bg-light);
             color: #1e293b;
             overflow-x: hidden;
+            margin: 0;
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(122, 0, 0, 0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(122, 0, 0, 0.4); }
 
         /* Sidebar Styles */
         .sidebar {
@@ -38,13 +47,13 @@
             position: fixed;
             left: 0;
             top: 0;
-            background-color: var(--sidebar-bg);
+            background: var(--sidebar-gradient);
             color: white;
             transition: var(--transition);
             z-index: 1050;
             display: flex;
             flex-direction: column;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+            box-shadow: 15px 0 40px rgba(0,0,0,0.15);
         }
 
         .sidebar.collapsed {
@@ -55,8 +64,8 @@
             padding: 2rem 1.5rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            justify-content: center;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .brand-logo {
@@ -65,38 +74,50 @@
             gap: 12px;
             text-decoration: none;
             color: white;
+        }
+
+        .logo-circle {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            white-space: nowrap;
+            opacity: 1;
             transition: var(--transition);
         }
 
         .sidebar.collapsed .brand-name {
-            display: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-gradient);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            font-weight: 800;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            opacity: 0;
+            width: 0;
+            overflow: hidden;
         }
 
         .nav-section {
-            padding: 1.5rem 0.75rem;
+            padding: 1.5rem 0.8rem;
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .nav-label {
-            padding: 0 1rem 0.75rem;
+            padding: 1rem 1.2rem 0.5rem;
             font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.4);
             font-weight: 700;
         }
 
@@ -110,46 +131,59 @@
             margin: 0;
         }
 
-        .nav-item-admin {
-            margin-bottom: 0.5rem;
+        .nav-item-premium {
+            margin-bottom: 0.4rem;
         }
 
-        .nav-link-admin {
+        .nav-link-premium {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem;
-            color: var(--text-muted);
+            padding: 0.85rem 1.2rem;
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
             border-radius: 12px;
             transition: var(--transition);
             font-weight: 500;
-            gap: 12px;
+            gap: 15px;
+            position: relative;
         }
 
-        .nav-link-admin i {
-            font-size: 1.25rem;
+        .nav-link-premium i {
+            font-size: 1.3rem;
             min-width: 24px;
             text-align: center;
+            transition: var(--transition);
         }
 
-        .nav-link-admin:hover {
+        .nav-link-premium:hover {
             color: white;
-            background: var(--sidebar-hover);
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
         }
 
-        .nav-link-admin.active {
+        .nav-link-premium.active {
             color: white;
-            background: var(--accent-color);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            background: linear-gradient(90deg, var(--bright-red) 0%, var(--primary-red) 100%);
+            box-shadow: 0 4px 15px rgba(255, 30, 30, 0.3);
+            font-weight: 600;
         }
 
         .sidebar.collapsed .nav-text {
             display: none;
         }
 
+        .sidebar.collapsed .nav-link-premium {
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .sidebar.collapsed .nav-link-premium:hover {
+            transform: none;
+        }
+
         .sidebar-footer {
-            padding: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
         /* Main Content */
@@ -157,7 +191,7 @@
             margin-left: var(--sidebar-width);
             transition: var(--transition);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
         }
 
         .main-content.expanded {
@@ -165,185 +199,198 @@
         }
 
         /* Top Navbar */
-        .top-navbar {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
+        .premium-navbar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
-            padding: 1rem 1.5rem;
+            padding: 0.8rem 1.5rem;
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 1.5rem;
+            z-index: 1000;
         }
 
-        .toggle-btn {
-            background: #f1f5f9;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .nav-search {
+            position: relative;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .nav-search input {
+            background: #fff;
+            border: 1px solid #eef2f7;
+            padding: 0.7rem 1rem 0.7rem 3rem;
+            border-radius: 14px;
+            width: 100%;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .nav-search input:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 4px rgba(196, 0, 0, 0.05);
+            outline: none;
+        }
+
+        .nav-search i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .action-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--sidebar-bg);
+            color: #64748b;
             transition: var(--transition);
-        }
-
-        .toggle-btn:hover {
-            background: #e2e8f0;
-        }
-
-        .search-box {
             position: relative;
-            max-width: 300px;
-            width: 100%;
-            display: none; /* Hidden for now */
+            border: 1px solid #eef2f7;
         }
 
-        @@media (min-width: 768px) {
-            .search-box { display: block; }
+        .action-icon:hover {
+            background: #f8fafc;
+            color: var(--primary-red);
+            transform: translateY(-2px);
         }
 
-        .search-box input {
-            background: #f1f5f9;
-            border: none;
-            padding: 0.6rem 1rem 0.6rem 2.5rem;
-            border-radius: 10px;
-            width: 100%;
-            font-size: 0.9rem;
-        }
-
-        .search-box i {
+        .notification-badge {
             position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
+            top: -5px;
+            right: -5px;
+            background: var(--bright-red);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 20px;
+            border: 2px solid white;
+            font-weight: 700;
         }
 
-        .user-menu {
+        .lang-selector {
             display: flex;
             align-items: center;
-            gap: 1rem;
-        }
-
-        .user-info {
-            text-align: right;
-            display: none;
-        }
-
-        @@media (min-width: 576px) {
-            .user-info { display: block; }
-        }
-
-        .user-name {
-            display: block;
-            font-weight: 700;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid #eef2f7;
+            font-weight: 600;
             font-size: 0.9rem;
-            line-height: 1;
         }
 
-        .user-role {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 1rem;
+            border-left: 1px solid #eef2f7;
         }
 
-        .user-avatar {
+        .admin-avatar {
             width: 45px;
             height: 45px;
-            border-radius: 12px;
+            border-radius: 14px;
             object-fit: cover;
             border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-account-profile {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(196, 0, 0, 0.2);
+        }
+
+        .btn-account-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 0, 0, 0.3);
+            color: white;
+        }
+
+        /* Section Title Style */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dashboard-header h1 i {
+            color: var(--primary-red);
+            font-size: 2.2rem;
+        }
+
+        .dashboard-header p {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 0;
         }
 
         /* Mobile Adjustments */
         @@media (max-width: 991.98px) {
-            .sidebar {
-                left: calc(-1 * var(--sidebar-width));
-            }
-            .sidebar.show {
-                left: 0;
-            }
-            .main-content {
-                margin-left: 0 !important;
-                padding: 1.5rem;
-            }
-        }
-        /* Premium Stat Cards */
-        .stat-card-premium {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.5rem;
-            border-radius: 20px;
-            text-decoration: none;
-            color: white;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            border: none;
-            box-shadow: var(--card-shadow);
+            .sidebar { left: calc(-1 * var(--sidebar-width)); }
+            .sidebar.show { left: 0; }
+            .main-content { margin-left: 0 !important; padding: 1rem; }
+            .premium-navbar { margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; position: static; }
+            .nav-search { order: 3; max-width: 100%; }
         }
 
-        .stat-card-premium:hover {
-            transform: translateY(-5px);
-            color: white;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        /* Animations */
+        @@keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .card-variant-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .card-variant-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .card-variant-blue { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
-        .card-variant-cyan { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); }
-        .card-variant-purple { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
-
-        .stat-card-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            opacity: 0.9;
-            margin-bottom: 0.25rem;
+        .content-body {
+            animation: slideIn 0.6s ease-out forwards;
         }
 
-        .stat-card-value {
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-
-        .stat-card-icon {
-            font-size: 2.5rem;
-            opacity: 0.3;
-            position: absolute;
-            right: 1rem;
-            bottom: -0.5rem;
-            transition: var(--transition);
-        }
-
-        .stat-card-premium:hover .stat-card-icon {
-            opacity: 0.5;
-            transform: scale(1.1) rotate(-10deg);
-        }
-
-        .dashboard-table-card {
+        /* Utility */
+        .glass-card {
             background: white;
-            padding: 1.5rem;
             border-radius: 20px;
+            border: 1px solid var(--border-soft);
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.05);
-            height: 100%;
+            transition: var(--transition);
         }
 
-        .dashboard-table-card h4 {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(196, 0, 0, 0.12);
         }
     </style>
 </head>
@@ -352,133 +399,186 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="/" class="brand-logo">
-                <div class="logo-icon">S</div>
-                <div class="brand-name">
-                    <h5 class="mb-0 fw-bold">SHOES <span style="color: var(--accent-color)">BD</span></h5>
-                </div>
+                <div class="logo-circle">SB</div>
+                <div class="brand-name">SHOES BANGLADESH</div>
             </a>
         </div>
 
         <div class="nav-section">
-            <div class="nav-label">Main Menu</div>
+            <div class="nav-label">Main Control</div>
             <ul class="nav-links">
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="Index" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
-                        <i class="bi bi-grid-1x2-fill"></i>
+                <li class="nav-item-premium">
+                    <a href="/" class="nav-link-premium">
+                        <i class="bi bi-globe"></i>
+                        <span class="nav-text">Back to Website</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="Index" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
+                        <i class="bi bi-speedometer2"></i>
                         <span class="nav-text">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Product" asp-action="Index" class="nav-link-admin @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" ? "active" : "")">
-                        <i class="bi bi-box-seam-fill"></i>
-                        <span class="nav-text">Inventory</span>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-tags-fill"></i>
+                        <span class="nav-text">Categories</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="OrdersByStatus" asp-route-status="All" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OrdersByStatus" ? "active" : "")">
-                        <i class="bi bi-cart-check-fill"></i>
-                        <span class="nav-text">Orders</span>
+                <li class="nav-item-premium">
+                    <a asp-controller="Product" asp-action="Index" class="nav-link-premium @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <i class="bi bi-box-seam"></i>
+                        <span class="nav-text">Products</span>
                     </a>
                 </li>
-            </ul>
-
-            <div class="nav-label mt-4">Inventory</div>
-            <ul class="nav-links">
-                <li class="nav-item-admin">
-                    <a asp-controller="Product" asp-action="Index" class="nav-link-admin @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
-                        <i class="bi bi-box-seam-fill"></i>
-                        <span class="nav-text">Product List</span>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-ui-checks"></i>
+                        <span class="nav-text">Product Types</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Product" asp-action="Create" class="nav-link-admin @(ViewContext.RouteData.Values["controller"]?.ToString() == "Product" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active" : "")">
-                        <i class="bi bi-plus-square-fill"></i>
-                        <span class="nav-text">Add New Product</span>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="ManageDisplaySections" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" ? "active" : "")">
+                        <i class="bi bi-layout-text-sidebar"></i>
+                        <span class="nav-text">Homepage Sections</span>
                     </a>
                 </li>
             </ul>
 
-            <div class="nav-label mt-4">Settings</div>
+            <div class="nav-label">Management</div>
             <ul class="nav-links">
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="ManageLandingPage" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageLandingPage" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
-                        <i class="bi bi-window-sidebar"></i>
-                        <span class="nav-text">Landing Page</span>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-person-badge"></i>
+                        <span class="nav-text">Manage Customer</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "OnlinePaymentHistory" && ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">
-                        <i class="bi bi-credit-card-2-front-fill"></i>
-                        <span class="nav-text">Payments</span>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="EmployeeList" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeList" ? "active" : "")">
+                        <i class="bi bi-people"></i>
+                        <span class="nav-text">Manage Employees</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="ManageReviews" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageReviews" ? "active" : "")">
-                        <i class="bi bi-star-fill"></i>
-                        <span class="nav-text">Reviews</span>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-truck"></i>
+                        <span class="nav-text">Manage Deliveryman</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="Messages" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "Messages" ? "active" : "")">
-                        <i class="bi bi-chat-dots-fill"></i>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-cart4"></i>
+                        <span class="nav-text">Manage Carts</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-person-walking"></i>
+                        <span class="nav-text">Delivery Personnel</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-label">Analytics & Communication</div>
+            <ul class="nav-links">
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-bar-chart-line"></i>
+                        <span class="nav-text">Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="ManageReviews" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageReviews" ? "active" : "")">
+                        <i class="bi bi-star"></i>
+                        <span class="nav-text">Manage Reviews</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="Messages" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "Messages" ? "active" : "")">
+                        <i class="bi bi-chat-left-text"></i>
                         <span class="nav-text">Messages</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="ManageDisplaySections" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" ? "active" : "")">
-                        <i class="bi bi-layout-sidebar-inset"></i>
-                        <span class="nav-text">Display Sections</span>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-envelope"></i>
+                        <span class="nav-text">Emails</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="EmployeeSalesOverview" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeSalesOverview" ? "active" : "")">
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="EmployeeSalesOverview" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeSalesOverview" ? "active" : "")">
                         <i class="bi bi-graph-up-arrow"></i>
-                        <span class="nav-text">Staff Performance</span>
+                        <span class="nav-text">Employee Products-Sales</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="EmployeeList" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "EmployeeList" ? "active" : "")">
-                        <i class="bi bi-people-fill"></i>
-                        <span class="nav-text">Staff Directory</span>
+            </ul>
+
+            <div class="nav-label">Configuration</div>
+            <ul class="nav-links">
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-person-circle"></i>
+                        <span class="nav-text">My Profile</span>
                     </a>
                 </li>
-                <li class="nav-item-admin">
-                    <a asp-controller="Admin" asp-action="FooterSettings" class="nav-link-admin @(ViewContext.RouteData.Values["action"]?.ToString() == "FooterSettings" ? "active" : "")">
-                        <i class="bi bi-layout-text-window-reverse"></i>
-                        <span class="nav-text">Footer</span>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="OnlinePaymentHistory" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "OnlinePaymentHistory" ? "active" : "")">
+                        <i class="bi bi-credit-card"></i>
+                        <span class="nav-text">Payment History</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a asp-controller="Admin" asp-action="ManageLandingPage" class="nav-link-premium @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageLandingPage" ? "active" : "")">
+                        <i class="bi bi-image"></i>
+                        <span class="nav-text">Manage Banners</span>
+                    </a>
+                </li>
+                <li class="nav-item-premium">
+                    <a href="#" class="nav-link-premium">
+                        <i class="bi bi-geo-alt"></i>
+                        <span class="nav-text">Track Customer Order</span>
                     </a>
                 </li>
             </ul>
         </div>
 
         <div class="sidebar-footer">
-            <a asp-controller="Account" asp-action="Logout" class="nav-link-admin text-danger">
-                <i class="bi bi-box-arrow-left"></i>
-                <span class="nav-text">Logout</span>
+            <a asp-controller="Account" asp-action="Logout" class="nav-link-premium text-white" style="background: rgba(255,255,255,0.1);">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="nav-text">Logout System</span>
             </a>
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content" id="main-content">
-        <header class="top-navbar">
+        <header class="premium-navbar">
             <div class="d-flex align-items-center gap-3">
-                <button class="toggle-btn" id="toggle-sidebar">
-                    <i class="bi bi-list fs-4"></i>
-                </button>
-                <h5 class="mb-0 fw-bold d-none d-sm-block">@ViewData["Title"]</h5>
+                <div class="action-icon" id="toggle-sidebar">
+                    <i class="bi bi-text-indent-left fs-5"></i>
+                </div>
+                <div class="nav-search d-none d-md-block">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search products, orders, customers...">
+                </div>
             </div>
 
-            <div class="user-menu">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Search anything...">
+            <div class="navbar-actions">
+                <div class="lang-selector">
+                    <img src="https://flagcdn.com/w20/us.png" alt="English" width="20">
+                    <span>EN</span>
+                    <i class="bi bi-chevron-down small"></i>
                 </div>
-                <div class="user-info">
-                    <span class="user-name">Administrator</span>
-                    <span class="user-role">Super Admin</span>
+                
+                <div class="action-icon">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-badge">5</span>
                 </div>
-                <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff&bold=true" class="user-avatar" alt="Admin">
+
+                <div class="admin-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff&bold=true" class="admin-avatar" alt="Admin">
+                    <a href="#" class="btn btn-account-profile d-none d-lg-block">Account Profile</a>
+                </div>
             </div>
         </header>
 
@@ -495,6 +595,7 @@
                 if ($(window).width() > 991.98) {
                     $('#sidebar').toggleClass('collapsed');
                     $('#main-content').toggleClass('expanded');
+                    $(this).find('i').toggleClass('bi-text-indent-left bi-text-indent-right');
                 } else {
                     $('#sidebar').toggleClass('show');
                 }
