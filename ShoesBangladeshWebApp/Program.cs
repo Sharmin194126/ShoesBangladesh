@@ -5,7 +5,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddViewLocalization()
-    .AddDataAnnotationsLocalization();
+    .AddDataAnnotationsLocalization()
+    .ConfigureApplicationPartManager(manager =>
+    {
+        var apiAssembly = manager.ApplicationParts.FirstOrDefault(p => p.Name == "ShoesBangladeshApi");
+        if (apiAssembly != null)
+        {
+            manager.ApplicationParts.Remove(apiAssembly);
+        }
+    });
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 

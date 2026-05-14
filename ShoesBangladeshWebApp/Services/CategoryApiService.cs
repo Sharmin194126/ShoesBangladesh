@@ -31,7 +31,14 @@ namespace ShoesBangladesh.Web.Services
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<List<CategoryViewModel>>(json, _jsonOpts) ?? new();
+                var categories = JsonSerializer.Deserialize<List<CategoryViewModel>>(json, _jsonOpts) ?? new();
+                var baseUrl = client.BaseAddress?.ToString().TrimEnd('/') ?? "";
+                foreach(var c in categories)
+                {
+                    if (!string.IsNullOrEmpty(c.ImageUrl) && c.ImageUrl.StartsWith("/"))
+                        c.ImageUrl = $"{baseUrl}{c.ImageUrl}";
+                }
+                return categories;
             }
             return new List<CategoryViewModel>();
         }
@@ -43,7 +50,13 @@ namespace ShoesBangladesh.Web.Services
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<CategoryViewModel>(json, _jsonOpts);
+                var category = JsonSerializer.Deserialize<CategoryViewModel>(json, _jsonOpts);
+                if (category != null && !string.IsNullOrEmpty(category.ImageUrl) && category.ImageUrl.StartsWith("/"))
+                {
+                    var baseUrl = client.BaseAddress?.ToString().TrimEnd('/') ?? "";
+                    category.ImageUrl = $"{baseUrl}{category.ImageUrl}";
+                }
+                return category;
             }
             return null;
         }

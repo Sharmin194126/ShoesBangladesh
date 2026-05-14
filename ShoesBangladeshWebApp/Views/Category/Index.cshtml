@@ -66,6 +66,22 @@
     }
     .btn-create:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); color: white; transform: translateY(-1px); }
 
+    .btn-back {
+        background: #F5F5F5;
+        color: #616161;
+        border: 1px solid #E0E0E0;
+        padding: 0.55rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.82rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: 0.2s;
+    }
+    .btn-back:hover { background: #EEEEEE; color: #1F1F1F; }
+
     .category-table { width: 100%; border-collapse: collapse; }
     .category-table thead th {
         background: linear-gradient(90deg, #1F1F1F 0%, #2B2B2B 100%);
@@ -199,9 +215,12 @@
                 <i class="bi bi-search"></i>
                 <input type="text" id="searchInput" placeholder="Search categories...">
             </div>
-            <span class="text-muted small fw-bold">@Model.Count Total</span>
+            <span class="text-muted small fw-bold" id="totalCount">@Model.Count Total</span>
         </div>
-        <a asp-action="Create" class="btn-create"><i class="bi bi-plus-lg"></i> Create New Category</a>
+        <div class="d-flex gap-2">
+            <a asp-controller="Admin" asp-action="Index" class="btn-back"><i class="bi bi-arrow-left"></i> Back</a>
+            <a asp-action="Create" class="btn-create"><i class="bi bi-plus-lg"></i> Create New Category</a>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -212,7 +231,6 @@
                     <th style="width: 60px;">Icon</th>
                     <th>Category Name</th>
                     <th>Description</th>
-                    <th>Products</th>
                     <th>Status</th>
                     <th style="width: 120px;">Actions</th>
                 </tr>
@@ -256,8 +274,16 @@
                                     @(cat.Description.Length > 60 ? cat.Description.Substring(0, 60) + "..." : cat.Description)
                                 </span>
                             </td>
-                            <td><span class="badge-count"><i class="bi bi-box-seam me-1"></i>@cat.ProductCount</span></td>
-                            <td><span class="badge-active"><i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>Active</span></td>
+                            <td>
+                                @if (cat.Status == "Active")
+                                {
+                                    <span class="badge-active"><i class="bi bi-check-circle-fill me-1" style="font-size: 0.6rem;"></i>Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-count" style="background:#FFEBEE;color:#C62828;"><i class="bi bi-x-circle-fill me-1" style="font-size: 0.6rem;"></i>Inactive</span>
+                                }
+                            </td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <a asp-action="Details" asp-route-id="@cat.Id" class="btn-action btn-view" title="View"><i class="bi bi-eye"></i></a>
@@ -285,9 +311,22 @@
         // Search
         document.getElementById('searchInput').addEventListener('keyup', function () {
             const val = this.value.toLowerCase();
-            document.querySelectorAll('#categoryTable tbody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+            let visibleCount = 0;
+            const rows = document.querySelectorAll('#categoryTable tbody tr');
+            
+            rows.forEach(row => {
+                if (row.cells.length > 1) { // Skip empty state row
+                    const name = row.cells[2].textContent.toLowerCase();
+                    const desc = row.cells[3].textContent.toLowerCase();
+                    if (name.includes(val) || desc.includes(val)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
             });
+            document.getElementById('totalCount').textContent = visibleCount + ' Total';
         });
 
         // Delete confirmation

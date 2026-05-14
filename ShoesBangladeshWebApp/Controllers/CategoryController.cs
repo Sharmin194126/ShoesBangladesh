@@ -37,6 +37,11 @@ namespace ShoesBangladeshWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryViewModel model, IFormFile? imageFile)
         {
+            if (imageFile != null && imageFile.Length > 300 * 1024)
+            {
+                ModelState.AddModelError("ImageUrl", "Image storage size will be must 200-300 kb.");
+            }
+
             if (!ModelState.IsValid) return View(model);
 
             var success = await _categoryService.CreateCategoryAsync(model, imageFile);
@@ -68,13 +73,18 @@ namespace ShoesBangladeshWebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, CategoryViewModel model, IFormFile? imageFile)
         {
+            if (imageFile != null && imageFile.Length > 300 * 1024)
+            {
+                ModelState.AddModelError("ImageUrl", "Image storage size will be must 200-300 kb.");
+            }
+
             if (!ModelState.IsValid) return View(model);
 
             var success = await _categoryService.UpdateCategoryAsync(id, model, imageFile);
             if (success)
             {
                 TempData["SuccessMessage"] = "Category updated successfully!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit), new { id = id });
             }
 
             ModelState.AddModelError("", "Failed to update category. Please try again.");
