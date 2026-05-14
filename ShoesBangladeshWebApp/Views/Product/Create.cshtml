@@ -1,257 +1,189 @@
-@model ProductDTO
-
+@model ShoesBangladesh.API.ViewModels.ProductViewModel
 @{
-    ViewData["Title"] = "Add New Product";
-    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Product";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<style>
-    .form-container {
-        background: white;
-        border-radius: 24px;
-        padding: 2.5rem;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
-    }
-
-    .form-label {
-        font-weight: 700;
-        color: #1e293b;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-        margin-bottom: 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .form-control, .form-select {
-        border-radius: 12px;
-        padding: 0.8rem 1.2rem;
-        border: 1px solid #e2e8f0;
-        font-size: 0.95rem;
-        transition: all 0.3s;
-        background-color: #f8fafc;
-    }
-
-    .form-control:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        background-color: white;
-    }
-
-    .upload-zone {
-        border: 2px dashed #cbd5e1;
-        border-radius: 20px;
-        padding: 2rem;
-        text-align: center;
-        background: #f8fafc;
-        transition: all 0.3s;
-        cursor: pointer;
-        position: relative;
-        min-height: 350px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .upload-zone:hover {
-        border-color: #6366f1;
-        background: rgba(99, 102, 241, 0.02);
-    }
-
-    .upload-icon {
-        width: 64px;
-        height: 64px;
-        background: white;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: #6366f1;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    .image-preview-container {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 1rem;
-        display: none;
-    }
-
-    .image-preview-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 12px;
-    }
-
-    .status-badge {
-        padding: 1.25rem;
-        border-radius: 16px;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s;
-    }
-
-    .status-badge:has(input:checked) {
-        border-color: #6366f1;
-        background: rgba(99, 102, 241, 0.05);
-    }
-</style>
-
-<div class="row justify-content-center">
-    <div class="col-xl-11">
-        <div class="form-container">
-            <div class="d-flex justify-content-between align-items-center mb-5">
-                <div>
-                    <h3 class="fw-bold mb-1">Create Product</h3>
-                    <p class="text-muted small mb-0">Fill in the details to add a new shoe to your collection.</p>
-                </div>
-                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 fw-600">
-                    <i class="bi bi-arrow-left me-2"></i> Back to Inventory
-                </a>
-            </div>
-
-            <form asp-action="Create" method="post" enctype="multipart/form-data">
-                <div class="row g-5">
-                    <!-- Left: Details -->
-                    <div class="col-lg-7">
-                        <div class="mb-4">
-                            <label asp-for="Name" class="form-label">
-                                <i class="bi bi-alphabet-uppercase text-primary"></i> Product Title
-                            </label>
-                            <input asp-for="Name" class="form-control" placeholder="e.g. Air Max Premium Leather" />
-                            <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="Description" class="form-label">
-                                <i class="bi bi-text-paragraph text-primary"></i> Detailed Description
-                            </label>
-                            <textarea asp-for="Description" class="form-control" rows="6" placeholder="Tell customers about the material, comfort, and style..."></textarea>
-                            <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
-                        </div>
-
-                        <div class="row g-4 mb-5">
-                            <div class="col-md-6">
-                                <label asp-for="Price" class="form-label">
-                                    <i class="bi bi-currency-dollar text-primary"></i> Regular Price (৳)
-                                </label>
-                                <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="0.00" />
-                                <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
-                            </div>
-                            <div class="col-md-6">
-                                <label asp-for="DiscountPrice" class="form-label">
-                                    <i class="bi bi-tag text-success"></i> Discount Price (৳)
-                                </label>
-                                <input asp-for="DiscountPrice" type="number" step="0.01" class="form-control" placeholder="Optional" />
-                            </div>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="status-badge">
-                                    <div class="form-check form-switch mb-0">
-                                        <input asp-for="IsEidOffer" class="form-check-input" type="checkbox" id="eidSwitch" style="width: 2.5em; height: 1.25em;">
-                                        <label class="form-check-label fw-bold ms-2" for="eidSwitch">
-                                            <i class="bi bi-stars text-warning me-1"></i> Eid Campaign
-                                        </label>
-                                    </div>
-                                    <p class="small text-muted mb-0 mt-2">Display this product in the holiday special section.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="status-badge">
-                                    <div class="form-check form-switch mb-0">
-                                        <input asp-for="IsFeatured" class="form-check-input" type="checkbox" id="featuredSwitch" style="width: 2.5em; height: 1.25em;">
-                                        <label class="form-check-label fw-bold ms-2" for="featuredSwitch">
-                                            <i class="bi bi-lightning-fill text-primary me-1"></i> Featured
-                                        </label>
-                                    </div>
-                                    <p class="small text-muted mb-0 mt-2">Highlight this item on the main landing page.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right: Media -->
-                    <div class="col-lg-5">
-                        <label class="form-label">
-                            <i class="bi bi-image text-primary"></i> Product Imagery
-                        </label>
-                        <div class="upload-zone" onclick="document.getElementById('imageFile').click()">
-                            <div id="uploadPlaceholder">
-                                <div class="upload-icon">
-                                    <i class="bi bi-cloud-arrow-up-fill"></i>
-                                </div>
-                                <h6 class="fw-bold mb-1">Click to upload image</h6>
-                                <p class="text-muted small">or drag and drop from your desktop</p>
-                                <div class="mt-4">
-                                    <span class="badge bg-light text-muted border px-3 py-2 rounded-pill">PNG, JPG, WEBP</span>
-                                </div>
-                            </div>
-                            <div id="imagePreviewWrapper" class="image-preview-container">
-                                <img id="imagePreview" src="" alt="Preview">
-                                <button type="button" class="btn btn-sm btn-dark position-absolute top-0 end-0 m-3 rounded-circle" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); resetImage();">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <input type="file" id="imageFile" name="imageFile" accept="image/*" class="d-none" onchange="handleImage(this)" />
-                        
-                        <div class="mt-4 p-4 rounded-4 bg-light">
-                            <h6 class="fw-bold small mb-2"><i class="bi bi-info-circle me-2"></i> Optimization Tip</h6>
-                            <p class="small text-muted mb-0">For the best look, use square images (1:1 aspect ratio) with a clean white or neutral background.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-5 pt-5 border-top d-flex flex-column flex-md-row justify-content-end gap-3">
-                    <a asp-action="Index" class="btn btn-light px-5 py-3 rounded-pill fw-bold border">Discard Changes</a>
-                    <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-sm">
-                        <i class="bi bi-check-lg me-2"></i> Publish Product
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="mb-4">
+    <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-box-seam me-2 text-danger"></i>Create New Product</h1>
+    <nav aria-label="breadcrumb" class="mt-1">
+        <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+            <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Products</a></li>
+            <li class="breadcrumb-item active" style="color:#9E9E9E;">Create</li>
+        </ol>
+    </nav>
 </div>
 
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
+    @Html.AntiForgeryToken()
+    <partial name="_ProductForm" model="Model" />
+</form>
+
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function handleImage(input) {
+        $(document).ready(function() {
+            let selectedSizes = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AvailableSizes ?? new List<string>()));
+            let sizeQuantities = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SizeQuantities ?? new Dictionary<string, int>()));
+
+            function renderSizes() {
+                $('#sizeQuantityContainer').empty();
+                
+                if(selectedSizes.length === 0) {
+                    $('#noSizesMsg').show();
+                    $('#totalStock').val(0);
+                    return;
+                }
+                
+                $('#noSizesMsg').hide();
+                let total = 0;
+
+                selectedSizes.forEach(size => {
+                    let qty = sizeQuantities[size] || 0;
+                    total += parseInt(qty);
+                    
+                    let row = `
+                        <div class="qty-box">
+                            <label>Size ${size}</label>
+                            <input type="number" min="0" class="size-qty-input" data-size="${size}" value="${qty}" />
+                        </div>
+                    `;
+                    $('#sizeQuantityContainer').append(row);
+                });
+                
+                $('#totalStock').val(total);
+                
+                // Update hidden JSON fields
+                $('#hiddenAvailableSizesJson').val(JSON.stringify(selectedSizes));
+                $('#hiddenSizeQuantitiesJson').val(JSON.stringify(sizeQuantities));
+            }
+
+            // Click on existing/custom size badge
+            $(document).on('click', '.size-badge', function(e) {
+                if($(e.target).hasClass('remove-size')) return; // handled separately
+                
+                let size = $(this).data('size').toString();
+                if($(this).hasClass('active')) {
+                    $(this).removeClass('active');
+                    selectedSizes = selectedSizes.filter(s => s !== size);
+                    delete sizeQuantities[size];
+                } else {
+                    $(this).addClass('active');
+                    if(!selectedSizes.includes(size)) {
+                        selectedSizes.push(size);
+                        sizeQuantities[size] = 0;
+                    }
+                }
+                renderSizes();
+            });
+
+            // Remove custom size
+            $(document).on('click', '.remove-size', function(e) {
+                e.stopPropagation();
+                let badge = $(this).closest('.size-badge');
+                let size = badge.data('size').toString();
+                selectedSizes = selectedSizes.filter(s => s !== size);
+                delete sizeQuantities[size];
+                badge.remove();
+                renderSizes();
+            });
+
+            // Add custom size
+            $('#btnAddSize').click(function() {
+                let newSize = $('#customSizeInput').val().trim();
+                if(!newSize) return;
+                
+                // Check if already exists in badges
+                let exists = false;
+                $('.size-badge').each(function() {
+                    if($(this).data('size').toString().toLowerCase() === newSize.toLowerCase()) exists = true;
+                });
+                
+                if(exists) {
+                    Swal.fire({ icon: 'warning', title: 'Already Exists', text: 'This size is already in the list.', confirmButtonColor: '#C40000' });
+                    return;
+                }
+                
+                // Create badge and activate it
+                let badge = `<div class="size-badge active" data-size="${newSize}">${newSize} <i class="bi bi-x-circle-fill remove-size"></i></div>`;
+                $(badge).insertBefore('#sizeContainer .input-group');
+                
+                selectedSizes.push(newSize);
+                sizeQuantities[newSize] = 0;
+                
+                $('#customSizeInput').val('');
+                renderSizes();
+            });
+
+            // Enter key on custom size input
+            $('#customSizeInput').keypress(function(e) {
+                if(e.which === 13) {
+                    e.preventDefault();
+                    $('#btnAddSize').click();
+                }
+            });
+
+            // Quantity change
+            $(document).on('input', '.size-qty-input', function() {
+                let size = $(this).data('size').toString();
+                let val = parseInt($(this).val()) || 0;
+                if(val < 0) { val = 0; $(this).val(0); }
+                sizeQuantities[size] = val;
+                
+                // Recalculate total
+                let total = 0;
+                for(let key in sizeQuantities) {
+                    total += sizeQuantities[key];
+                }
+                $('#totalStock').val(total);
+                $('#hiddenSizeQuantitiesJson').val(JSON.stringify(sizeQuantities));
+            });
+
+            // Auto calculate offer price
+            function calcOffer() {
+                let price = parseFloat($('#regPrice').val()) || 0;
+                let pct = parseFloat($('#offerPct').val()) || 0;
+                if(pct > 0 && pct <= 100) {
+                    let offPrice = price - (price * pct / 100);
+                    $('#offerPrice').val(offPrice.toFixed(2));
+                    $('#hiddenDiscountPrice').val(offPrice.toFixed(2));
+                } else {
+                    $('#offerPrice').val(price.toFixed(2));
+                    $('#hiddenDiscountPrice').val(price.toFixed(2));
+                }
+            }
+            $('#regPrice, #offerPct').on('input', calcOffer);
+
+            // Initial render
+            renderSizes();
+        });
+
+        function previewMainImage(input) {
             const preview = document.getElementById('imagePreview');
-            const wrapper = document.getElementById('imagePreviewWrapper');
-            const placeholder = document.getElementById('uploadPlaceholder');
-            
+            const icon = document.getElementById('imagePreviewIcon');
             if (input.files && input.files[0]) {
+                if (input.files[0].size > 300 * 1024) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'File Too Large',
+                        text: 'Image storage size must be 200-300 kb.',
+                        confirmButtonColor: '#C40000'
+                    });
+                    input.value = '';
+                    preview.src = '';
+                    if(icon) icon.style.display = 'block';
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.src = e.target.result;
-                    wrapper.style.display = 'block';
-                    placeholder.style.display = 'none';
-                };
+                    preview.style.display = 'block';
+                    if(icon) icon.style.display = 'none';
+                }
                 reader.readAsDataURL(input.files[0]);
             }
-        }
-
-        function resetImage() {
-            const input = document.getElementById('imageFile');
-            const preview = document.getElementById('imagePreview');
-            const wrapper = document.getElementById('imagePreviewWrapper');
-            const placeholder = document.getElementById('uploadPlaceholder');
-            
-            input.value = "";
-            preview.src = "";
-            wrapper.style.display = 'none';
-            placeholder.style.display = 'flex';
         }
     </script>
 }

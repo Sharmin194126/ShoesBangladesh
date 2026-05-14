@@ -1,4 +1,4 @@
-@model IEnumerable<ProductDTO>
+@model IEnumerable<ShoesBangladesh.API.ViewModels.ProductViewModel>
 
 @{
     ViewData["Title"] = "Inventory Management";
@@ -165,12 +165,11 @@ else
                             <a asp-action="Edit" asp-route-id="@product.Id" class="btn-action-icon" title="Edit Product">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <a href="/Landing/ProductDetails/@product.Id" target="_blank" class="btn-action-icon" title="Preview on Site">
+                            <a asp-action="Details" asp-route-id="@product.Id" class="btn-action-icon" title="View Details">
                                 <i class="bi bi-eye"></i>
                             </a>
                             <a asp-action="Delete" asp-route-id="@product.Id" 
                                class="btn-action-icon ms-auto text-danger" 
-                               onclick="return confirm('Are you sure you want to delete this product?')" 
                                title="Delete Product">
                                 <i class="bi bi-trash3"></i>
                             </a>

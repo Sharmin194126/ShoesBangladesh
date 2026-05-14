@@ -1,0 +1,261 @@
+@model ShoesBangladesh.API.ViewModels.ProductViewModel
+
+@{
+    var categories = ViewBag.Categories as IEnumerable<ShoesBangladesh.API.ViewModels.CategoryDTO>;
+    var employees = ViewBag.Employees as IEnumerable<ShoesBangladesh.API.ViewModels.EmployeeViewModel>;
+    var displaySections = ViewBag.DisplaySections as IEnumerable<ShoesBangladesh.API.ViewModels.DisplaySectionViewModel>;
+}
+
+<style>
+    .form-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2rem; max-width: 1000px; margin: 0 auto; }
+    .form-label-custom { font-size: 0.82rem; font-weight: 700; color: #1F1F1F; margin-bottom: 6px; display: block; }
+    .form-control-custom, .form-select-custom {
+        width: 100%;
+        padding: 0.65rem 0.9rem;
+        border: 1.5px solid #ECECEC;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+        color: #1F1F1F;
+        outline: none;
+        transition: 0.2s;
+        background: #FAFAFA;
+    }
+    .form-control-custom:focus, .form-select-custom:focus { border-color: #C40000; background: #fff; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
+    .form-control-custom.is-invalid, .form-select-custom.is-invalid { border-color: #C40000; }
+    .field-error { font-size: 0.75rem; color: #C40000; margin-top: 4px; font-weight: 600; }
+    
+    .section-title { font-size: 1rem; font-weight: 800; color: #1F1F1F; border-bottom: 2px solid #F5F5F5; padding-bottom: 0.5rem; margin-bottom: 1.25rem; margin-top: 1.5rem; }
+    .section-title:first-child { margin-top: 0; }
+    
+    .size-badge {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: #F5F5F5; color: #616161; border: 1.5px solid #ECECEC; border-radius: 8px;
+        padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: 0.2s;
+        margin-right: 6px; margin-bottom: 6px;
+    }
+    .size-badge.active { background: #FFEBEE; color: #C40000; border-color: #FECACA; }
+    .size-badge .remove-size { margin-left: 6px; color: #C40000; cursor: pointer; display: none; }
+    .size-badge.active .remove-size { display: inline-block; }
+
+    .qty-box { background: #FAFAFA; border: 1.5px solid #ECECEC; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; }
+    .qty-box label { font-size: 0.85rem; font-weight: 700; color: #1F1F1F; margin: 0; }
+    .qty-box input { width: 80px; padding: 0.4rem; border: 1px solid #ECECEC; border-radius: 6px; text-align: center; font-weight: 600; outline: none; }
+    .qty-box input:focus { border-color: #C40000; }
+
+    .btn-submit { background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%); color: white; border: none; padding: 0.65rem 2rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 12px rgba(196,0,0,0.25); }
+    .btn-submit:hover { background: linear-gradient(135deg, #C40000 0%, #8B0000 100%); transform: translateY(-1px); color: white; }
+    .btn-cancel { background: #F5F5F5; color: #2B2B2B; border: 1px solid #ECECEC; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: 0.2s; }
+    .btn-cancel:hover { background: #ECECEC; color: #1F1F1F; }
+    
+    .form-check-custom .form-check-input { width: 1.25rem; height: 1.25rem; border-color: #ECECEC; }
+    .form-check-custom .form-check-input:checked { background-color: #C40000; border-color: #C40000; }
+    .form-check-custom .form-check-label { font-size: 0.85rem; font-weight: 600; margin-left: 0.5rem; margin-top: 2px; }
+</style>
+
+<div class="form-card">
+    <div class="row gx-5">
+        <!-- Left Column -->
+        <div class="col-md-6">
+            <h4 class="section-title">Basic Information</h4>
+            <div class="mb-3">
+                <label class="form-label-custom">Product Name <span class="text-danger">*</span></label>
+                <input asp-for="Name" class="form-control-custom" placeholder="e.g. Premium Leather Loafers" />
+                <span asp-validation-for="Name" class="field-error d-block"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Category <span class="text-danger">*</span></label>
+                    <select asp-for="CategoryId" class="form-select-custom">
+                        <option value="">Select Category</option>
+                        @if(categories != null) {
+                            foreach(var cat in categories) {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryId" class="field-error d-block"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Product Type</label>
+                    <select asp-for="ProductType" class="form-select-custom">
+                        <option value="Regular">Regular</option>
+                        <option value="New Arrival">New Arrival</option>
+                        <option value="Best Seller">Best Seller</option>
+                        <option value="Clearance">Clearance</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label-custom">Description <span class="text-danger">*</span></label>
+                <textarea asp-for="Description" class="form-control-custom" rows="4" placeholder="Detailed product description..."></textarea>
+                <span asp-validation-for="Description" class="field-error d-block"></span>
+            </div>
+
+            <h4 class="section-title">Pricing & Delivery</h4>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label-custom">Regular Price (৳) <span class="text-danger">*</span></label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control-custom" id="regPrice" />
+                    <span asp-validation-for="Price" class="field-error d-block"></span>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Offer %</label>
+                    <input asp-for="OfferPercentage" type="number" step="0.01" class="form-control-custom" id="offerPct" />
+                    <span asp-validation-for="OfferPercentage" class="field-error d-block"></span>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Offer Price (৳)</label>
+                    <input type="text" class="form-control-custom bg-light" id="offerPrice" readonly value="@Model.DiscountPrice" />
+                    <input type="hidden" asp-for="DiscountPrice" id="hiddenDiscountPrice" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label-custom">VAT %</label>
+                    <input asp-for="VatPercentage" type="number" step="0.01" class="form-control-custom" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Delivery Charge</label>
+                    <input asp-for="DeliveryCharge" type="number" step="0.01" class="form-control-custom" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-custom">Max Order Limit</label>
+                    <input asp-for="MaxOrderLimit" type="number" class="form-control-custom" placeholder="0 = No limit" />
+                </div>
+            </div>
+            
+            <h4 class="section-title">Settings</h4>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Status</label>
+                    <select asp-for="Status" class="form-select-custom">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end pb-2">
+                    <div class="form-check form-check-custom">
+                        <input asp-for="IsApproved" class="form-check-input" type="checkbox" id="isApprovedCheck">
+                        <label class="form-check-label" for="isApprovedCheck">Approved for Sale</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label-custom">Assign Employee</label>
+                    <select asp-for="AssignedEmployeeId" class="form-select-custom">
+                        <option value="">None</option>
+                        @if(employees != null) {
+                            foreach(var emp in employees) {
+                                <option value="@emp.Id">@emp.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-custom">Display Section</label>
+                    <select asp-for="DisplaySectionId" class="form-select-custom">
+                        <option value="">Default Shop</option>
+                        @if(displaySections != null) {
+                            foreach(var sec in displaySections) {
+                                <option value="@sec.Id">@sec.Title</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3 d-flex gap-4">
+                 <div class="form-check form-check-custom">
+                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" id="isFeaturedCheck">
+                    <label class="form-check-label" for="isFeaturedCheck">Featured Product</label>
+                </div>
+                <div class="form-check form-check-custom">
+                    <input asp-for="IsEidOffer" class="form-check-input" type="checkbox" id="isEidCheck">
+                    <label class="form-check-label" for="isEidCheck">Eid Offer</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-6">
+            <h4 class="section-title">Sizes & Inventory</h4>
+            
+            <div class="mb-3">
+                <label class="form-label-custom">Available Sizes</label>
+                <div class="d-flex flex-wrap align-items-center mb-2" id="sizeContainer">
+                    <!-- Standard Sizes -->
+                    @{
+                        var standardSizes = new[] { "S", "M", "L", "XL", "XXL", "3XL" };
+                        foreach(var sz in standardSizes)
+                        {
+                            var isActive = Model.AvailableSizes.Contains(sz);
+                            <div class="size-badge @(isActive ? "active" : "")" data-size="@sz">
+                                @sz
+                            </div>
+                        }
+                    }
+                    <!-- Custom Sizes placeholder -->
+                    <div class="input-group" style="width: 140px; margin-bottom: 6px;">
+                        <input type="text" id="customSizeInput" class="form-control form-control-sm" placeholder="e.g. 42" style="border: 1.5px solid #ECECEC;" />
+                        <button class="btn btn-sm text-white" type="button" id="btnAddSize" style="background: #C40000; font-weight: 600;">Add</button>
+                    </div>
+                </div>
+                
+                <!-- Hidden inputs for sizes -->
+                <div id="hiddenSizesInputs"></div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label-custom">Size Wise Quantity</label>
+                <div id="sizeQuantityContainer" style="max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                    <div class="text-muted small" id="noSizesMsg" style="display:none;">Select sizes above to set quantities.</div>
+                    <!-- Dynamically generated qty inputs will go here -->
+                </div>
+                <!-- Hidden JSON field for SizeQuantities -->
+                <input type="hidden" asp-for="SizeQuantitiesJson" id="hiddenSizeQuantitiesJson" />
+                <input type="hidden" asp-for="AvailableSizesJson" id="hiddenAvailableSizesJson" />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label-custom">Total Stock Quantity</label>
+                <input asp-for="StockQuantity" class="form-control-custom bg-light" id="totalStock" readonly />
+                <span class="text-muted small">Auto-calculated from size quantities.</span>
+            </div>
+
+            <h4 class="section-title">Media</h4>
+            <div class="mb-3">
+                <label class="form-label-custom">Main Product Image <span class="text-danger">*</span></label>
+                <div id="imagePreviewContainer" style="width: 100%; height: 200px; border-radius: 12px; border: 2px dashed #ECECEC; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #FAFAFA; margin-bottom: 12px;">
+                    @if(!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img id="imagePreview" src="@Model.ImageUrl" style="width: 100%; height: 100%; object-fit: contain;" />
+                    }
+                    else
+                    {
+                        <img id="imagePreview" src="" style="width: 100%; height: 100%; object-fit: contain; display: none;" />
+                        <div class="text-center" id="imagePreviewIcon">
+                            <i class="bi bi-cloud-arrow-up text-muted fs-1 mb-2"></i>
+                            <div style="font-size: 0.8rem; color: #9E9E9E;">Click to upload main image</div>
+                        </div>
+                    }
+                </div>
+                <input type="hidden" asp-for="ImageUrl" />
+                <input type="file" name="imageFile" id="imageFile" class="form-control-custom" accept="image/*" onchange="previewMainImage(this)" />
+                <p class="text-muted mt-2" style="font-size: 0.75rem;">Max file size: 300KB. Formats: JPG, PNG, WEBP.</p>
+            </div>
+            
+        </div>
+    </div>
+
+    <hr style="border-color: #F5F5F5; margin: 1.5rem 0;">
+
+    <div class="d-flex align-items-center gap-3">
+        <button type="submit" class="btn-submit" id="btnSubmitForm"><i class="bi bi-check2 me-2"></i>Save Product</button>
+        <a asp-action="Index" class="btn-cancel">Cancel</a>
+    </div>
+</div>

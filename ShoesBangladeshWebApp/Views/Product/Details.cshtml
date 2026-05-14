@@ -1,0 +1,151 @@
+@model ShoesBangladesh.API.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Product Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var baseUrl = "http://localhost:5190";
+    var imageUrl = !string.IsNullOrEmpty(Model.ImageUrl) 
+        ? (Model.ImageUrl.StartsWith("http") ? Model.ImageUrl : $"{baseUrl}{Model.ImageUrl}") 
+        : "/images/placeholder.png";
+}
+
+<style>
+    .details-card { background: #fff; border-radius: 16px; border: 1px solid #ECECEC; box-shadow: 0 2px 12px rgba(0,0,0,0.07); padding: 2rem; max-width: 1000px; margin: 0 auto; }
+    .product-img-container { width: 100%; height: 350px; border-radius: 12px; background: #FAFAFA; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px solid #ECECEC; margin-bottom: 1rem; }
+    .product-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    .info-label { font-size: 0.8rem; color: #9E9E9E; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; }
+    .info-value { font-size: 1rem; color: #1F1F1F; font-weight: 600; margin-bottom: 1.25rem; }
+    
+    .badge-status { padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-active { background: #E8F5E9; color: #2E7D32; }
+    .badge-inactive { background: #FFEBEE; color: #C62828; }
+    
+    .badge-approved { background: #E3F2FD; color: #1565C0; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-pending { background: #FFF3E0; color: #E65100; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    
+    .badge-type { background: #F3E5F5; color: #6A1B9A; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-feature { background: #FFF8E1; color: #FF8F00; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+
+    .size-box { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; background: #FAFAFA; border: 1.5px solid #ECECEC; border-radius: 8px; padding: 0.5rem 1rem; margin-right: 8px; margin-bottom: 8px; min-width: 60px; }
+    .size-box .sz-name { font-size: 0.9rem; font-weight: 800; color: #1F1F1F; }
+    .size-box .sz-qty { font-size: 0.75rem; color: #C40000; font-weight: 700; }
+    
+    .price-lg { font-size: 1.5rem; color: #C40000; font-weight: 800; }
+    .price-strike { font-size: 1rem; color: #9E9E9E; text-decoration: line-through; margin-left: 10px; }
+</style>
+
+<div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <h1 style="font-size: 1.4rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-info-circle me-2 text-primary"></i>Product Details</h1>
+            <nav aria-label="breadcrumb" class="mt-1">
+                <ol class="breadcrumb mb-0" style="font-size: 0.78rem;">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" style="color:#C40000; text-decoration:none;">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a asp-action="Index" style="color:#C40000; text-decoration:none;">Products</a></li>
+                    <li class="breadcrumb-item active" style="color:#9E9E9E;">Details</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm fw-bold px-3 py-2 text-dark" style="border-radius: 8px;"><i class="bi bi-pencil-square me-1"></i> Edit</a>
+            <a asp-action="Index" class="btn btn-light btn-sm fw-bold px-3 py-2 border text-dark ms-2" style="border-radius: 8px;"><i class="bi bi-arrow-left me-1"></i> Back</a>
+        </div>
+    </div>
+</div>
+
+<div class="details-card">
+    <div class="row gx-5">
+        <!-- Image Section -->
+        <div class="col-md-5">
+            <div class="product-img-container">
+                <img src="@imageUrl" class="product-img" alt="@Model.Name" />
+            </div>
+            
+            <div class="d-flex gap-2 flex-wrap mb-4">
+                <span class="badge-status @(Model.Status == "Active" ? "badge-active" : "badge-inactive")">@Model.Status</span>
+                <span class="@(Model.IsApproved ? "badge-approved" : "badge-pending")">@(Model.IsApproved ? "Approved" : "Pending Approval")</span>
+                <span class="badge-type">@Model.ProductType</span>
+                @if(Model.IsFeatured) { <span class="badge-feature"><i class="bi bi-star-fill me-1"></i> Featured</span> }
+                @if(Model.IsEidOffer) { <span class="badge-feature"><i class="bi bi-gift-fill me-1"></i> Eid Offer</span> }
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="col-md-7">
+            <h2 style="font-size: 1.8rem; font-weight: 800; color: #1F1F1F; margin-bottom: 0.5rem;">@Model.Name</h2>
+            <div class="info-value text-muted mb-3" style="font-size: 0.95rem;">@Model.CategoryName</div>
+            
+            <div class="mb-4">
+                @if(Model.OfferPercentage > 0) {
+                    <span class="price-lg">৳@Model.DiscountPrice</span>
+                    <span class="price-strike">৳@Model.Price</span>
+                    <span class="badge bg-danger ms-2" style="border-radius: 4px;">-@Model.OfferPercentage% OFF</span>
+                } else {
+                    <span class="price-lg">৳@Model.Price</span>
+                }
+            </div>
+            
+            <div class="row mb-2">
+                <div class="col-6">
+                    <div class="info-label">Stock Quantity</div>
+                    <div class="info-value" style="color: @(Model.StockQuantity > 0 ? "#2E7D32" : "#C62828")">
+                        @Model.StockQuantity Units @(Model.StockQuantity == 0 ? "(Out of Stock)" : "")
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Max Order Limit</div>
+                    <div class="info-value">@(Model.MaxOrderLimit > 0 ? Model.MaxOrderLimit.ToString() : "No Limit")</div>
+                </div>
+            </div>
+
+            <div class="row mb-2">
+                <div class="col-6">
+                    <div class="info-label">VAT</div>
+                    <div class="info-value">@Model.VatPercentage%</div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Delivery Charge</div>
+                    <div class="info-value">৳@Model.DeliveryCharge</div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <div class="info-label">Available Sizes & Quantities</div>
+                <div class="d-flex flex-wrap mt-2">
+                    @if(Model.AvailableSizes != null && Model.AvailableSizes.Any())
+                    {
+                        foreach(var sz in Model.AvailableSizes)
+                        {
+                            var qty = Model.SizeQuantities != null && Model.SizeQuantities.ContainsKey(sz) ? Model.SizeQuantities[sz] : 0;
+                            <div class="size-box">
+                                <span class="sz-name">@sz</span>
+                                <span class="sz-qty">Qty: @qty</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="info-value text-muted" style="font-size: 0.85rem;">No sizes available</div>
+                    }
+                </div>
+            </div>
+
+            <hr style="border-color: #F5F5F5; margin: 1.5rem 0;" />
+            
+            <div class="mb-4">
+                <div class="info-label">Description</div>
+                <div style="font-size: 0.9rem; color: #424242; line-height: 1.6; white-space: pre-wrap;">@Model.Description</div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="info-label">Assigned Employee ID</div>
+                    <div class="info-value">@(Model.AssignedEmployeeId?.ToString() ?? "None")</div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Display Section ID</div>
+                    <div class="info-value">@(Model.DisplaySectionId?.ToString() ?? "Default")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
