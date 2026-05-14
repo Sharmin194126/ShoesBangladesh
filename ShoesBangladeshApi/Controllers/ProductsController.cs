@@ -106,6 +106,13 @@ namespace ShoesBangladesh.API.Controllers
             var imageUrl = $"/uploads/{fileName}";
             return Ok(new { imageUrl });
         }
+
+        // GET: api/Products/Types
+        [HttpGet("Types")]
+        public async Task<ActionResult<IEnumerable<ProductType>>> GetProductTypes()
+        {
+            return await _context.ProductTypes.ToListAsync();
+        }
     }
 }
 

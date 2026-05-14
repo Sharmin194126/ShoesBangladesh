@@ -1,216 +1,283 @@
 @model IEnumerable<ShoesBangladesh.API.ViewModels.ProductViewModel>
 
 @{
-    ViewData["Title"] = "Inventory Management";
-    Layout = "_AdminLayout";
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
-    .product-card {
-        background: white;
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid rgba(0,0,0,0.05);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+    .page-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #ECECEC;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
     }
 
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    }
-
-    .product-image-wrapper {
-        position: relative;
-        height: 200px;
-        background: #f8fafc;
-        overflow: hidden;
-    }
-
-    .product-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .product-card:hover .product-image {
-        transform: scale(1.08);
-    }
-
-    .badge-premium {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        padding: 0.5rem 0.75rem;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        backdrop-filter: blur(8px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .price-tag {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #1e293b;
-    }
-
-    .price-old {
-        font-size: 0.85rem;
-        color: #94a3b8;
-        text-decoration: line-through;
-    }
-
-    .action-overlay {
-        position: absolute;
-        bottom: -50px;
-        left: 0;
-        right: 0;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(4px);
-        padding: 0.75rem;
-        display: flex;
-        gap: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .product-card:hover .action-overlay {
-        bottom: 0;
-    }
-
-    .btn-action-icon {
-        width: 36px;
-        height: 36px;
+    .theme-back-btn {
+        background: #F5F5F5;
+        color: #2B2B2B;
+        border: 1px solid #ECECEC;
+        padding: 0.5rem 1.25rem;
         border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: white;
-        color: #1e293b;
-        border: none;
-        transition: all 0.2s;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: 0.2s;
     }
+    .theme-back-btn:hover { background: #ECECEC; color: #1F1F1F; }
 
-    .btn-action-icon:hover {
-        background: var(--accent-color);
+    .btn-custom-primary {
+        background: linear-gradient(135deg, #ff2d2d 0%, #C40000 100%);
         color: white;
+        border: none;
+        padding: 0.5rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        box-shadow: 0 3px 10px rgba(196,0,0,0.2);
+    }
+    .btn-custom-primary:hover {
+        background: linear-gradient(135deg, #C40000 0%, #8B0000 100%);
+        color: white;
+        transform: translateY(-1px);
     }
 
-    .empty-state {
-        background: white;
-        border-radius: 30px;
-        padding: 5rem 2rem;
-        text-align: center;
-        border: 2px dashed #e2e8f0;
+    .table-custom {
+        width: 100%;
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
     }
+    .table-custom thead th { background: #1F1F1F; color: #FFFFFF; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 1.1rem 1rem; white-space: nowrap; }
+    .table-custom thead th:first-child { border-top-left-radius: 12px; }
+    .table-custom thead th:last-child { border-top-right-radius: 12px; }
+    
+    .table-custom tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        font-size: 0.85rem;
+        color: #424242;
+        border-bottom: 1px solid #ECECEC;
+        border-right: 1px solid #ECECEC;
+    }
+    .table-custom tbody td:first-child { border-left: 1px solid #ECECEC; }
+    .table-custom tbody tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+    .table-custom tbody tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+    
+    .table-custom tbody tr:hover td {
+        background-color: #FAFAFA;
+    }
+
+    .badge-stock-low { background: #FFEBEE; color: #C62828; padding: 0.35rem 0.65rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-stock-ok { background: #E8F5E9; color: #2E7D32; padding: 0.35rem 0.65rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+
+    .badge-status-active { background: #E3F2FD; color: #1565C0; padding: 0.35rem 0.65rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+    .badge-status-inactive { background: #FFF3E0; color: #E65100; padding: 0.35rem 0.65rem; border-radius: 6px; font-weight: 700; font-size: 0.75rem; }
+
+    .img-thumbnail-custom {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        border-radius: 8px;
+        border: 1px solid #ECECEC;
+        background: #FAFAFA;
+        padding: 4px;
+    }
+
+    .action-btn {
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: 4px;
+        display: inline-block;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .action-btn-details { background: #F5F5F5; color: #424242; border: 1px solid #E0E0E0; }
+    .action-btn-details:hover { background: #E0E0E0; color: #212121; }
+    
+    .action-btn-edit { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+    .action-btn-edit:hover { background: #C8E6C9; color: #1B5E20; }
+
+    .action-btn-delete { background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+    .action-btn-delete:hover { background: #FFCDD2; color: #B71C1C; }
+
+    .filter-input {
+        border: 1.5px solid #ECECEC;
+        border-radius: 8px;
+        padding: 0.55rem 1rem;
+        font-size: 0.85rem;
+        color: #1F1F1F;
+        background: #FAFAFA;
+        width: 100%;
+        outline: none;
+    }
+    .filter-input:focus { border-color: #C40000; background: #fff; }
 </style>
 
-<div class="row align-items-end mb-5">
-    <div class="col-md-6">
-        <h3 class="fw-bold mb-1">Product Inventory</h3>
-        <p class="text-muted mb-0">You have <span class="text-primary fw-bold">@Model.Count()</span> items in your collection.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; color: #1F1F1F; margin: 0;"><i class="bi bi-box-seam me-2 text-danger"></i>Products</h1>
+        <p class="text-muted mb-0" style="font-size: 0.85rem;">Manage your entire product inventory.</p>
     </div>
-    <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <div class="d-inline-flex gap-2">
-            <div class="search-box d-md-block d-none" style="display:block !important;">
-                <input type="text" class="form-control rounded-pill px-4" placeholder="Filter products..." style="background: white; border: 1px solid #e2e8f0;">
-            </div>
-            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-                <i class="bi bi-plus-lg me-2"></i> New Product
-            </a>
-        </div>
-    </div>
+    <a href="javascript:history.back()" class="theme-back-btn"><i class="bi bi-arrow-left me-1"></i> Back</a>
 </div>
 
-@if (!Model.Any())
-{
-    <div class="empty-state">
-        <div class="mb-4">
-            <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
-                <i class="bi bi-box-seam text-muted" style="font-size: 3rem;"></i>
-            </div>
-        </div>
-        <h4 class="fw-bold">Your inventory is empty</h4>
-        <p class="text-muted mb-4">Start adding your beautiful collection of shoes to the platform.</p>
-        <a asp-action="Create" class="btn btn-primary px-5 py-3 rounded-pill fw-bold">
-            Create First Product
+<div class="page-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="mb-0 fw-bold" style="color: #1F1F1F;">All Products</h5>
+        <a asp-action="Create" class="btn-custom-primary">
+            <i class="bi bi-plus-circle me-1"></i> Add New Product
         </a>
     </div>
-}
-else
-{
-    <div class="row g-4">
-        @foreach (var product in Model)
-        {
-            <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="product-card">
-                    <div class="product-image-wrapper">
-                        <img src="http://localhost:5190@(product.ImageUrl)"
-                             alt="@product.Name"
-                             class="product-image"
-                             onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop'" />
-                        
-                        @if (product.IsEidOffer)
-                        {
-                            <span class="badge-premium bg-warning text-dark">
-                                <i class="bi bi-stars me-1"></i> Eid Offer
-                            </span>
-                        }
-                        
-                        <div class="action-overlay">
-                            <a asp-action="Edit" asp-route-id="@product.Id" class="btn-action-icon" title="Edit Product">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <a asp-action="Details" asp-route-id="@product.Id" class="btn-action-icon" title="View Details">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@product.Id" 
-                               class="btn-action-icon ms-auto text-danger" 
-                               title="Delete Product">
-                                <i class="bi bi-trash3"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="p-4 flex-grow-1 d-flex flex-column">
-                        <div class="mb-2">
-                            <h6 class="fw-bold text-truncate mb-1" style="font-size: 1rem;">@product.Name</h6>
-                            <div class="d-flex align-items-center gap-2">
-                                @if (product.IsFeatured)
+
+    <!-- Filter Form Placeholder (Currently just UI, logic can be added later) -->
+    <form method="get" asp-action="Index" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <select class="filter-input" name="categoryId">
+                <option value="">All Categories</option>
+                <!-- Populate with ViewBag.Categories if available -->
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="filter-input" name="productTypeId">
+                <option value="">All Types</option>
+                <option value="Regular">Regular</option>
+                <option value="New Arrival">New Arrival</option>
+                <option value="Best Seller">Best Seller</option>
+                <option value="Clearance">Clearance</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="query" class="filter-input" placeholder="Search product name..." />
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn-custom-primary flex-grow-1" style="box-shadow: none;">Filter</button>
+            <a asp-action="Index" class="theme-back-btn flex-grow-1 text-center" style="padding-top: 0.55rem;">Clear Filter</a>
+        </div>
+    </form>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success d-flex align-items-center mb-4" style="border-radius: 10px; font-size: 0.9rem;">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center mb-4" style="border-radius: 10px; font-size: 0.9rem;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th style="width:60px; text-align: center;">SL No</th>
+                    <th style="width:80px; text-align: center;">Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Price</th>
+                    <th>Offer %</th>
+                    <th>Offer Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Approval</th>
+                    <th style="width: 220px; text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var sl = 1; }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="12" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-2 d-block mb-2 text-light"></i>
+                            No products found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model)
+                    {
+                        var imageUrl = !string.IsNullOrEmpty(item.ImageUrl) 
+                            ? (item.ImageUrl.StartsWith("http") ? item.ImageUrl : $"http://localhost:5190{item.ImageUrl}") 
+                            : "/images/placeholder.png";
+
+                        <tr>
+                            <td class="text-center fw-bold text-muted">@(sl++)</td>
+                            <td class="text-center">
+                                <img src="@imageUrl" class="img-thumbnail-custom" alt="Product" />
+                            </td>
+                            <td class="fw-bold" style="color: #2B2B2B;">@item.Name</td>
+                            <td class="text-muted">@(string.IsNullOrEmpty(item.CategoryName) ? $"ID: {item.CategoryId}" : item.CategoryName)</td>
+                            <td><span class="badge bg-light text-dark border">@item.ProductTypeName</span></td>
+                            <td>
+                                @if (item.OfferPercentage > 0)
                                 {
-                                    <span class="badge bg-primary bg-opacity-10 text-primary small" style="font-size: 0.65rem;">Featured</span>
-                                }
-                                <span class="badge bg-light text-muted small" style="font-size: 0.65rem;">Stock: In Stock</span>
-                            </div>
-                        </div>
-                        
-                        <p class="text-muted small mb-3 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            @product.Description
-                        </p>
-                        
-                        <div class="d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
-                            <div class="price-container">
-                                @if (product.DiscountPrice.HasValue && product.DiscountPrice > 0)
-                                {
-                                    <span class="price-tag">৳@product.DiscountPrice</span>
-                                    <span class="price-old ms-2">৳@product.Price</span>
+                                    <del class="text-muted" style="font-size: 0.75rem;">৳@item.Price.ToString("#,##0.00")</del>
                                 }
                                 else
                                 {
-                                    <span class="price-tag">৳@product.Price</span>
+                                    <span class="fw-bold text-dark">৳@item.Price.ToString("#,##0.00")</span>
                                 }
-                            </div>
-                            <div class="text-muted small">
-                                <i class="bi bi-tag-fill me-1"></i> Shoes
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
+                            </td>
+                            <td>
+                                @if (item.OfferPercentage > 0)
+                                {
+                                    <span class="text-success fw-bold">@item.OfferPercentage%</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.OfferPercentage > 0)
+                                {
+                                    <span class="fw-bold text-danger">৳@item.DiscountPrice?.ToString("#,##0.00")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge @(item.StockQuantity <= 10 ? "badge-stock-low" : "badge-stock-ok")">
+                                    @item.StockQuantity Units
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge @(item.Status == "Active" ? "badge-status-active" : "badge-status-inactive")">
+                                    @item.Status
+                                </span>
+                            </td>
+                            <td>
+                                @if (item.IsApproved)
+                                {
+                                    <span class="badge bg-success" style="font-size:0.7rem;"><i class="bi bi-check-circle me-1"></i> Yes</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning text-dark" style="font-size:0.7rem;"><i class="bi bi-clock me-1"></i> Pending</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="action-btn action-btn-details"><i class="bi bi-eye"></i> Details</a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn action-btn-edit"><i class="bi bi-pencil-square"></i> Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn action-btn-delete"><i class="bi bi-trash3"></i> Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
-}
+</div>

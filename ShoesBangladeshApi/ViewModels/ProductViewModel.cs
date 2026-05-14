@@ -35,17 +35,28 @@ namespace ShoesBangladesh.API.ViewModels
         public List<string> AdditionalImages { get; set; } = new();
 
         public string AvailableSizesJson { get; set; } = "[]";
-        public List<string> AvailableSizes { get; set; } = new();
+        private List<string>? _availableSizes;
+        public List<string> AvailableSizes 
+        { 
+            get => _availableSizes ?? (string.IsNullOrEmpty(AvailableSizesJson) ? new List<string>() : System.Text.Json.JsonSerializer.Deserialize<List<string>>(AvailableSizesJson) ?? new List<string>());
+            set { _availableSizes = value; AvailableSizesJson = System.Text.Json.JsonSerializer.Serialize(value); }
+        }
 
         public string SizeQuantitiesJson { get; set; } = "{}";
-        public Dictionary<string, int> SizeQuantities { get; set; } = new();
+        private Dictionary<string, int>? _sizeQuantities;
+        public Dictionary<string, int> SizeQuantities 
+        { 
+            get => _sizeQuantities ?? (string.IsNullOrEmpty(SizeQuantitiesJson) ? new Dictionary<string, int>() : System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, int>>(SizeQuantitiesJson) ?? new Dictionary<string, int>());
+            set { _sizeQuantities = value; SizeQuantitiesJson = System.Text.Json.JsonSerializer.Serialize(value); }
+        }
 
         public bool IsEidOffer { get; set; }
         public bool IsFeatured { get; set; }
         public bool IsApproved { get; set; }
 
         public string Status { get; set; } = "Active";
-        public string ProductType { get; set; } = "Regular";
+        public int ProductTypeId { get; set; }
+        public string ProductTypeName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category is required.")]
         public int CategoryId { get; set; }

@@ -34,6 +34,19 @@ namespace ShoesBangladesh.API.Data
             }
             var categories = context.Categories.ToList();
 
+            // 1.1 Seed ProductTypes
+            if (!context.ProductTypes.Any())
+            {
+                context.ProductTypes.AddRange(
+                    new ProductType { Name = "Regular" },
+                    new ProductType { Name = "New Arrival" },
+                    new ProductType { Name = "Best Seller" },
+                    new ProductType { Name = "Clearance" }
+                );
+                context.SaveChanges();
+            }
+            var productTypes = context.ProductTypes.ToList();
+
             // 2. Seed SystemSettings
             if (!context.SystemSettings.Any())
             {
@@ -89,9 +102,9 @@ namespace ShoesBangladesh.API.Data
             if (!context.Products.Any())
             {
                 context.Products.AddRange(
-                    new Product { Name = "Sport Runner X1", Description = "High performance running shoes", Price = 2500, DiscountPrice = 2200, StockQuantity = 50, CategoryId = categories[0].Id, ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", IsFeatured = true },
-                    new Product { Name = "Classic Oxford", Description = "Elegant leather shoes", Price = 3500, DiscountPrice = 3200, StockQuantity = 30, CategoryId = categories[0].Id, ImageUrl = "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400", IsFeatured = true },
-                    new Product { Name = "Summer Breeze Sandals", Description = "Comfortable sandals", Price = 1200, DiscountPrice = 1000, StockQuantity = 100, CategoryId = categories[1].Id, ImageUrl = "https://images.unsplash.com/photo-1603487759130-10029bc04294?w=400", IsEidOffer = true }
+                    new Product { Name = "Sport Runner X1", Description = "High performance running shoes", Price = 2500, DiscountPrice = 2200, StockQuantity = 50, CategoryId = categories[0].Id, ProductTypeId = productTypes[0].Id, ImageUrl = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400", IsFeatured = true },
+                    new Product { Name = "Classic Oxford", Description = "Elegant leather shoes", Price = 3500, DiscountPrice = 3200, StockQuantity = 30, CategoryId = categories[0].Id, ProductTypeId = productTypes[0].Id, ImageUrl = "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=400", IsFeatured = true },
+                    new Product { Name = "Summer Breeze Sandals", Description = "Comfortable sandals", Price = 1200, DiscountPrice = 1000, StockQuantity = 100, CategoryId = categories[1].Id, ProductTypeId = productTypes[0].Id, ImageUrl = "https://images.unsplash.com/photo-1603487759130-10029bc04294?w=400", IsEidOffer = true }
                 );
                 context.SaveChanges();
             }

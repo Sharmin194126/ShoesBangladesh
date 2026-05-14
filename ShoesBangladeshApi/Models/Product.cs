@@ -47,7 +47,8 @@ namespace ShoesBangladesh.API.Models
         public bool IsApproved { get; set; }
         
         public string Status { get; set; } = "Active";
-        public string ProductType { get; set; } = "Regular";
+        public int ProductTypeId { get; set; }
+        public ProductType? ProductType { get; set; }
 
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
