@@ -96,7 +96,7 @@
         transition: all 0.2s;
         box-shadow: var(--shadow);
     }
-    .quick-manage-btn:hover { background: var(--gray-100); border-color: var(--gray-300); color: var(--charcoal); transform: translateY(-1px); }
+    .quick-manage-btn:hover { background: #FFEBEE; border-color: #FECACA; color: #C40000; transform: translateY(-1px); }
     .quick-manage-btn .btn-icon { width: 28px; height: 28px; border-radius: 7px; background: #FFEBEE; color: var(--red); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; margin-right: 10px; flex-shrink: 0; }
     .quick-manage-btn .bi-chevron-right { font-size: 0.65rem; color: var(--gray-300); }
 
@@ -145,13 +145,10 @@
 <div class="dashboard-container py-4">
     <!-- Header -->
     <div class="d-flex align-items-center gap-3 mb-4">
-        <div style="background: #FEE2E2; color: #C40000; padding: 10px; border-radius: 8px;"><i class="bi bi-bar-chart-fill fs-4"></i></div>
+        <div style="background: #FFEBEE; color: #C40000; padding: 10px; border-radius: 8px;"><i class="bi bi-bar-chart-fill fs-4"></i></div>
         <div>
-            <h1 class="fw-bold fs-3 mb-0">Admin Dashboard Overview</h1>
+            <h1 class="fw-bold fs-3 mb-0" style="color: #1F1F1F;">Admin Dashboard Overview</h1>
             <p class="text-muted small mb-0">Welcome back, admin! Here's what's happening with your store today.</p>
-        </div>
-        <div class="ms-auto">
-            <button class="btn btn-danger px-4 rounded-pill fw-bold" style="background: #C40000; border: none;"><i class="bi bi-person-vcard me-2"></i> Account Profile</button>
         </div>
     </div>
 
@@ -221,7 +218,7 @@
 
     <!-- Quick Management -->
     <div class="mb-4">
-        <div class="section-label">Quick Management</div>
+        <div class="section-label" style="font-size: 0.82rem; font-weight: 800; color: #1F1F1F; letter-spacing: 0.3px;"><span style="display:inline-block; width:3px; height:16px; background:#C40000; border-radius:2px; margin-right:8px; vertical-align:middle;"></span>Quick Management</div>
         <div class="row g-2">
             <div class="col-md-3"><a href="#" class="quick-manage-btn"><span class="btn-icon"><i class="bi bi-person-workspace"></i></span> Employee Goal Set <i class="bi bi-chevron-right"></i></a></div>
             <div class="col-md-3"><a href="#" class="quick-manage-btn"><span class="btn-icon"><i class="bi bi-people-fill"></i></span> Customers <i class="bi bi-chevron-right"></i></a></div>
@@ -241,7 +238,7 @@
                 <div class="card-header-custom mb-3">
                     <div>
                         <span class="text-muted fw-bold small text-uppercase">Product Sales</span>
-                        <h2 class="fw-extrabold mb-0">৳0</h2>
+                        <h2 class="fw-extrabold mb-0" style="font-size: 2rem; font-weight: 900; color: #1F1F1F;">৳0</h2>
                         <div class="d-flex gap-4 mt-2 small text-muted fw-bold">
                             <div>Total Amount<br><b class="text-dark">৳0</b></div>
                             <div>Total Pieces<br><b class="text-dark">0</b></div>
@@ -257,7 +254,7 @@
         <div class="col-xl-3">
             <div class="dashboard-card text-center">
                 <div class="card-header-custom">
-                    <span class="card-title-custom"><i class="bi bi-award-fill"></i> Sales Goal</span>
+                    <span class="card-title-custom" style="font-size: 1.05rem; font-weight: 800;"><i class="bi bi-award-fill"></i> Sales Goal</span>
                     <div class="d-flex gap-2">
                         <span class="small fw-bold text-muted border px-2 rounded-pill">2026</span>
                         <a href="#" class="text-danger small fw-bold text-decoration-none">History</a>
@@ -288,7 +285,7 @@
         <div class="col-xl-4">
             <div class="dashboard-card">
                 <div class="card-header-custom">
-                    <span class="card-title-custom"><i class="bi bi-fire text-warning"></i> Top Moving Products</span>
+                    <span class="card-title-custom" style="font-size: 1.05rem; font-weight: 800;"><i class="bi bi-fire text-warning"></i> Top Moving Products</span>
                     <a href="#" class="btn btn-link btn-sm text-danger text-decoration-none fw-bold p-0">View Full Report</a>
                 </div>
                 <div class="product-list">

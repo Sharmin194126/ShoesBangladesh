@@ -112,7 +112,7 @@
             font-weight: 600;
         }
 
-        /* Scrollable nav */
+        /* Sidebar scroll */
         .sidebar-scroll {
             flex: 1;
             overflow-y: auto;
@@ -122,6 +122,38 @@
 
         .sidebar-scroll::-webkit-scrollbar { width: 3px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 10px; }
+
+        /* Admin profile section in sidebar */
+        .sidebar-admin-profile {
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            background: var(--gray-100);
+        }
+
+        .sidebar-admin-profile img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-300);
+            flex-shrink: 0;
+        }
+
+        .sidebar-admin-profile .admin-name-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        .sidebar-admin-profile .admin-role-text {
+            font-size: 0.62rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
 
         .nav-group-title {
             padding: 1rem 1.25rem 0.35rem;
@@ -133,7 +165,6 @@
         }
 
         .nav-list { list-style: none; padding: 0; margin: 0; }
-
         .nav-list li { padding: 1px 0.6rem; }
 
         .nav-link-item {
@@ -157,10 +188,13 @@
             flex-shrink: 0;
         }
 
+        /* Light red hover on sidebar nav */
         .nav-link-item:hover {
-            background: var(--gray-100);
-            color: var(--gray-900);
+            background: #FFEBEE;
+            color: var(--red-primary);
         }
+
+        .nav-link-item:hover i { color: var(--red-primary); }
 
         .nav-link-item.active {
             background: var(--red-tint);
@@ -243,7 +277,7 @@
 
         .btn-toggle:hover { background: var(--gray-200); color: var(--gray-900); }
 
-        /* Search */
+        /* Search - Light Red */
         .search-box {
             position: relative;
             max-width: 340px;
@@ -255,7 +289,7 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray-400);
+            color: var(--red-primary);
             font-size: 0.85rem;
         }
 
@@ -263,8 +297,8 @@
             width: 100%;
             padding: 0.5rem 1rem 0.5rem 2.2rem;
             border-radius: var(--radius-sm);
-            border: 1px solid var(--gray-200);
-            background: var(--gray-100);
+            border: 1.5px solid #FECACA;
+            background: #FFEBEE;
             font-size: 0.82rem;
             color: var(--gray-900);
             font-family: 'Inter', sans-serif;
@@ -272,8 +306,8 @@
             transition: 0.2s;
         }
 
-        .search-input::placeholder { color: var(--gray-400); }
-        .search-input:focus { border-color: var(--gray-300); background: var(--white); }
+        .search-input::placeholder { color: #E57373; }
+        .search-input:focus { border-color: var(--red-primary); background: #FFF5F5; box-shadow: 0 0 0 3px rgba(196,0,0,0.08); }
 
         /* Topbar elements */
         .lang-btn {
@@ -403,6 +437,15 @@
             <div class="brand-info">
                 <div class="brand-name">Shoes Bangladesh</div>
                 <div class="brand-role">Admin Panel</div>
+            </div>
+        </div>
+
+        <!-- Admin Profile Section -->
+        <div class="sidebar-admin-profile">
+            <img src="https://ui-avatars.com/api/?name=Admin&background=C40000&color=fff" alt="Admin">
+            <div>
+                <div class="admin-name-text">@User.Identity?.Name?.Split('@')[0] ?? "Admin"</div>
+                <div class="admin-role-text">System Administrator</div>
             </div>
         </div>
 
