@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ShoesBangladesh.API.ViewModels;
+using ShoesBangladesh.Web.Models;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -70,11 +71,14 @@ namespace ShoesBangladeshWebApp.Controllers
                 var data = JsonSerializer.Deserialize<LandingPageResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 return View(data?.Settings);
             }
-            return RedirectToAction("Index");
+            
+            var error = await response.Content.ReadAsStringAsync();
+            ViewBag.ErrorMessage = $"API Request Failed: {error}";
+            return View("Error", new ErrorViewModel { RequestId = response.StatusCode.ToString() });
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage)
+        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -111,6 +115,24 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     settings.HeroBgImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.HeroBgImageUrl;
+                }
+            }
+
+            // 3. Handle Banner Image Upload
+            if (bannerImage != null && bannerImage.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = bannerImage.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(bannerImage.ContentType);
+                form.Add(streamContent, "file", bannerImage.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    settings.BannerImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.BannerImageUrl;
                 }
             }
 

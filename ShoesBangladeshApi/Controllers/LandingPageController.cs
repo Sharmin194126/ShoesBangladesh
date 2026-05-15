@@ -5,8 +5,11 @@ using ShoesBangladesh.API.Models;
 using ShoesBangladesh.API.ViewModels;
 using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 
+// API Controller for Landing Page Management
 namespace ShoesBangladesh.API.Controllers
 {
     [Route("api/[controller]")]
@@ -43,7 +46,13 @@ namespace ShoesBangladesh.API.Controllers
                         ProductSectionDescription = settings?.ProductSectionDescription ?? "Discover our latest and most exclusive footwear collection.",
                         FacebookPageLink = settings?.FacebookPageLink ?? "#",
                         HeroImageUrl = settings?.HeroImageUrl ?? "/images/hero-shoe.png",
-                        HeroBgImageUrl = settings?.HeroBgImageUrl ?? "/images/hero-bg.png"
+                        HeroBgImageUrl = settings?.HeroBgImageUrl ?? "/images/hero-bg.png",
+                        BannerImageUrl = settings?.BannerImageUrl ?? "/images/banner-red.png",
+                        BannerTitle = settings?.BannerTitle ?? "Classic Red Series",
+                        BannerDescription = settings?.BannerDescription ?? "Experience ultimate comfort with our premium collection.",
+                        OfferCardTitle = settings?.OfferCardTitle ?? "25%",
+                        OfferCardSubtitle = settings?.OfferCardSubtitle ?? "EXTRA OFF",
+                        OfferCardCouponCode = settings?.OfferCardCouponCode ?? "Use Code: EID2024"
                     },
 
                     Categories = categories.Select(c => new CategoryDTO { Id = c.Id, Name = c.Name }).ToList(),
@@ -92,6 +101,12 @@ namespace ShoesBangladesh.API.Controllers
             existing.FacebookPageLink = settings.FacebookPageLink;
             existing.HeroImageUrl = settings.HeroImageUrl ?? existing.HeroImageUrl;
             existing.HeroBgImageUrl = settings.HeroBgImageUrl ?? existing.HeroBgImageUrl;
+            existing.BannerImageUrl = settings.BannerImageUrl ?? existing.BannerImageUrl;
+            existing.BannerTitle = settings.BannerTitle;
+            existing.BannerDescription = settings.BannerDescription;
+            existing.OfferCardTitle = settings.OfferCardTitle;
+            existing.OfferCardSubtitle = settings.OfferCardSubtitle;
+            existing.OfferCardCouponCode = settings.OfferCardCouponCode;
 
             await _context.SaveChangesAsync();
             return Ok(new { IsSuccess = true, Message = "Settings updated successfully." });

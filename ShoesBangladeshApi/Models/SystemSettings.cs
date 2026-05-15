@@ -22,5 +22,15 @@ namespace ShoesBangladesh.API.Models
         
         public string HeroImageUrl { get; set; } = "/images/hero-shoe.png";
         public string HeroBgImageUrl { get; set; } = "/images/hero-bg.png";
+
+        // New fields for the middle banner section
+        public string? BannerImageUrl { get; set; } = "/images/banner-red.png";
+        public string? BannerTitle { get; set; } = "Classic Red Series";
+        public string? BannerDescription { get; set; } = "Experience ultimate comfort with our premium collection.";
+        
+        // New fields for the side offer card
+        public string? OfferCardTitle { get; set; } = "25%";
+        public string? OfferCardSubtitle { get; set; } = "EXTRA OFF";
+        public string? OfferCardCouponCode { get; set; } = "Use Code: EID2024";
     }
 }

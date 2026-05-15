@@ -25,7 +25,7 @@ namespace ShoesBangladeshWebApp.Controllers
             if (!response.IsSuccessStatusCode)
             {
                 var errorBody = await response.Content.ReadAsStringAsync();
-                ViewBag.ErrorMessage = $"API Request Failed: {errorBody}";
+                ViewBag.ErrorMessage = $"API Request Failed (Status: {response.StatusCode}): {errorBody}";
                 return View("Error", new ErrorViewModel { RequestId = response.StatusCode.ToString() });
             }
 
