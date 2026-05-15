@@ -183,50 +183,106 @@
         @RenderBody()
     </main>
 
-    <footer class="footer-premium">
-        <div class="container">
+    <footer style="
+        background-color: #0a0a0a;
+        background-image: linear-gradient(rgba(10,10,10,0.88), rgba(10,10,10,0.88));
+        color: #fff;
+        padding: 5rem 0 0;
+        border-top: 2px solid #D4AF37;
+        margin-top: 0;
+    ">
+        <div class="container pb-5">
             <div class="row g-5">
                 <div class="col-lg-4">
-                    <span class="footer-logo">SHOES<span class="text-primary">BD</span></span>
-                    <p class="text-muted mb-4">Premium footwear for the modern generation. Quality, comfort, and style in every step.</p>
-                    <div class="d-flex">
-                        <a href="#" class="social-circle"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-circle"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="social-circle"><i class="bi bi-twitter-x"></i></a>
+                    <div style="font-size:1.8rem; font-weight:900; letter-spacing:-1px; margin-bottom:1rem;">
+                        SHOES<span style="color:#D4AF37">BD</span>
                     </div>
-                </div>
-                <div class="col-6 col-lg-2 ms-auto">
-                    <h6 class="fw-bold mb-4">Shop</h6>
-                    <a href="#" class="footer-link">New Arrivals</a>
-                    <a href="#" class="footer-link">Best Sellers</a>
-                    <a href="#" class="footer-link">Men</a>
-                    <a href="#" class="footer-link">Women</a>
+                    <p style="color:rgba(255,255,255,0.6); line-height:1.8;">Your trusted destination for premium fashion and quality footwear in Bangladesh.</p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-whatsapp"></i></a>
+                    </div>
                 </div>
                 <div class="col-6 col-lg-2">
-                    <h6 class="fw-bold mb-4">Support</h6>
-                    <a href="#" class="footer-link">Help Center</a>
-                    <a href="#" class="footer-link">Shipping</a>
-                    <a href="#" class="footer-link">Returns</a>
-                    <a href="#" class="footer-link">Contact</a>
+                    <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Explore</h6>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Latest Shoes</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">New Arrivals</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Special Offers</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Track Order</a>
                 </div>
-                <div class="col-lg-3">
-                    <h6 class="fw-bold mb-4">Newsletter</h6>
-                    <p class="small text-muted mb-4">Get updates on new collections and special offers.</p>
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-dark border-0 text-white rounded-start-pill px-4" placeholder="Your email">
-                        <button class="btn btn-primary rounded-end-pill px-4">Join</button>
+                <div class="col-6 col-lg-2">
+                    <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Support</h6>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Terms of Service</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Privacy Policy</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Refund Policy</a>
+                    <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">FAQs</a>
+                </div>
+                <div class="col-lg-4">
+                    <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Newsletter</h6>
+                    <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:16px; border:1px solid rgba(212,175,55,0.2);">
+                        <p class="small mb-3" style="color:rgba(255,255,255,0.6);">Get the latest updates on new collections and exclusive offers.</p>
+                        <div class="input-group">
+                            <input type="email" id="footer-newsletter-email" class="form-control" placeholder="Your Email Address"
+                                   style="background:rgba(255,255,255,0.08); border:1px solid rgba(212,175,55,0.4); color:#fff;">
+                            <button class="btn btn-warning px-3" type="button" onclick="subscribeFooter()"><i class="bi bi-send"></i></button>
+                        </div>
+                        <div id="footer-newsletter-msg" class="small mt-2" style="display:none;"></div>
+                    </div>
+                    <div class="mt-4 ps-1">
+                        <p class="mb-2" style="color:rgba(255,255,255,0.6);"><i class="bi bi-geo-alt-fill me-2" style="color:#D4AF37"></i> Dhaka, Bangladesh</p>
+                        <p class="mb-2" style="color:rgba(255,255,255,0.6);"><i class="bi bi-envelope-fill me-2" style="color:#D4AF37"></i> info@shoesbangladesh.com</p>
+                        <p class="mb-0" style="color:rgba(255,255,255,0.6);"><i class="bi bi-telephone-fill me-2" style="color:#D4AF37"></i> +880 1234 56789</p>
                     </div>
                 </div>
             </div>
-            <div class="pt-5 mt-5 border-top border-secondary border-opacity-25 text-center text-muted small">
-                <p class="mb-0">&copy; @DateTime.Now.Year Shoes Bangladesh. All rights reserved.</p>
-            </div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding:1.5rem 0; text-align:center; color:rgba(255,255,255,0.4); font-size:0.85rem;">
+            &copy; @DateTime.Now.Year Shoes Bangladesh. All Rights Reserved.
         </div>
     </footer>
+    <style>
+        .footer-nav-link:hover { color: #D4AF37 !important; padding-left: 5px; }
+        input::placeholder { color: rgba(255,255,255,0.4) !important; }
+    </style>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        async function subscribeFooter() {
+            const emailInput = document.getElementById('footer-newsletter-email');
+            const msgEl = document.getElementById('footer-newsletter-msg');
+            const email = emailInput.value.trim();
+            if (!email) {
+                msgEl.innerText = 'Please enter a valid email.';
+                msgEl.style.color = '#ff4d4d';
+                msgEl.style.display = 'block';
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:5190/api/Newsletter/Subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(email)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    msgEl.innerText = '✓ Thank you for subscribing!';
+                    msgEl.style.color = '#4ade80';
+                    emailInput.value = '';
+                } else {
+                    msgEl.innerText = result.message || 'Already subscribed.';
+                    msgEl.style.color = '#facc15';
+                }
+            } catch {
+                msgEl.innerText = 'Error connecting. Please try again.';
+                msgEl.style.color = '#ff4d4d';
+            }
+            msgEl.style.display = 'block';
+        }
+    </script>
+
 </body>
 </html>
