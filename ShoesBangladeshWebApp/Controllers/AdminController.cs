@@ -77,6 +77,20 @@ namespace ShoesBangladeshWebApp.Controllers
             return View("Error", new ErrorViewModel { RequestId = response.StatusCode.ToString() });
         }
 
+        public async Task<IActionResult> NewsletterSubscribers()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Newsletter/Subscribers");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var subscribers = JsonSerializer.Deserialize<List<JsonElement>>(json);
+                return View(subscribers);
+            }
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage, IFormFile? logoImage)
         {

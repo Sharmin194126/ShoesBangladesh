@@ -429,9 +429,10 @@
                     <h6 class="footer-title mb-3">Newsletter</h6>
                     <p class="small text-white-50 mb-3">Get the latest updates on new collections and exclusive offers.</p>
                     <div class="input-group">
-                        <input type="text" class="form-control bg-transparent border-warning text-white" placeholder="Email Address">
-                        <button class="btn btn-warning px-3" type="button"><i class="bi bi-send"></i></button>
+                        <input type="email" id="newsletter-email" class="form-control bg-transparent border-warning text-white" placeholder="Email Address">
+                        <button class="btn btn-warning px-3" type="button" onclick="subscribeNewsletter()"><i class="bi bi-send"></i></button>
                     </div>
+                    <div id="newsletter-msg" class="small mt-2" style="display:none;"></div>
                 </div>
                 <div class="mt-4 ps-2">
                     <p class="text-white-50 mb-1"><i class="bi bi-geo-alt-fill text-warning me-2"></i> Dhaka, Bangladesh</p>
@@ -474,5 +475,42 @@
 
         setInterval(updateEidTimer, 1000);
         updateEidTimer();
+
+        async function subscribeNewsletter() {
+            const emailInput = document.getElementById('newsletter-email');
+            const msgEl = document.getElementById('newsletter-msg');
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                msgEl.innerText = "Please enter a valid email.";
+                msgEl.style.color = "#ff4d4d";
+                msgEl.style.display = "block";
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5190/api/Newsletter/Subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(email)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    msgEl.innerText = "Thank you for subscribing!";
+                    msgEl.style.color = "#28a745";
+                    emailInput.value = "";
+                } else {
+                    msgEl.innerText = result.message || result || "Subscription failed.";
+                    msgEl.style.color = "#ff4d4d";
+                }
+                msgEl.style.display = "block";
+            } catch (error) {
+                msgEl.innerText = "Error connecting to server.";
+                msgEl.style.color = "#ff4d4d";
+                msgEl.style.display = "block";
+            }
+        }
     </script>
 }

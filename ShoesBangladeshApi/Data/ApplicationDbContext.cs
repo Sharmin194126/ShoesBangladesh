@@ -23,6 +23,7 @@ namespace ShoesBangladesh.API.Data
         public DbSet<DisplaySection> DisplaySections { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Newsletter> Newsletters { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

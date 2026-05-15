@@ -1,0 +1,111 @@
+@using System.Text.Json
+@model List<JsonElement>
+
+@{
+    ViewData["Title"] = "Newsletter Subscribers";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-premium">Newsletter Subscribers</h2>
+        <span class="badge bg-premium px-3 py-2">Total: @Model.Count</span>
+    </div>
+
+    <div class="premium-page-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark-premium">
+                    <tr>
+                        <th style="width: 80px;">SL No</th>
+                        <th>Email Address</th>
+                        <th>Subscription Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">No subscribers found yet.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        int sl = 1;
+                        foreach (var sub in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@sl++</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm me-3 bg-light-premium text-premium d-flex align-items-center justify-content-center rounded-circle" style="width: 35px; height: 35px;">
+                                            <i class="bi bi-envelope"></i>
+                                        </div>
+                                        <span class="fw-semibold">@sub.GetProperty("email").GetString()</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="text-muted">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        @DateTime.Parse(sub.GetProperty("subscribedAt").GetString()).ToString("dd MMM yyyy, hh:mm tt")
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="confirmDelete(@sub.GetProperty("id").GetInt32())">
+                                        <i class="bi bi-trash"></i> Remove
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-premium { color: var(--premium-red); }
+    .bg-premium { background-color: var(--premium-red); color: white; }
+    .table-dark-premium { background-color: #1a1a1a; color: #d4af37; }
+    .bg-light-premium { background-color: rgba(208, 0, 0, 0.1); }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@@11"></script>
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This subscriber will be removed from the list.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, remove it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteSubscriber(id);
+                }
+            })
+        }
+
+        async function deleteSubscriber(id) {
+            try {
+                const response = await fetch(`http://localhost:5190/api/Newsletter/Unsubscribe/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    Swal.fire('Removed!', 'Subscriber has been removed.', 'success')
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Error!', 'Could not remove subscriber.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'Connection failed.', 'error');
+            }
+        }
+    </script>
+}

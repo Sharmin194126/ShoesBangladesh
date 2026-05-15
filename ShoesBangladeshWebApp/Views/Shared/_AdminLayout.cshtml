@@ -502,6 +502,12 @@
                         <i class="bi bi-megaphone"></i> FB Campaign Page
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="NewsletterSubscribers" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "NewsletterSubscribers" ? "active" : "")">
+                        <i class="bi bi-people"></i> Newsletter Subscribers
+                    </a>
+                </li>
             </ul>
 
             <div class="nav-group-title">Order Management</div>
