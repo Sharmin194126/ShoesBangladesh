@@ -36,7 +36,8 @@
         transition: all 0.25s;
         box-shadow: var(--shadow);
     }
-    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); border-color: var(--red); }
+    .stat-link { text-decoration: none; color: inherit; display: block; height: 100%; }
     .stat-icon-box { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
     .bg-soft-orange { background: #FFF3E0; color: #E65100; }
     .bg-soft-red    { background: #FFEBEE; color: #C62828; }
@@ -155,52 +156,60 @@
     <!-- Top 5 Cards Row -->
     <div class="row g-4 mb-4">
         <div class="col-xl col-md-4">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-soft-orange"><i class="bi bi-gift-fill"></i></div>
-                    <div>
-                        <span class="stat-label">Delivered Orders</span>
-                        <div class="stat-value">@Model.TotalDelivered</div>
+            <a asp-action="DeliveredOrders" class="stat-link">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-soft-orange"><i class="bi bi-gift-fill"></i></div>
+                        <div>
+                            <span class="stat-label">Delivered Orders</span>
+                            <div class="stat-value">@Model.TotalDelivered</div>
+                        </div>
                     </div>
+                    <div class="stat-meta text-end"><span class="growth-up">+20%</span><br><span class="text-muted">vs last week</span></div>
                 </div>
-                <div class="stat-meta text-end"><span class="growth-up">+20%</span><br><span class="text-muted">vs last week</span></div>
-            </div>
+            </a>
         </div>
         <div class="col-xl col-md-4">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-soft-red"><i class="bi bi-calendar-event-fill"></i></div>
-                    <div>
-                        <span class="stat-label">Pending Orders</span>
-                        <div class="stat-value">@Model.TotalPending</div>
+            <a asp-action="PendingOrders" class="stat-link">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-soft-red"><i class="bi bi-calendar-event-fill"></i></div>
+                        <div>
+                            <span class="stat-label">Pending Orders</span>
+                            <div class="stat-value">@Model.TotalPending</div>
+                        </div>
                     </div>
+                    <div class="stat-meta text-end"><span class="growth-up">+14%</span><br><span class="text-muted">vs last week</span></div>
                 </div>
-                <div class="stat-meta text-end"><span class="growth-up">+14%</span><br><span class="text-muted">vs last week</span></div>
-            </div>
+            </a>
         </div>
         <div class="col-xl col-md-4">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-soft-pink"><i class="bi bi-gear-fill"></i></div>
-                    <div>
-                        <span class="stat-label">In Processing</span>
-                        <div class="stat-value">@Model.TotalProcessing</div>
+            <a asp-action="ProcessingOrders" class="stat-link">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-soft-pink"><i class="bi bi-gear-fill"></i></div>
+                        <div>
+                            <span class="stat-label">In Processing</span>
+                            <div class="stat-value">@Model.TotalProcessing</div>
+                        </div>
                     </div>
+                    <div class="stat-meta text-end"><span class="growth-up">+16%</span><br><span class="text-muted">vs last week</span></div>
                 </div>
-                <div class="stat-meta text-end"><span class="growth-up">+16%</span><br><span class="text-muted">vs last week</span></div>
-            </div>
+            </a>
         </div>
         <div class="col-xl col-md-6">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon-box bg-soft-blue"><i class="bi bi-truck"></i></div>
-                    <div>
-                        <span class="stat-label">Shipped Orders</span>
-                        <div class="stat-value">@Model.TotalShipped</div>
+            <a asp-action="ShippedOrders" class="stat-link">
+                <div class="stat-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="stat-icon-box bg-soft-blue"><i class="bi bi-truck"></i></div>
+                        <div>
+                            <span class="stat-label">Shipped Orders</span>
+                            <div class="stat-value">@Model.TotalShipped</div>
+                        </div>
                     </div>
+                    <div class="stat-meta text-end"><span class="growth-up">+10%</span><br><span class="text-muted">vs last week</span></div>
                 </div>
-                <div class="stat-meta text-end"><span class="growth-up">+10%</span><br><span class="text-muted">vs last week</span></div>
-            </div>
+            </a>
         </div>
         <div class="col-xl col-md-6">
             <div class="revenue-card">

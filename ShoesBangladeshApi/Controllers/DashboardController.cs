@@ -324,5 +324,61 @@ namespace ShoesBangladesh.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        [HttpPost("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderStatusDTO model)
+        {
+            var order = await _context.Orders.FindAsync(model.OrderId);
+            if (order == null) return NotFound();
+
+            order.Status = model.Status;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = $"Order status updated to {model.Status}" });
+        }
+
+        [HttpGet("PaymentHistory")]
+        public async Task<ActionResult<List<PaymentHistoryViewModel>>> GetPaymentHistory()
+        {
+            var history = await _context.PaymentHistories
+                .Include(p => p.Order)
+                .ThenInclude(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .OrderByDescending(p => p.PaymentDate)
+                .ToListAsync();
+
+            var users = await _context.Users.ToListAsync();
+
+            return history.Select(p => new PaymentHistoryViewModel
+            {
+                Id = p.Id,
+                OrderId = p.OrderId,
+                TransactionId = p.TransactionId,
+                Amount = p.Amount,
+                GatewayName = p.GatewayName,
+                Status = p.Status,
+                CustomerName = p.CustomerName ?? users.FirstOrDefault(u => u.Id == p.Order.UserId)?.FullName,
+                CustomerAccount = p.CustomerAccount,
+                PaymentDate = p.PaymentDate,
+                Order = new OrderSummaryViewModel
+                {
+                    Id = p.Order.Id,
+                    CreatedAt = p.Order.OrderDate,
+                    CustomerName = users.FirstOrDefault(u => u.Id == p.Order.UserId)?.FullName ?? "Unknown",
+                    OrderDetails = p.Order.OrderDetails.Select(od => new OrderDetailSummaryViewModel
+                    {
+                        ProductName = od.Product?.Name ?? "Unknown",
+                        ProductImageUrl = od.Product?.ImageUrl ?? "",
+                        Quantity = od.Quantity,
+                        Price = od.PriceWithVat
+                    }).ToList()
+                }
+            }).ToList();
+        }
+    }
+
+    public class UpdateOrderStatusDTO
+    {
+        public int OrderId { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

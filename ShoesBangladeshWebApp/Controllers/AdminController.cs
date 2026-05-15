@@ -251,6 +251,24 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(new List<EmployeeViewModel>());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, string status)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var content = new StringContent(JsonSerializer.Serialize(new { OrderId = orderId, Status = status }), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/Dashboard/UpdateOrderStatus", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = $"Order #{orderId} status updated to {status}.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to update order status.";
+            }
+            return Redirect(Request.Headers["Referer"].ToString());
+        }
+
         public async Task<IActionResult> OrdersByStatus(string status)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
@@ -274,10 +292,16 @@ namespace ShoesBangladeshWebApp.Controllers
                 }
                 
                 ViewBag.Status = status;
-                return View(orders);
+                return View("OrdersByStatus", orders);
             }
-            return View(new List<RecentOrderViewModel>());
+            return View("OrdersByStatus", new List<RecentOrderViewModel>());
         }
+
+        public Task<IActionResult> PendingOrders() => OrdersByStatus("Pending");
+        public Task<IActionResult> ProcessingOrders() => OrdersByStatus("Processing");
+        public Task<IActionResult> ShippedOrders() => OrdersByStatus("Shipped");
+        public Task<IActionResult> DeliveredOrders() => OrdersByStatus("Delivered");
+        public Task<IActionResult> CancelledOrders() => OrdersByStatus("Cancelled");
 
         [HttpPost]
         public async Task<IActionResult> UpdateSalesGoal(int year, decimal goalAmount)

@@ -4,93 +4,258 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container-fluid py-4">
+<style>
+    :root {
+        --red: #C40000;
+        --charcoal: #1F1F1F;
+        --gray-100: #F5F5F5;
+        --gray-200: #ECECEC;
+        --gray-500: #9E9E9E;
+        --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .page-container { max-width: 1400px; margin: 0 auto; }
+
+    .premium-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--gray-200);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .table-premium thead th {
+        background: var(--charcoal) !important;
+        color: #fff !important;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 1.25rem 1rem;
+        border: none;
+    }
+
+    .table-premium tbody td {
+        font-size: 0.85rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+        color: #333;
+    }
+
+    .table-premium tbody tr:hover td { background: #FAFAFA; }
+
+    /* Badges */
+    .status-badge {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    .badge-delivered   { background: #E8F5E9; color: #2E7D32; }
+    .badge-processing  { background: #E3F2FD; color: #1565C0; }
+    .badge-pending     { background: #FFF8E1; color: #E65100; }
+    .badge-shipped     { background: #F3E5F5; color: #7B1FA2; }
+    .badge-cancelled   { background: #F5F5F5; color: #616161; }
+
+    .payment-badge {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+    .payment-paid { background: #C8E6C9; color: #1B5E20; }
+    .payment-unpaid { background: #FFCCBC; color: #BF360C; }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        border: 1px solid var(--gray-200);
+        color: var(--gray-500);
+        background: #fff;
+    }
+    .btn-action:hover {
+        background: var(--red);
+        color: #fff;
+        border-color: var(--red);
+        transform: translateY(-2px);
+    }
+
+    .header-icon {
+        width: 48px;
+        height: 48px;
+        background: #FFEBEE;
+        color: var(--red);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+</style>
+
+<div class="page-container py-4">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">@ViewBag.Status Orders</h2>
-            <p class="text-muted mb-0">Showing all orders currently in the "@ViewBag.Status" state.</p>
+        <div class="d-flex align-items-center gap-3">
+            <div class="header-icon">
+                <i class="bi @(ViewBag.Status == "Pending" ? "bi-clock-history" : ViewBag.Status == "Processing" ? "bi-gear-wide-connected" : ViewBag.Status == "Shipped" ? "bi-truck" : "bi-check2-circle")"></i>
+            </div>
+            <div>
+                <h1 class="fw-bold fs-3 mb-0">@ViewBag.Status Orders</h1>
+                <p class="text-muted small mb-0">Manage and track your @ViewBag.Status.ToLower() customer orders</p>
+            </div>
         </div>
         <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-bold">
+                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+            </a>
             <div class="dropdown">
-                <button class="btn btn-white shadow-sm border-0 rounded-3 dropdown-toggle" data-bs-toggle="dropdown">
-                    Filter by Status
+                <button class="btn btn-dark rounded-pill px-4 btn-sm fw-bold dropdown-toggle" data-bs-toggle="dropdown">
+                    Switch View
                 </button>
-                <ul class="dropdown-menu border-0 shadow-sm">
-                    <li><a class="dropdown-item" asp-action="OrdersByStatus" asp-route-status="Pending">Pending</a></li>
-                    <li><a class="dropdown-item" asp-action="OrdersByStatus" asp-route-status="Processing">Processing</a></li>
-                    <li><a class="dropdown-item" asp-action="OrdersByStatus" asp-route-status="Shipped">Shipped</a></li>
-                    <li><a class="dropdown-item" asp-action="OrdersByStatus" asp-route-status="Delivered">Delivered</a></li>
-                    <li><a class="dropdown-item" asp-action="OrdersByStatus" asp-route-status="Cancelled">Cancelled</a></li>
+                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3">
+                    <li><a class="dropdown-item py-2" asp-action="PendingOrders">Pending</a></li>
+                    <li><a class="dropdown-item py-2" asp-action="ProcessingOrders">Processing</a></li>
+                    <li><a class="dropdown-item py-2" asp-action="ShippedOrders">Shipped</a></li>
+                    <li><a class="dropdown-item py-2" asp-action="DeliveredOrders">Delivered</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2" asp-action="OrdersByStatus" asp-route-status="All">All Orders</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead style="background: #1F1F1F !important; color: #fff !important;">
-                        <tr>
-                            <th class="ps-4 border-0 py-3">Order ID</th>
-                            <th class="border-0 py-3">Customer</th>
-                            <th class="border-0 py-3">Date</th>
-                            <th class="border-0 py-3">Amount</th>
-                            <th class="border-0 py-3">Payment</th>
-                            <th class="border-0 py-3 pe-4 text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            @foreach (var order in Model)
-                            {
-                                <tr>
-                                    <td class="ps-4 fw-medium text-primary">#@order.OrderId</td>
-                                    <td>@order.CustomerName</td>
-                                    <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
-                                    <td class="fw-bold">৳@order.Amount.ToString("N0")</td>
-                                    <td>
-                                        @if (order.PaymentStatus == "Paid")
-                                        {
-                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">@order.PaymentStatus</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3">@order.PaymentStatus</span>
-                                        }
-                                        <small class="text-muted ms-1">(@order.PaymentMethod)</small>
-                                    </td>
-                                    <td class="pe-4 text-end">
-                                        <div class="btn-group">
-                                            <button class="btn btn-light btn-sm rounded-3 me-2">Details</button>
-                                            <div class="dropdown">
-                                                <button class="btn btn-light btn-sm rounded-3 dropdown-toggle" data-bs-toggle="dropdown">Status</button>
-                                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-                                                    <li><a class="dropdown-item" href="#">Move to Processing</a></li>
-                                                    <li><a class="dropdown-item" href="#">Mark as Shipped</a></li>
-                                                    <li><a class="dropdown-item" href="#">Mark as Delivered</a></li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item text-danger" href="#">Cancel Order</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
+    <!-- Stats Summary (Optional but looks good) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="premium-card p-3 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-bold text-uppercase">Total @ViewBag.Status</span>
+                    <h3 class="fw-bold mb-0">@Model.Count</h3>
+                </div>
+                <div class="text-danger opacity-25"><i class="bi bi-cart-check fs-1"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="premium-card">
+        <div class="table-responsive">
+            <table class="table table-premium mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Order ID</th>
+                        <th>Customer Details</th>
+                        <th>Date & Time</th>
+                        <th>Amount</th>
+                        <th>Payment Status</th>
+                        <th>Current Status</th>
+                        <th class="pe-4 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var order in Model)
                         {
                             <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
-                                    <i class="bi bi-cart-x fs-1 d-block mb-3 opacity-50"></i>
-                                    No orders found with status "@ViewBag.Status".
+                                <td class="ps-4">
+                                    <span class="fw-bold text-danger">#@order.OrderId</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-sm" style="width:32px; height:32px; background:#f0f0f0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold;">
+                                            @order.CustomerName.Substring(0, 1)
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">@order.CustomerName</div>
+                                            <div class="text-muted" style="font-size: 0.7rem;">@order.ShippingAddress</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">@order.OrderDate.ToString("MMM dd, yyyy")</div>
+                                    <div class="text-muted" style="font-size: 0.7rem;">@order.OrderDate.ToString("hh:mm tt")</div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">৳@order.Amount.ToString("#,##0")</div>
+                                </td>
+                                <td>
+                                    <span class="payment-badge @(order.PaymentStatus == "Paid" ? "payment-paid" : "payment-unpaid")">
+                                        @order.PaymentStatus
+                                    </span>
+                                    <div class="text-muted mt-1" style="font-size: 0.65rem;">@order.PaymentMethod</div>
+                                </td>
+                                <td>
+                                    <span class="status-badge @(order.Status == "Delivered" ? "badge-delivered" : order.Status == "Processing" ? "badge-processing" : order.Status == "Shipped" ? "badge-shipped" : order.Status == "Cancelled" ? "badge-cancelled" : "badge-pending")">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="#" class="btn-action" title="View Details"><i class="bi bi-eye-fill"></i></a>
+                                        <div class="dropdown">
+                                            <button class="btn-action" data-bs-toggle="dropdown" title="Update Status">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg">
+                                                <li>
+                                                    <form asp-action="UpdateOrderStatus" method="post">
+                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                        <input type="hidden" name="status" value="Processing" />
+                                                        <button type="submit" class="dropdown-item">Mark as Processing</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form asp-action="UpdateOrderStatus" method="post">
+                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                        <input type="hidden" name="status" value="Shipped" />
+                                                        <button type="submit" class="dropdown-item">Mark as Shipped</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form asp-action="UpdateOrderStatus" method="post">
+                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                        <input type="hidden" name="status" value="Delivered" />
+                                                        <button type="submit" class="dropdown-item">Mark as Delivered</button>
+                                                    </form>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <form asp-action="UpdateOrderStatus" method="post">
+                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                                        <input type="hidden" name="status" value="Cancelled" />
+                                                        <button type="submit" class="dropdown-item text-danger">Cancel Order</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-inbox fs-1"></i></div>
+                                <h5 class="text-muted">No @ViewBag.Status.ToLower() orders found</h5>
+                                <p class="text-muted small">When customers place orders, they will appear here.</p>
+                                <a asp-action="OrdersByStatus" asp-route-status="All" class="btn btn-sm btn-outline-danger rounded-pill px-4 mt-2">View All Orders</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

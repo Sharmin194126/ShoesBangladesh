@@ -498,6 +498,34 @@
                 </li>
             </ul>
 
+            <div class="nav-group-title">Order Management</div>
+            <ul class="nav-list">
+                <li>
+                    <a asp-controller="Admin" asp-action="PendingOrders" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "PendingOrders" ? "active" : "")">
+                        <i class="bi bi-clock-history"></i> Pending Orders
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="ProcessingOrders" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ProcessingOrders" ? "active" : "")">
+                        <i class="bi bi-gear-wide-connected"></i> Processing Orders
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="ShippedOrders" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ShippedOrders" ? "active" : "")">
+                        <i class="bi bi-truck"></i> Shipped Orders
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="DeliveredOrders" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "DeliveredOrders" ? "active" : "")">
+                        <i class="bi bi-check2-circle"></i> Delivered Orders
+                    </a>
+                </li>
+            </ul>
+
             <div class="nav-group-title">Operations</div>
             <ul class="nav-list">
                 <li><a href="#" class="nav-link-item"><i class="bi bi-people"></i> Manage Customers</a></li>
