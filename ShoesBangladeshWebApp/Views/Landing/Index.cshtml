@@ -19,11 +19,13 @@
     /* Hero Section */
     .hero-luxury {
         position: relative;
-        height: 100vh;
+        min-height: 90vh;
         display: flex;
         align-items: center;
-        background: linear-gradient(135deg, rgba(74, 0, 0, 0.9) 0%, rgba(10, 10, 10, 0.9) 100%), url('@ResolveUrl(Model.Settings.HeroBgImageUrl)');
-        background-size: cover;
+        background-color: #0a0a0a;
+        background-image: linear-gradient(135deg, rgba(74, 0, 0, 0.85) 0%, rgba(10, 10, 10, 0.95) 100%), url('@ResolveUrl(Model.Settings.HeroBgImageUrl)');
+        background-size: 100% auto;
+        background-repeat: no-repeat;
         background-position: center;
         overflow: hidden;
     }
@@ -32,7 +34,15 @@
         position: relative;
         z-index: 10;
         width: 100%;
-        padding: 0 4rem;
+        padding: 4rem;
+    }
+
+    .landing-logo {
+        position: absolute;
+        top: 2rem;
+        left: 4rem;
+        height: 60px;
+        z-index: 100;
     }
 
     .hero-tagline {
@@ -46,7 +56,7 @@
     }
 
     .hero-headline {
-        font-size: 5rem;
+        font-size: 3.5rem; /* Decreased font size as requested */
         font-weight: 900;
         line-height: 1.1;
         margin-bottom: 1.5rem;
@@ -57,7 +67,7 @@
     }
 
     .discount-text {
-        font-size: 3rem;
+        font-size: 2.5rem;
         font-weight: 800;
         color: #fff;
         margin-bottom: 2rem;
@@ -66,11 +76,11 @@
 
     .hero-shoe-image {
         position: absolute;
-        right: 5%;
+        right: 8%;
         top: 50%;
         transform: translateY(-50%);
-        width: 45%;
-        max-height: 500px;
+        width: 40%;
+        max-height: 450px;
         object-fit: contain;
         z-index: 15;
         animation: float 4s ease-in-out infinite;
@@ -80,7 +90,7 @@
     /* Countdown Timer */
     .countdown-wrapper {
         display: flex;
-        gap: 1.5rem;
+        gap: 1rem;
         margin-bottom: 3rem;
     }
 
@@ -88,19 +98,20 @@
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(212, 175, 55, 0.3);
-        padding: 1.25rem;
-        border-radius: 20px;
-        min-width: 90px;
+        padding: 1rem;
+        border-radius: 15px;
+        min-width: 80px;
         text-align: center;
         transition: var(--transition);
     }
 
     .timer-val {
-        font-size: 2rem;
+        font-size: 1.8rem;
         font-weight: 900;
         display: block;
         color: var(--gold-accent);
     }
+    .timer-label { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
 
     /* Banner Section (Classic Red) */
     .banner-grid {
@@ -148,6 +159,70 @@
         border: 1px solid var(--gold-accent);
     }
 
+    /* Product Section */
+    .product-section {
+        background: #0f0f0f;
+        padding: 6rem 4rem;
+    }
+
+    .luxury-card {
+        background: #1a1a1a;
+        border-radius: 30px;
+        padding: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: var(--transition);
+        height: 100%;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+    }
+    .luxury-card:hover {
+        border-color: var(--gold-accent);
+        transform: translateY(-10px);
+    }
+
+    .product-img-wrapper {
+        width: 100%;
+        height: 220px;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    .product-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .rating-stars { color: #ffc107; font-size: 0.85rem; margin-bottom: 0.8rem; }
+
+    .btn-shop-mini {
+        width: 100%;
+        padding: 0.8rem;
+        border-radius: 15px;
+        background: var(--premium-red);
+        color: white;
+        border: none;
+        font-weight: 700;
+        transition: var(--transition);
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-top: auto;
+    }
+
+    /* Footer */
+    .premium-footer {
+        background: #050505;
+        color: #fff;
+        padding: 5rem 4rem 2rem;
+        border-top: 1px solid rgba(212, 175, 55, 0.1);
+    }
+    .footer-logo { height: 50px; margin-bottom: 1.5rem; }
+    .footer-link { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; margin-bottom: 0.8rem; display: block; }
+    .footer-link:hover { color: var(--gold-accent); padding-left: 5px; }
+    .footer-title { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; font-size: 1rem; }
+
     /* Shop Now Button */
     .btn-luxury-shop {
         background: linear-gradient(135deg, var(--premium-red), #800000);
@@ -166,54 +241,6 @@
         text-decoration: none;
     }
 
-    /* Product Section */
-    .product-section {
-        background: #0f0f0f;
-        padding: 6rem 4rem;
-    }
-
-    .luxury-card {
-        background: #1a1a1a;
-        border-radius: 30px;
-        padding: 1.25rem;
-        border: 1px solid rgba(255,255,255,0.05);
-        transition: var(--transition);
-        height: 100%;
-        color: #fff;
-    }
-    .luxury-card:hover {
-        border-color: var(--gold-accent);
-        transform: translateY(-10px);
-    }
-
-    .product-img-wrapper {
-        width: 100%;
-        height: 250px;
-        border-radius: 20px;
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-    }
-    .product-img-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .btn-shop-mini {
-        width: 100%;
-        padding: 0.8rem;
-        border-radius: 15px;
-        background: var(--premium-red);
-        color: white;
-        border: none;
-        font-weight: 700;
-        transition: var(--transition);
-        text-decoration: none;
-        display: block;
-        text-align: center;
-        margin-top: 1rem;
-    }
-
     /* Animations */
     @@keyframes float {
         0%, 100% { transform: translateY(-50%) translateX(0); }
@@ -221,13 +248,21 @@
     }
 
     @@media (max-width: 1200px) {
-        .hero-headline { font-size: 3.5rem; }
+        .hero-headline { font-size: 2.5rem; }
         .hero-shoe-image { display: none; }
-        .banner-grid { padding: 4rem 2rem; }
+        .hero-luxury { background-size: cover; padding: 6rem 0; }
+        .hero-container, .landing-logo { padding-left: 2rem; padding-right: 2rem; left: 0; }
+        .banner-grid, .product-section, .premium-footer { padding: 4rem 2rem; }
     }
 </style>
 
 <div class="landing-v3">
+    <!-- Header Logo -->
+    @if (!string.IsNullOrEmpty(Model.Settings.LogoUrl))
+    {
+        <img src="@ResolveUrl(Model.Settings.LogoUrl)" class="landing-logo" alt="Company Logo">
+    }
+
     <!-- Hero Section -->
     <section class="hero-luxury">
         <div class="hero-container">
@@ -239,21 +274,25 @@
             {
                 <div class="countdown-wrapper" id="eid-countdown" data-endtime="@Model.Settings.EidOfferEndTime.ToString("yyyy-MM-ddTHH:mm:ss")">
                     <div class="timer-box">
+                        <span class="timer-val" id="c-days">00</span>
+                        <span class="timer-label">Days</span>
+                    </div>
+                    <div class="timer-box">
                         <span class="timer-val" id="c-hours">00</span>
                         <span class="timer-label">Hours</span>
                     </div>
                     <div class="timer-box">
                         <span class="timer-val" id="c-minutes">00</span>
-                        <span class="timer-label">Minutes</span>
+                        <span class="timer-label">Mins</span>
                     </div>
                     <div class="timer-box">
                         <span class="timer-val" id="c-seconds">00</span>
-                        <span class="timer-label">Seconds</span>
+                        <span class="timer-label">Secs</span>
                     </div>
                 </div>
             }
 
-            <p class="mb-4 text-white-50 fw-bold">@Model.Settings.EidOfferSubtitle</p>
+            <p class="mb-4 text-white-50 fw-bold" style="max-width: 600px;">@Model.Settings.EidOfferSubtitle</p>
 
             <a href="#featured" class="btn-luxury-shop">Shop Now</a>
         </div>
@@ -307,14 +346,23 @@
                             <img src="@ResolveUrl(product.ImageUrl)" alt="@product.Name">
                         </div>
                         
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
                             <span class="text-white-50 small">@product.CategoryName</span>
-                            <span class="badge bg-danger">HOT</span>
+                            <span class="badge bg-danger">TRENDING</span>
                         </div>
                         
-                        <h5 class="fw-bold mb-3">@product.Name</h5>
+                        <h5 class="fw-bold mb-2">@product.Name</h5>
+
+                        <div class="rating-stars">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                            <span class="text-white-50 ms-1 small">(4.8)</span>
+                        </div>
                         
-                        <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-3 mb-3">
                             <span class="fs-4 fw-bold text-white">৳@(product.DiscountPrice ?? product.Price)</span>
                             @if (product.DiscountPrice.HasValue)
                             {
@@ -329,19 +377,44 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-black py-5 text-center text-white border-top border-white border-opacity-10">
-        <div class="container">
-            <h3 class="font-luxury mb-4">@Model.Settings.CompanyName</h3>
-            <p class="text-white-50 mb-4 mx-auto" style="max-width: 600px;">@Model.Settings.CompanyDescription</p>
-            <div class="d-flex justify-content-center gap-4 mb-4">
-                <a href="@Model.Settings.FacebookPageLink" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="text-white fs-4"><i class="bi bi-whatsapp"></i></a>
+    <!-- Premium Footer -->
+    <footer class="premium-footer">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                @if (!string.IsNullOrEmpty(Model.Settings.LogoUrl))
+                {
+                    <img src="@ResolveUrl(Model.Settings.LogoUrl)" class="footer-logo" alt="Logo">
+                }
+                <p class="text-white-50 pe-lg-5">@Model.Settings.CompanyDescription</p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="@Model.Settings.FacebookPageLink" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-whatsapp"></i></a>
+                </div>
             </div>
-            <div class="text-white-50 small">
-                &copy; @DateTime.Now.Year @Model.Settings.CompanyName. Crafted for Perfection.
+            <div class="col-lg-2">
+                <h6 class="footer-title">Quick Links</h6>
+                <a href="#" class="footer-link">New Arrivals</a>
+                <a href="#" class="footer-link">Special Offers</a>
+                <a href="#" class="footer-link">Order Tracking</a>
+                <a href="#" class="footer-link">Contact Us</a>
             </div>
+            <div class="col-lg-2">
+                <h6 class="footer-title">Policy</h6>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Return Policy</a>
+                <a href="#" class="footer-link">Terms & Conditions</a>
+                <a href="#" class="footer-link">Shipping Guide</a>
+            </div>
+            <div class="col-lg-4">
+                <h6 class="footer-title">Contact Support</h6>
+                <p class="text-white-50 mb-1"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Dhaka, Bangladesh</p>
+                <p class="text-white-50 mb-1"><i class="bi bi-envelope-fill text-danger me-2"></i> @Model.Settings.ContactEmail</p>
+                <p class="text-white-50 mb-1"><i class="bi bi-telephone-fill text-danger me-2"></i> @Model.Settings.Phone</p>
+            </div>
+        </div>
+        <div class="text-center mt-5 pt-4 border-top border-white border-opacity-10 text-white-50 small">
+            &copy; @DateTime.Now.Year @Model.Settings.CompanyName. All Rights Reserved. Designed for Premium Experience.
         </div>
     </footer>
 </div>
@@ -361,10 +434,12 @@
                 return;
             }
 
-            const h = Math.floor(diff / (1000 * 60 * 60));
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
 
+            document.getElementById('c-days').innerText = d.toString().padStart(2, '0');
             document.getElementById('c-hours').innerText = h.toString().padStart(2, '0');
             document.getElementById('c-minutes').innerText = m.toString().padStart(2, '0');
             document.getElementById('c-seconds').innerText = s.toString().padStart(2, '0');

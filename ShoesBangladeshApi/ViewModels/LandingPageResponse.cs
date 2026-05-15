@@ -24,6 +24,9 @@ namespace ShoesBangladesh.API.ViewModels
         public string CompanyDescription { get; set; } = string.Empty;
         public string ProductSectionDescription { get; set; } = string.Empty;
         public string FacebookPageLink { get; set; } = string.Empty;
+        public string? ContactEmail { get; set; }
+        public string? Phone { get; set; }
+        public string? LogoUrl { get; set; }
         public string HeroImageUrl { get; set; } = string.Empty;
         public string HeroBgImageUrl { get; set; } = string.Empty;
         public string? BannerImageUrl { get; set; }

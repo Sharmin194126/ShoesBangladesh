@@ -19,6 +19,7 @@ namespace ShoesBangladesh.API.Models
 
         public string Phone { get; set; } = "+880 1234 56789";
         public string FacebookPageLink { get; set; } = "https://facebook.com/shoesbangladesh";
+        public string? LogoUrl { get; set; } = "/images/logo.png";
         
         public string HeroImageUrl { get; set; } = "/images/hero-shoe.png";
         public string HeroBgImageUrl { get; set; } = "/images/hero-bg.png";

@@ -45,6 +45,9 @@ namespace ShoesBangladesh.API.Controllers
                         CompanyDescription = settings?.CompanyDescription ?? "Your trusted destination for premium footwear in Bangladesh.",
                         ProductSectionDescription = settings?.ProductSectionDescription ?? "Discover our latest and most exclusive footwear collection.",
                         FacebookPageLink = settings?.FacebookPageLink ?? "#",
+                        ContactEmail = settings?.ContactEmail ?? "info@shoesbangladesh.com",
+                        Phone = settings?.Phone ?? "+880 1234 56789",
+                        LogoUrl = settings?.LogoUrl ?? "/images/logo.png",
                         HeroImageUrl = settings?.HeroImageUrl ?? "/images/hero-shoe.png",
                         HeroBgImageUrl = settings?.HeroBgImageUrl ?? "/images/hero-bg.png",
                         BannerImageUrl = settings?.BannerImageUrl ?? "/images/banner-red.png",
@@ -99,6 +102,9 @@ namespace ShoesBangladesh.API.Controllers
             existing.CompanyDescription = settings.CompanyDescription;
             existing.ProductSectionDescription = settings.ProductSectionDescription;
             existing.FacebookPageLink = settings.FacebookPageLink;
+            existing.ContactEmail = settings.ContactEmail;
+            existing.Phone = settings.Phone;
+            existing.LogoUrl = settings.LogoUrl ?? existing.LogoUrl;
             existing.HeroImageUrl = settings.HeroImageUrl ?? existing.HeroImageUrl;
             existing.HeroBgImageUrl = settings.HeroBgImageUrl ?? existing.HeroBgImageUrl;
             existing.BannerImageUrl = settings.BannerImageUrl ?? existing.BannerImageUrl;

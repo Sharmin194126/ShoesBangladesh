@@ -123,6 +123,7 @@
         <input type="hidden" asp-for="HeroImageUrl" />
         <input type="hidden" asp-for="HeroBgImageUrl" />
         <input type="hidden" asp-for="BannerImageUrl" />
+        <input type="hidden" asp-for="LogoUrl" />
 
         <div class="row">
             <div class="col-lg-8">
@@ -200,6 +201,14 @@
                             <label class="form-label-premium">Company Name</label>
                             <input asp-for="CompanyName" class="form-control-premium w-100" />
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label-premium">Contact Email</label>
+                            <input asp-for="ContactEmail" class="form-control-premium w-100" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-premium">Phone Number</label>
+                            <input asp-for="Phone" class="form-control-premium w-100" />
+                        </div>
                         <div class="col-md-12">
                             <label class="form-label-premium">Facebook Page Link</label>
                             <input asp-for="FacebookPageLink" class="form-control-premium w-100" />
@@ -238,11 +247,19 @@
                         </div>
                     </div>
 
-                    <div class="mb-2">
+                    <div class="mb-4">
                         <label class="form-label-premium">Classic Series Banner</label>
                         <div class="upload-preview-container">
                             <img src="@ResolveUrl(Model.BannerImageUrl)" id="bannerPreview" class="preview-img-premium" style="object-fit: cover;">
                             <input type="file" name="bannerImage" class="form-control form-control-sm" onchange="previewImage(this, 'bannerPreview')" accept="image/*" />
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label-premium">Company Logo</label>
+                        <div class="upload-preview-container">
+                            <img src="@ResolveUrl(Model.LogoUrl)" id="logoPreview" class="preview-img-premium">
+                            <input type="file" name="logoImage" class="form-control form-control-sm" onchange="previewImage(this, 'logoPreview')" accept="image/*" />
                         </div>
                     </div>
                 </div>

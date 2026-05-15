@@ -78,7 +78,7 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage)
+        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage, IFormFile? logoImage)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -133,6 +133,24 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     settings.BannerImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.BannerImageUrl;
+                }
+            }
+
+            // 4. Handle Logo Image Upload
+            if (logoImage != null && logoImage.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = logoImage.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(logoImage.ContentType);
+                form.Add(streamContent, "file", logoImage.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    settings.LogoUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.LogoUrl;
                 }
             }
 
