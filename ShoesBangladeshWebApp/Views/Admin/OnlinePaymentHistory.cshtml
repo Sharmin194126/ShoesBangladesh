@@ -1,90 +1,222 @@
 @model List<ShoesBangladesh.API.ViewModels.PaymentHistoryViewModel>
 @{
-    ViewData["Title"] = "Payment History";
+    ViewData["Title"] = "Online Payment History";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="container-fluid py-4">
+<style>
+    :root {
+        --red: #C40000;
+        --charcoal: #1F1F1F;
+        --gray-100: #F5F5F5;
+        --gray-200: #ECECEC;
+        --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .page-container { max-width: 1400px; margin: 0 auto; }
+
+    .page-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--gray-200);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 1.5rem;
+    }
+
+    .theme-back-btn {
+        background: var(--charcoal);
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        border: none;
+    }
+    .theme-back-btn:hover { background: var(--red); color: #fff; transform: translateY(-2px); }
+
+    .table-premium thead th {
+        background: var(--charcoal) !important;
+        color: #fff !important;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 1.25rem 1rem;
+        border: none;
+    }
+
+    .table-premium tbody td {
+        font-size: 0.85rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        display: inline-block;
+    }
+    .status-success { background: #E8F5E9; color: #2E7D32; }
+    .status-failed  { background: #FFEBEE; color: #C62828; }
+    .status-pending { background: #FFF3E0; color: #E65100; }
+
+    .btn-filter {
+        background: var(--red);
+        color: #fff;
+        border: none;
+        font-weight: 700;
+        border-radius: 8px;
+    }
+    .btn-filter:hover { background: #9A0000; color: #fff; }
+
+    .product-img {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+    }
+</style>
+
+<div class="page-container py-4">
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Online Payment History</h2>
-            <p class="text-muted mb-0">Track all digital transactions and payment statuses.</p>
+        <div class="d-flex align-items-center gap-3">
+            <div style="background: #FFEBEE; color: var(--red); padding: 12px; border-radius: 12px;">
+                <i class="bi bi-credit-card fs-4"></i>
+            </div>
+            <div>
+                <h1 class="fw-bold fs-3 mb-0">Online Payment History</h1>
+                <p class="text-muted small mb-0">Monitor and manage all digital transactions</p>
+            </div>
         </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary rounded-3">
-                <i class="bi bi-filter me-2"></i>Filter
-            </button>
-            <button class="btn btn-primary rounded-3">
-                <i class="bi bi-file-earmark-excel me-2"></i>Export
-            </button>
+        <div>
+            <a asp-action="Index" class="theme-back-btn"><i class="bi bi-grid-fill me-2"></i>Dashboard</a>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead style="background: #1F1F1F !important; color: #fff !important;">
-                        <tr>
-                            <th class="ps-4 border-0 py-3">Transaction ID</th>
-                            <th class="border-0 py-3">Order ID</th>
-                            <th class="border-0 py-3">Customer</th>
-                            <th class="border-0 py-3">Gateway</th>
-                            <th class="border-0 py-3">Amount</th>
-                            <th class="border-0 py-3">Date</th>
-                            <th class="border-0 py-3">Status</th>
-                            <th class="border-0 py-3 pe-4 text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
+    <!-- Filters -->
+    <div class="page-card">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="small fw-bold text-muted mb-1">Search Transaction</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Transaction ID, Name, Account..." value="@ViewBag.Search">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold text-muted mb-1">Method</label>
+                <select name="method" class="form-select">
+                    <option value="">All Methods</option>
+                    <option value="bKash" selected="@(ViewBag.Method == "bKash")">bKash</option>
+                    <option value="Nagad" selected="@(ViewBag.Method == "Nagad")">Nagad</option>
+                    <option value="Rocket" selected="@(ViewBag.Method == "Rocket")">Rocket</option>
+                    <option value="SSLCommerz" selected="@(ViewBag.Method == "SSLCommerz")">SSLCommerz</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold text-muted mb-1">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="Success" selected="@(ViewBag.Status == "Success")">Success</option>
+                    <option value="Pending" selected="@(ViewBag.Status == "Pending")">Pending</option>
+                    <option value="Failed" selected="@(ViewBag.Status == "Failed")">Failed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="small fw-bold text-muted mb-1">Sort By</label>
+                <select name="sortBy" class="form-select">
+                    <option value="date_desc" selected="@(ViewBag.SortBy == "date_desc")">Newest First</option>
+                    <option value="date_asc" selected="@(ViewBag.SortBy == "date_asc")">Oldest First</option>
+                    <option value="amount_desc" selected="@(ViewBag.SortBy == "amount_desc")">Highest Amount</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="btn-group w-100">
+                    <button type="submit" class="btn btn-filter py-2">Filter</button>
+                    <a asp-action="OnlinePaymentHistory" class="btn btn-outline-secondary py-2" title="Clear Filters"><i class="bi bi-arrow-counterclockwise"></i></a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="page-card p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-premium table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Customer & Account</th>
+                        <th>Product Details</th>
+                        <th>Payment Info</th>
+                        <th>Status</th>
+                        <th class="pe-4">Dates</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
                         {
-                            @foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td class="ps-4 fw-medium">@item.TransactionId</td>
-                                    <td><a href="#" class="text-decoration-none">#@item.OrderId</a></td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-light p-2 rounded-circle" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="bi bi-person text-secondary"></i>
-                                            </div>
-                                            <span>@item.CustomerName</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-light text-dark border rounded-pill px-3">@item.GatewayName</span>
-                                    </td>
-                                    <td class="fw-bold">৳@item.Amount.ToString("N2")</td>
-                                    <td>@item.PaymentDate.ToString("dd MMM yyyy, hh:mm tt")</td>
-                                    <td>
-                                        @if (item.Status == "Success")
-                                        {
-                                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">@item.Status</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">@item.Status</span>
-                                        }
-                                    </td>
-                                    <td class="pe-4 text-end">
-                                        <button class="btn btn-light btn-sm rounded-3">Details</button>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
+                            var firstItem = item.Order?.OrderDetails?.FirstOrDefault();
                             <tr>
-                                <td colspan="8" class="text-center py-5 text-muted">
-                                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                    No payment history found.
+                                <td class="ps-4">
+                                    <div class="fw-bold" style="color: var(--charcoal);">@item.CustomerName</div>
+                                    <small class="text-muted d-block"><i class="bi bi-phone me-1"></i>@item.CustomerAccount</small>
+                                    <small class="text-muted d-block"><i class="bi bi-person me-1"></i>Customer: @(item.Order?.CustomerName ?? "N/A")</small>
+                                </td>
+                                <td>
+                                    @if (firstItem != null)
+                                    {
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="@firstItem.ProductImageUrl" class="product-img" alt="">
+                                            <div>
+                                                <div class="fw-bold small" style="max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">@firstItem.ProductName</div>
+                                                <small class="text-muted">Qty: @firstItem.Quantity</small>
+                                                @if (item.Order?.OrderDetails?.Count > 1)
+                                                {
+                                                    <span class="badge bg-light text-dark border ms-1" style="font-size: 0.6rem;">+@(item.Order.OrderDetails.Count - 1) more</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-bold" style="color: var(--red);">৳@item.Amount.ToString("N2")</div>
+                                    <small class="text-muted d-block">Method: <strong>@item.GatewayName</strong></small>
+                                    <small class="text-muted d-block">TrxID: <span class="text-dark fw-bold">@item.TransactionId</span></small>
+                                </td>
+                                <td>
+                                    <span class="status-badge @(item.Status == "Success" ? "status-success" : item.Status == "Failed" ? "status-failed" : "status-pending")">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td class="pe-4">
+                                    <div class="small fw-medium">Order: @item.Order?.CreatedAt.ToString("dd MMM yyyy")</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">Paid: @item.PaymentDate.ToString("dd MMM yyyy, HH:mm")</div>
                                 </td>
                             </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="opacity-25 mb-3"><i class="bi bi-credit-card-2-front fs-1"></i></div>
+                                <h5 class="text-muted">No payment records found</h5>
+                                <p class="text-muted small">All digital transactions will appear here once processed.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

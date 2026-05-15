@@ -121,7 +121,7 @@ namespace ShoesBangladeshWebApp.Controllers
             return RedirectToAction("ManageLandingPage");
         }
 
-        public async Task<IActionResult> OnlinePaymentHistory()
+        public async Task<IActionResult> OnlinePaymentHistory(string search, string method, string status, string sortBy)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
             var response = await client.GetAsync("api/Dashboard/PaymentHistory");
@@ -129,7 +129,38 @@ namespace ShoesBangladeshWebApp.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var history = JsonSerializer.Deserialize<List<PaymentHistoryViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var history = JsonSerializer.Deserialize<List<PaymentHistoryViewModel>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<PaymentHistoryViewModel>();
+
+                // Filtering
+                if (!string.IsNullOrEmpty(search))
+                {
+                    search = search.ToLower();
+                    history = history.Where(p => 
+                        p.TransactionId.ToLower().Contains(search) || 
+                        (p.CustomerName?.ToLower().Contains(search) ?? false) || 
+                        (p.CustomerAccount?.ToLower().Contains(search) ?? false)).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(method))
+                {
+                    history = history.Where(p => p.GatewayName == method).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(status))
+                {
+                    history = history.Where(p => p.Status == status).ToList();
+                }
+
+                // Sorting
+                if (sortBy == "amount_desc") history = history.OrderByDescending(p => p.Amount).ToList();
+                else if (sortBy == "date_asc") history = history.OrderBy(p => p.PaymentDate).ToList();
+                else history = history.OrderByDescending(p => p.PaymentDate).ToList();
+
+                ViewBag.Search = search;
+                ViewBag.Method = method;
+                ViewBag.Status = status;
+                ViewBag.SortBy = sortBy;
+
                 return View(history);
             }
             return View(new List<PaymentHistoryViewModel>());
