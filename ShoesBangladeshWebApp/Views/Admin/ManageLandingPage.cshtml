@@ -1,217 +1,271 @@
 @model ShoesBangladesh.API.ViewModels.SystemSettingsDTO
 
 @{
-    ViewData["Title"] = "Landing Page Settings";
+    ViewData["Title"] = "FB Campaign Page Settings";
     Layout = "_AdminLayout";
 }
 
 <style>
-    .settings-card {
-        background: white;
-        border-radius: 24px;
+    :root {
+        --red: #C40000;
+        --charcoal: #1F1F1F;
+        --gray-100: #F8F9FA;
+        --gray-200: #E9ECEF;
+        --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .settings-container { max-width: 1200px; margin: 0 auto; }
+
+    .premium-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
         padding: 2.5rem;
-        border: 1px solid rgba(0,0,0,0.05);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+    }
+
+    .section-header {
+        border-left: 4px solid var(--red);
+        padding-left: 1rem;
+        margin-bottom: 2rem;
+    }
+    .section-header h5 {
+        font-weight: 800;
+        color: var(--charcoal);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.25rem;
     }
 
     .form-label {
-        font-weight: 600;
-        color: #475569;
-        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--charcoal);
+        font-size: 0.85rem;
         margin-bottom: 0.5rem;
+        display: block;
     }
 
     .form-control, .form-select {
         border-radius: 12px;
-        padding: 0.75rem 1rem;
-        border: 1px solid #e2e8f0;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid var(--gray-200);
         font-size: 0.95rem;
-        transition: all 0.3s;
+        transition: all 0.2s;
+        background: var(--gray-100);
     }
-
     .form-control:focus {
-        border-color: #6366f1;
-        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: #fff;
+        border-color: var(--red);
+        box-shadow: 0 0 0 4px rgba(196, 0, 0, 0.05);
     }
 
-    .section-divider {
-        height: 1px;
-        background: #f1f5f9;
-        margin: 2rem 0;
+    .asset-upload-box {
+        background: var(--gray-100);
+        border: 2px dashed var(--gray-200);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s;
+        position: relative;
+    }
+    .asset-upload-box:hover { border-color: var(--red); background: #fff; }
+
+    .preview-img {
+        max-height: 180px;
+        width: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
     }
 
-    .info-box {
-        background: #f8fafc;
-        border-radius: 20px;
-        padding: 1.5rem;
-        border: 1px solid #e2e8f0;
+    .btn-update {
+        background: var(--red);
+        color: #fff;
+        padding: 1.25rem 3rem;
+        border-radius: 50px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border: none;
+        transition: all 0.3s;
+        box-shadow: 0 10px 25px rgba(196, 0, 0, 0.3);
     }
+    .btn-update:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(196, 0, 0, 0.4); color: #fff; }
 
-    .input-group-text {
-        border-radius: 12px 0 0 12px;
-        background: #f8fafc;
-        border-color: #e2e8f0;
-    }
-    
-    .rounded-end-12 {
-        border-radius: 0 12px 12px 0 !important;
-    }
+    .status-badge-active { background: #E8F5E9; color: #2E7D32; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; }
 </style>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="settings-card">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h4 class="fw-bold mb-1">Configuration</h4>
-                    <p class="text-muted small mb-0">Customize your website appearance and active offers.</p>
-                </div>
-                <a href="/Landing" target="_blank" class="btn btn-outline-primary rounded-pill px-4 fw-600">
-                    <i class="bi bi-eye me-2"></i> Preview Site
-                </a>
-            </div>
+<div class="settings-container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-900 mb-1" style="color: var(--charcoal);">FB Campaign Page <span class="text-muted fw-light">Management</span></h2>
+            <p class="text-muted mb-0">Configure your high-conversion landing page for Facebook ads.</p>
+        </div>
+        <a href="/Landing" target="_blank" class="btn btn-dark rounded-pill px-4 fw-bold">
+            <i class="bi bi-eye me-2"></i> Preview Campaign
+        </a>
+    </div>
 
-            <form asp-action="UpdateSettings" method="post" enctype="multipart/form-data">
-                <input type="hidden" asp-for="HeroImageUrl" />
-                <input type="hidden" asp-for="HeroBgImageUrl" />
+    <form asp-action="UpdateSettings" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="HeroImageUrl" />
+        <input type="hidden" asp-for="HeroBgImageUrl" />
 
-                <!-- Campaign & Offers -->
-                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Campaign & Offers</h6>
-                <div class="row g-4 mb-4">
-                    <div class="col-md-8">
-                        <label class="form-label">Main Offer Title</label>
-                        <input asp-for="EidOfferTitle" class="form-control" placeholder="e.g. Eid-ul-Adha Special" />
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Campaign Details -->
+                <div class="premium-card">
+                    <div class="section-header">
+                        <h5>Campaign & Offers</h5>
+                        <p class="text-muted small">Manage headline and discount settings.</p>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Discount Percentage (%)</label>
-                        <input asp-for="DiscountPercentage" type="number" class="form-control" />
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Campaign Subtitle</label>
-                        <input asp-for="EidOfferSubtitle" class="form-control" placeholder="Short description of the offer..." />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Offer Expiry Date</label>
-                        <input asp-for="EidOfferEndTime" type="datetime-local" class="form-control" />
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label d-block">Campaign Status</label>
-                        <div class="form-check form-switch mt-2">
-                            <input asp-for="IsOfferActive" class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;">
-                            <label class="form-check-label ms-2 mt-1">Enable Eid Campaign Section</label>
+
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <label class="form-label">Main Campaign Title</label>
+                            <input asp-for="EidOfferTitle" class="form-control" placeholder="e.g. Eid-ul-Adha Special" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Discount (%)</label>
+                            <div class="input-group">
+                                <input asp-for="DiscountPercentage" type="number" class="form-control border-end-0" />
+                                <span class="input-group-text bg-light border-start-0" style="border-radius: 0 12px 12px 0;">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Campaign Subtitle</label>
+                            <input asp-for="EidOfferSubtitle" class="form-control" placeholder="Short description of the offer..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Offer Expiry Date</label>
+                            <input asp-for="EidOfferEndTime" type="datetime-local" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Campaign Status</label>
+                            <div class="form-check form-switch mt-2">
+                                <input asp-for="IsOfferActive" class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;">
+                                <label class="form-check-label ms-2 mt-1 fw-bold">Active for Customers</label>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="section-divider"></div>
+                <!-- Visual Assets -->
+                <div class="premium-card">
+                    <div class="section-header">
+                        <h5>Visual Identity</h5>
+                        <p class="text-muted small">Update hero images for the campaign.</p>
+                    </div>
 
-                <!-- Hero Assets -->
-                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Visual Assets (Hero Section)</h6>
-                <div class="row g-4 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label">Hero Shoe Image (Desktop Upload)</label>
-                        <div class="info-box p-3 mb-2 text-center">
-                            <img src="@(string.IsNullOrEmpty(Model.HeroImageUrl) ? "/images/hero-shoe.png" : Model.HeroImageUrl)" id="heroPreview" style="max-height: 120px; object-fit: contain;" class="mb-3">
-                            <input type="file" name="heroImage" class="form-control" onchange="previewImage(this, 'heroPreview')" accept="image/*" />
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-center">Hero Shoe Image</label>
+                            <div class="asset-upload-box">
+                                <img src="@(string.IsNullOrEmpty(Model.HeroImageUrl) ? "/images/hero-shoe.png" : Model.HeroImageUrl)" id="heroPreview" class="preview-img">
+                                <input type="file" name="heroImage" class="form-control form-control-sm" onchange="previewImage(this, 'heroPreview')" accept="image/*" />
+                                <small class="text-muted d-block mt-2">Transparent PNG (800x800)</small>
+                            </div>
                         </div>
-                        <small class="text-muted">Recommended: Transparent PNG, 800x800px</small>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Hero Background (Desktop Upload)</label>
-                        <div class="info-box p-3 mb-2 text-center">
-                            <img src="@(string.IsNullOrEmpty(Model.HeroBgImageUrl) ? "/images/hero-bg.png" : Model.HeroBgImageUrl)" id="bgPreview" style="max-height: 120px; width: 100%; object-fit: cover; border-radius: 8px;" class="mb-3">
-                            <input type="file" name="bgImage" class="form-control" onchange="previewImage(this, 'bgPreview')" accept="image/*" />
-                        </div>
-                        <small class="text-muted">Recommended: High-res Gradient or Lifestyle Image</small>
-                    </div>
-                </div>
-
-                <script>
-                    function previewImage(input, previewId) {
-                        if (input.files && input.files[0]) {
-                            var reader = new FileReader();
-                            reader.onload = function (e) {
-                                document.getElementById(previewId).setAttribute('src', e.target.result);
-                            }
-                            reader.readAsDataURL(input.files[0]);
-                        }
-                    }
-                </script>
-
-                <div class="section-divider"></div>
-
-                <!-- Company & Product Descriptions -->
-                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Company Information</h6>
-                <div class="row g-4">
-                    <div class="col-md-12">
-                        <label class="form-label">Brand Name</label>
-                        <input asp-for="CompanyName" class="form-control" />
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Footer Description</label>
-                        <textarea asp-for="CompanyDescription" class="form-control" rows="3"></textarea>
-                    </div>
-                    <div class="col-md-12">
-                        <label class="form-label">Product Collection Intro</label>
-                        <textarea asp-for="ProductSectionDescription" class="form-control" rows="3" placeholder="A short intro for your products list..."></textarea>
-                    </div>
-                </div>
-
-                <div class="section-divider"></div>
-
-                <!-- Social Links -->
-                <h6 class="text-primary fw-bold text-uppercase small mb-4" style="letter-spacing: 0.05em;">Social Channels</h6>
-                <div class="row g-4">
-                    <div class="col-md-12">
-                        <label class="form-label">Facebook Page URL</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-facebook text-primary"></i></span>
-                            <input asp-for="FacebookPageLink" class="form-control rounded-end-12" placeholder="https://facebook.com/yourpage" />
+                        <div class="col-md-6">
+                            <label class="form-label text-center">Hero Background</label>
+                            <div class="asset-upload-box">
+                                <img src="@(string.IsNullOrEmpty(Model.HeroBgImageUrl) ? "/images/hero-bg.png" : Model.HeroBgImageUrl)" id="bgPreview" class="preview-img" style="object-fit: cover;">
+                                <input type="file" name="bgImage" class="form-control form-control-sm" onchange="previewImage(this, 'bgPreview')" accept="image/*" />
+                                <small class="text-muted d-block mt-2">High-res Gradient or Lifestyle</small>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-5 pt-3">
-                    <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-4 shadow-sm w-100 w-md-auto">
-                        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Update Landing Page
+                <!-- Company Info -->
+                <div class="premium-card">
+                    <div class="section-header">
+                        <h5>Brand & Content</h5>
+                        <p class="text-muted small">Customize company details and intro text.</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <label class="form-label">Brand Name</label>
+                            <input asp-for="CompanyName" class="form-control" />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Footer Description</label>
+                            <textarea asp-for="CompanyDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Product Collection Intro</label>
+                            <textarea asp-for="ProductSectionDescription" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Facebook Page Link</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="bi bi-facebook text-primary"></i></span>
+                                <input asp-for="FacebookPageLink" class="form-control border-start-0 ps-0" placeholder="https://facebook.com/yourpage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-end mb-5">
+                    <button type="submit" class="btn btn-update w-100">
+                        <i class="bi bi-shield-check me-2"></i> Save Campaign Changes
                     </button>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
 
-    <div class="col-lg-4">
-        <div class="info-box mb-4">
-            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                <i class="bi bi-lightbulb text-warning"></i> Quick Tips
-            </h6>
-            <p class="small text-muted mb-3">Keep your campaign titles short and punchy for better mobile view.</p>
-            <div class="d-flex flex-column gap-3">
-                <div class="d-flex gap-2">
-                    <div class="bg-primary bg-opacity-10 p-1 rounded-circle" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;">1</div>
-                    <p class="small mb-0">Use the <strong>Live Status</strong> toggle to enable/disable holiday banners.</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <div class="bg-primary bg-opacity-10 p-1 rounded-circle" style="width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;">2</div>
-                    <p class="small mb-0">Product descriptions appear right above your shoe catalog.</p>
+            <div class="col-lg-4">
+                <div class="premium-card bg-dark text-white p-4 sticky-top" style="top: 100px;">
+                    <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-info-circle text-warning"></i> Campaign Strategy
+                    </h6>
+                    <div class="mb-4 small opacity-75">
+                        This page is hidden from your main website. It is designed to be shared directly on Facebook to maximize conversions.
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check2-circle text-success fs-5"></i>
+                            <span class="small">Automatically syncs all products from your inventory.</span>
+                        </li>
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check2-circle text-success fs-5"></i>
+                            <span class="small">Real-time countdown timer creates urgency.</span>
+                        </li>
+                        <li class="mb-3 d-flex gap-3">
+                            <i class="bi bi-check2-circle text-success fs-5"></i>
+                            <span class="small">Optimized for mobile shoppers from social media.</span>
+                        </li>
+                    </ul>
+
+                    <hr class="opacity-25 my-4">
+
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-outline-light w-100 rounded-pill py-2 fw-bold">
+                        Manage Inventory
+                    </a>
                 </div>
             </div>
         </div>
-        
-        <div class="settings-card border-0 bg-dark text-white p-4">
-            <h6 class="fw-bold mb-3">Product Sync</h6>
-            <p class="small text-white-50 mb-4">Need to add new shoes to the catalog? Head over to inventory.</p>
-            <a asp-controller="Product" asp-action="Index" class="btn btn-primary w-100 rounded-pill py-2 fw-600">
-                Go to Inventory
-            </a>
-        </div>
-    </div>
+    </form>
 </div>
+
+<script>
+    function previewImage(input, previewId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById(previewId).setAttribute('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="toast-container position-fixed bottom-0 end-0 p-4">
-        <div class="toast show align-items-center text-white bg-dark border-0 rounded-4" role="alert">
+        <div class="toast show align-items-center text-white bg-dark border-0 rounded-4" role="alert" id="successToast">
             <div class="d-flex">
                 <div class="toast-body p-3">
                     <i class="bi bi-check-circle-fill text-success me-2"></i> @TempData["SuccessMessage"]
@@ -220,4 +274,10 @@
             </div>
         </div>
     </div>
+    <script>
+        setTimeout(function() {
+            var toast = document.getElementById('successToast');
+            if (toast) toast.classList.remove('show');
+        }, 3000);
+    </script>
 }

@@ -72,7 +72,7 @@ namespace ShoesBangladesh.API.Controllers
 
 
         [HttpPost("UpdateSettings")]
-        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings)
+        public async Task<IActionResult> UpdateSettings([FromBody] SystemSettingsDTO settings)
         {
             var existing = await _context.SystemSettings.FirstOrDefaultAsync();
             if (existing == null)

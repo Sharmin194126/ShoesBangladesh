@@ -1,36 +1,38 @@
-﻿@model LandingPageResponse
+@model LandingPageResponse
 
 @{
-    ViewData["Title"] = "Eid Special Luxury Collection";
+    ViewData["Title"] = Model.Settings.EidOfferTitle;
     Layout = "_LandingLayout";
 }
 
 <style>
+    :root {
+        --premium-red: #C40000;
+        --gold-accent: #D4AF37;
+        --deep-black: #0A0A0A;
+        --charcoal: #1F1F1F;
+    }
+
     /* Typography */
     .font-luxury { font-family: 'Playfair Display', serif; }
     
-    /* Luxury Placeholder Style */
-    .image-placeholder {
-        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-        border: 2px dashed rgba(212, 175, 55, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: rgba(255,255,255,0.3);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        font-size: 0.8rem;
-    }
-
     /* Hero Section */
     .hero-luxury {
         position: relative;
         height: 100vh;
         display: flex;
         align-items: center;
-        background: linear-gradient(135deg, #4a0000 0%, #0a0a0a 100%); /* Solid Gradient Placeholder */
+        background-image: url('@Model.Settings.HeroBgImageUrl');
+        background-size: cover;
+        background-position: center;
         overflow: hidden;
+    }
+    .hero-luxury::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.4) 100%);
+        z-index: 1;
     }
 
     .hero-container {
@@ -47,259 +49,165 @@
         text-transform: uppercase;
         margin-bottom: 1rem;
         display: block;
-        animation: fadeInDown 1s ease;
     }
 
     .hero-headline {
-        font-size: 6rem;
+        font-size: 5rem;
         font-weight: 900;
-        line-height: 1;
+        line-height: 1.1;
         margin-bottom: 1.5rem;
-        background: linear-gradient(to right, #fff, #d4af37);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: fadeInLeft 1.2s ease;
+        color: #fff;
     }
 
     .discount-text {
-        font-size: 3.5rem;
+        font-size: 3rem;
         font-weight: 800;
-        color: #fff;
-        margin-bottom: 2.5rem;
-        text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        color: var(--gold-accent);
+        margin-bottom: 2rem;
     }
 
-    /* Hero Image Placeholder */
-    .hero-shoe-placeholder {
+    .hero-shoe-image {
         position: absolute;
         right: 5%;
         top: 50%;
         transform: translateY(-50%);
         width: 45%;
-        height: 500px;
+        max-height: 600px;
+        object-fit: contain;
         z-index: 15;
+        filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
         animation: float 4s ease-in-out infinite;
-        border-radius: 40px;
     }
 
     /* Countdown Timer */
     .countdown-wrapper {
         display: flex;
-        gap: 1.5rem;
-        margin-bottom: 3.5rem;
+        gap: 1rem;
+        margin-bottom: 3rem;
     }
 
     .timer-box {
         background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(212, 175, 55, 0.3);
-        padding: 1.5rem;
-        border-radius: 20px;
-        min-width: 100px;
+        padding: 1rem;
+        border-radius: 15px;
+        min-width: 90px;
         text-align: center;
-        transition: var(--transition);
     }
 
     .timer-val {
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 900;
         display: block;
-        color: var(--gold-accent);
-    }
-
-    /* Shop Now Button */
-    .btn-luxury-shop {
-        background: linear-gradient(135deg, var(--premium-red), #800000);
         color: #fff;
-        padding: 1.5rem 4rem;
+    }
+    .timer-label { font-size: 0.7rem; text-transform: uppercase; color: var(--gold-accent); font-weight: 700; }
+
+    .btn-luxury-shop {
+        background: var(--premium-red);
+        color: #fff;
+        padding: 1.25rem 3.5rem;
         border-radius: 100px;
         font-weight: 800;
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         text-transform: uppercase;
-        letter-spacing: 3px;
-        border: 2px solid var(--gold-accent);
-        box-shadow: 0 0 30px rgba(208, 0, 0, 0.4);
-        position: relative;
-        transition: var(--transition);
+        letter-spacing: 2px;
+        box-shadow: 0 10px 30px rgba(196, 0, 0, 0.4);
         display: inline-block;
         text-decoration: none;
-        animation: floatButton 3s ease-in-out infinite;
+        transition: all 0.3s;
     }
+    .btn-luxury-shop:hover { transform: scale(1.05); color: #fff; box-shadow: 0 15px 40px rgba(196, 0, 0, 0.6); }
 
-    /* Banner Section */
-    .banner-grid {
-        padding: 8rem 4rem;
-        background: var(--deep-black);
-    }
-
-    .sale-card {
-        position: relative;
-        height: 400px;
-        border-radius: 30px;
-        overflow: hidden;
-        background: #151515;
-        border: 1px solid rgba(255,255,255,0.05);
-        transition: var(--transition);
-    }
-
-    .banner-image-placeholder {
-        width: 100%;
-        height: 100%;
-    }
-
-    .sale-content {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        padding: 2.5rem;
-        width: 100%;
-        background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    }
-
-    /* Product Section */
-    .product-section {
-        background: #0f0f0f;
-        padding: 8rem 4rem;
-    }
-
+    /* Product Grid */
+    .product-section { background: #0a0a0a; padding: 6rem 4rem; }
     .luxury-card {
-        background: #1a1a1a;
-        border-radius: 30px;
-        padding: 1.5rem;
+        background: #151515;
+        border-radius: 25px;
+        padding: 1.25rem;
         border: 1px solid rgba(255,255,255,0.05);
-        transition: var(--transition);
+        transition: all 0.3s;
         height: 100%;
+        color: #fff;
     }
-
-    .product-image-placeholder {
+    .luxury-card:hover { transform: translateY(-10px); border-color: var(--gold-accent); }
+    .product-img-wrapper {
         width: 100%;
         height: 250px;
         border-radius: 20px;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        background: #000;
     }
+    .product-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
 
     .btn-shop-mini {
         width: 100%;
-        padding: 0.8rem;
-        border-radius: 15px;
-        background: var(--deep-black);
+        padding: 0.75rem;
+        border-radius: 12px;
+        background: var(--premium-red);
         color: white;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: none;
         font-weight: 700;
-        transition: var(--transition);
         text-decoration: none;
         display: block;
         text-align: center;
-        margin-top: 1rem;
+        margin-top: 1.25rem;
     }
 
-    /* Footer */
-    .luxury-footer {
-        background: #4a0000;
-        padding: 6rem 4rem 2rem;
-        border-top: 2px solid var(--gold-accent);
-    }
-
-    /* Animations */
     @@keyframes float {
-        0%, 100% { transform: translateY(-50%) translateX(0); }
-        50% { transform: translateY(-55%) translateX(-20px); }
+        0%, 100% { transform: translateY(-50%) rotate(0deg); }
+        50% { transform: translateY(-55%) rotate(-5deg); }
     }
 
-    @@keyframes floatButton {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-
-    @@keyframes fadeInLeft {
-        from { opacity: 0; transform: translateX(-100px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
-
-    /* Responsive */
-    @@media (max-width: 1200px) {
-        .hero-headline { font-size: 4rem; }
-        .hero-shoe-placeholder { display: none; }
-    }
-
-    @@media (max-width: 768px) {
-        .hero-container { padding: 0 2rem; }
+    @@media (max-width: 992px) {
         .hero-headline { font-size: 3rem; }
-        .countdown-wrapper { flex-wrap: wrap; }
+        .hero-shoe-image { display: none; }
+        .hero-container { padding: 0 2rem; }
     }
 </style>
 
-<div class="landing-v3">
+<div class="landing-page">
     <!-- Hero Section -->
     <section class="hero-luxury">
         <div class="hero-container">
-            <span class="hero-tagline">Premium Footwear Experience</span>
+            <span class="hero-tagline">Exclusively for @Model.Settings.CompanyName</span>
             <h1 class="hero-headline font-luxury">@Model.Settings.EidOfferTitle</h1>
-            <div class="discount-text">UP TO 50% OFF</div>
+            <div class="discount-text">UP TO @Model.Settings.DiscountPercentage% OFF</div>
             
-            <div class="countdown-wrapper" id="eid-countdown" data-endtime="@Model.Settings.EidOfferEndTime.ToString("yyyy-MM-ddTHH:mm:ss")">
-                <div class="timer-box">
-                    <span class="timer-val" id="c-hours">00</span>
-                    <span class="timer-label">Hours</span>
+            @if (Model.Settings.IsOfferActive)
+            {
+                <div class="countdown-wrapper" id="eid-countdown" data-endtime="@Model.Settings.EidOfferEndTime.ToString("yyyy-MM-ddTHH:mm:ss")">
+                    <div class="timer-box">
+                        <span class="timer-val" id="c-hours">00</span>
+                        <span class="timer-label">Hours</span>
+                    </div>
+                    <div class="timer-box">
+                        <span class="timer-val" id="c-minutes">00</span>
+                        <span class="timer-label">Mins</span>
+                    </div>
+                    <div class="timer-box">
+                        <span class="timer-val" id="c-seconds">00</span>
+                        <span class="timer-label">Secs</span>
+                    </div>
                 </div>
-                <div class="timer-box">
-                    <span class="timer-val" id="c-minutes">00</span>
-                    <span class="timer-label">Minutes</span>
-                </div>
-                <div class="timer-box">
-                    <span class="timer-val" id="c-seconds">00</span>
-                    <span class="timer-label">Seconds</span>
-                </div>
-            </div>
+            }
 
-            <p class="mb-4 text-white-50 fw-bold">OFFER ENDS: @Model.Settings.EidOfferEndTime.ToString("MMM dd, yyyy HH:mm")</p>
+            <p class="text-white-50 mb-5 max-w-500">@Model.Settings.EidOfferSubtitle</p>
 
-            <a href="#featured" class="btn-luxury-shop">Shop Now</a>
+            <a href="#featured" class="btn-luxury-shop">Claim Your Offer</a>
         </div>
 
-        <!-- Hero Image Placeholder -->
-        <div class="hero-shoe-placeholder image-placeholder">
-            Hero Product Image Placeholder
-        </div>
+        <img src="@Model.Settings.HeroImageUrl" class="hero-shoe-image" alt="Featured Product">
     </section>
 
-    <!-- Banners -->
-    <section class="banner-grid">
-        <div class="row g-4">
-            <div class="col-lg-8">
-                <div class="sale-card">
-                    <div class="banner-image-placeholder image-placeholder">
-                        Classic Red Series Image Placeholder
-                    </div>
-                    <div class="sale-content">
-                        <span class="sale-badge">LIMITED EDITION</span>
-                        <h2 class="font-luxury fs-1">Classic Red Series</h2>
-                        <p>Experience ultimate comfort with our premium collection.</p>
-                        <a href="#" class="btn btn-outline-light rounded-pill px-4">Discover</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="sale-card" style="background: var(--premium-red);">
-                    <div class="p-5 d-flex flex-column justify-content-center h-100 text-center">
-                        <h1 class="display-3 fw-900 mb-0">25%</h1>
-                        <p class="fs-4 fw-bold mb-4">EXTRA OFF</p>
-                        <div class="border-top border-white opacity-50 py-3">Use Code: EID2024</div>
-                        <a href="#" class="btn btn-dark rounded-pill mt-3">Claim Offer</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Products -->
+    <!-- Product Grid -->
     <section class="product-section" id="featured">
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <h2 class="font-luxury display-5">Featured Collection</h2>
-                <p class="text-white-50">@Model.Settings.ProductSectionDescription</p>
-            </div>
-            <a href="#" class="btn btn-link text-gold-accent text-decoration-none fw-bold">VIEW ALL <i class="bi bi-arrow-right"></i></a>
+        <div class="text-center mb-5">
+            <h2 class="font-luxury display-4 text-white">Exclusive Collection</h2>
+            <div class="mx-auto" style="width: 60px; height: 3px; background: var(--gold-accent); margin: 1.5rem auto;"></div>
+            <p class="text-white-50">@Model.Settings.ProductSectionDescription</p>
         </div>
 
         <div class="row g-4">
@@ -307,33 +215,22 @@
             {
                 <div class="col-xl-3 col-lg-4 col-md-6">
                     <div class="luxury-card">
-                        <!-- Product Image Placeholder -->
-                        <div class="product-image-placeholder image-placeholder">
-                            Product Image
+                        <div class="product-img-wrapper">
+                            <img src="@product.ImageUrl" alt="@product.Name">
                         </div>
-                        
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-white-50 small">@product.CategoryName</span>
-                            <div class="rating-stars">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                            </div>
+                            <span class="badge bg-danger" style="font-size: 0.6rem;">HOT</span>
                         </div>
-                        
                         <h5 class="fw-bold mb-3">@product.Name</h5>
-                        
                         <div class="d-flex align-items-center gap-3">
-                            <span class="fs-4 fw-bold text-white">à§³@(product.DiscountPrice ?? product.Price)</span>
+                            <span class="fs-4 fw-bold text-white">৳@(product.DiscountPrice ?? product.Price)</span>
                             @if (product.DiscountPrice.HasValue)
                             {
-                                <span class="text-white-50 text-decoration-line-through">à§³@product.Price</span>
+                                <span class="text-white-50 text-decoration-line-through small">৳@product.Price</span>
                             }
                         </div>
-
-                        <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-shop-mini">Shop Now</a>
+                        <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-shop-mini">Order Now</a>
                     </div>
                 </div>
             }
@@ -341,41 +238,16 @@
     </section>
 
     <!-- Footer -->
-    <footer class="luxury-footer">
-        <div class="row g-5">
-            <div class="col-lg-4">
-                <div class="brand-logo-container mb-4">Logo Placeholder</div>
-                <p class="text-white-50">Premium footwear destination in Bangladesh. Quality that walks with you.</p>
-                <div class="d-flex gap-3 mt-4">
-                    <!-- Payment icons could be font-awesome or small placeholders -->
-                    <div class="bg-white bg-opacity-10 p-2 rounded small">VISA</div>
-                    <div class="bg-white bg-opacity-10 p-2 rounded small">MASTER</div>
-                    <div class="bg-white bg-opacity-10 p-2 rounded small">BKASH</div>
-                </div>
+    <footer class="bg-black text-white py-5 px-4 border-top border-dark">
+        <div class="container text-center">
+            <h3 class="font-luxury mb-4">@Model.Settings.CompanyName</h3>
+            <p class="text-white-50 mb-4 mx-auto" style="max-width: 600px;">@Model.Settings.CompanyDescription</p>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="@Model.Settings.FacebookPageLink" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white fs-4"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-white fs-4"><i class="bi bi-whatsapp"></i></a>
             </div>
-            <div class="col-6 col-lg-2 ms-auto">
-                <h6 class="footer-title">Policy</h6>
-                <a href="#" class="footer-link">Delivery Info</a>
-                <a href="#" class="footer-link">Return Policy</a>
-                <a href="#" class="footer-link">Privacy Policy</a>
-            </div>
-            <div class="col-6 col-lg-2">
-                <h6 class="footer-title">Support</h6>
-                <a href="#" class="footer-link">Contact Us</a>
-                <a href="#" class="footer-link">FAQ</a>
-                <a href="#" class="footer-link">Size Guide</a>
-            </div>
-            <div class="col-lg-3">
-                <h6 class="footer-title">Newsletter</h6>
-                <p class="small text-white-50 mb-4">Join our elite list for exclusive Eid updates.</p>
-                <div class="input-group">
-                    <input type="text" class="form-control bg-dark border-0 text-white rounded-start-pill px-4" placeholder="Your Email">
-                    <button class="btn btn-danger rounded-end-pill px-4">JOIN</button>
-                </div>
-            </div>
-        </div>
-        <div class="mt-5 pt-4 border-top border-white border-opacity-10 text-center text-white-50 small">
-            &copy; @DateTime.Now.Year Shoes Bangladesh. Crafted for Perfection.
+            <p class="small text-muted">&copy; @DateTime.Now.Year @Model.Settings.CompanyName. All rights reserved.</p>
         </div>
     </footer>
 </div>
@@ -403,8 +275,9 @@
             document.getElementById('c-minutes').innerText = m.toString().padStart(2, '0');
             document.getElementById('c-seconds').innerText = s.toString().padStart(2, '0');
         }
-
         setInterval(updateEidTimer, 1000);
         updateEidTimer();
     </script>
+}
+>
 }
