@@ -499,7 +499,12 @@
                 <li>
                     <a asp-controller="Admin" asp-action="ManageLandingPage" 
                        class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageLandingPage" ? "active" : "")">
-                        <i class="bi bi-megaphone"></i> FB Campaign Page
+                        <i class="bi bi-gear-fill"></i> Landing Page Settings
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Landing" asp-action="Index" target="_blank" class="nav-link-item">
+                        <i class="bi bi-eye"></i> Collection (Landing Page)
                     </a>
                 </li>
                 <li>
