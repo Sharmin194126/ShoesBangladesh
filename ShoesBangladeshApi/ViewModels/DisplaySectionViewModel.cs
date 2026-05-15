@@ -10,5 +10,6 @@ namespace ShoesBangladesh.API.ViewModels
         public string SectionType { get; set; } = "Grid";
         public bool IsActive { get; set; } = true;
         public int DisplayOrder { get; set; }
+        public int? CategoryId { get; set; }
     }
 }

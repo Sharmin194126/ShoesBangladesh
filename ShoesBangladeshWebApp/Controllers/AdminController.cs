@@ -91,6 +91,30 @@ namespace ShoesBangladeshWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> ManageHomePageSettings()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/HomePageSettings");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var settings = JsonSerializer.Deserialize<JsonElement>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(settings);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageHomePageSettings(string marqueeText, string heroHeadline, string heroSubtitle, string heroBtnText, string heroBtnLink)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var payload = new { MarqueeText = marqueeText, HeroHeadline = heroHeadline, HeroSubtitle = heroSubtitle, HeroBtnText = heroBtnText, HeroBtnLink = heroBtnLink, IsActive = true };
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+            await client.PostAsync("api/HomePageSettings", content);
+            TempData["SuccessMessage"] = "Homepage settings updated successfully!";
+            return RedirectToAction("ManageHomePageSettings");
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage, IFormFile? logoImage)
         {
@@ -282,6 +306,16 @@ namespace ShoesBangladeshWebApp.Controllers
             var client = _httpClientFactory.CreateClient("ShoesAPI");
             var response = await client.GetAsync("api/Dashboard/DisplaySections");
             
+            // Fetch Settings for Logo
+            try {
+                var sResp = await client.GetAsync("api/LandingPage");
+                if (sResp.IsSuccessStatusCode) {
+                    var sJson = await sResp.Content.ReadAsStringAsync();
+                    var ld = JsonSerializer.Deserialize<JsonElement>(sJson);
+                    if (ld.TryGetProperty("settings", out var s)) ViewBag.Settings = s;
+                }
+            } catch { }
+
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
@@ -291,7 +325,18 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(new List<DisplaySectionViewModel>());
         }
 
-        public IActionResult CreateDisplaySection() => View();
+        public async Task<IActionResult> CreateDisplaySection()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Category");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var categories = JsonSerializer.Deserialize<List<JsonElement>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                ViewBag.Categories = categories;
+            }
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateDisplaySection(DisplaySectionViewModel model)
@@ -400,15 +445,24 @@ namespace ShoesBangladeshWebApp.Controllers
         public async Task<IActionResult> EditDisplaySection(int id)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
-            var response = await client.GetAsync($"api/Dashboard/DisplaySections/{id}");
             
-            if (response.IsSuccessStatusCode)
+            // Fetch Section
+            var response = await client.GetAsync($"api/Dashboard/DisplaySections/{id}");
+            if (!response.IsSuccessStatusCode) return RedirectToAction(nameof(ManageDisplaySections));
+            
+            var json = await response.Content.ReadAsStringAsync();
+            var section = JsonSerializer.Deserialize<DisplaySectionViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Fetch Categories
+            var catResponse = await client.GetAsync("api/Category");
+            if (catResponse.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var section = JsonSerializer.Deserialize<DisplaySectionViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                return View(section);
+                var catJson = await catResponse.Content.ReadAsStringAsync();
+                var categories = JsonSerializer.Deserialize<List<JsonElement>>(catJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                ViewBag.Categories = categories;
             }
-            return RedirectToAction(nameof(ManageDisplaySections));
+
+            return View(section);
         }
 
         [HttpPost]
@@ -421,7 +475,7 @@ namespace ShoesBangladeshWebApp.Controllers
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "Display Section updated successfully!";
-                return RedirectToAction(nameof(ManageDisplaySections));
+                return RedirectToAction(nameof(EditDisplaySection), new { id = model.Id });
             }
             return View(model);
         }
@@ -439,6 +493,223 @@ namespace ShoesBangladeshWebApp.Controllers
             else
             {
                 TempData["ErrorMessage"] = "Failed to delete display section.";
+            }
+            return RedirectToAction(nameof(ManageDisplaySections));
+        }
+        public async Task<IActionResult> ManageBanners()
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.GetAsync("api/Banners");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var banners = JsonSerializer.Deserialize<List<JsonElement>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(banners);
+            }
+            return View(new List<JsonElement>());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBanner(string? title, string? subtitle, string? linkUrl, int displayOrder, IFormFile imageFile)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            string imageUrl = "/images/hero-bg.png"; // Default
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var stream = imageFile.OpenReadStream();
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+                form.Add(streamContent, "file", imageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    imageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? imageUrl;
+                }
+            }
+
+            var banner = new { 
+                Title = title ?? "New Banner", 
+                Subtitle = subtitle ?? "", 
+                ImageUrl = imageUrl, 
+                LinkUrl = linkUrl ?? "/products", 
+                DisplayOrder = displayOrder, 
+                IsActive = true 
+            };
+            
+            var content = new StringContent(JsonSerializer.Serialize(banner), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/Banners", content);
+
+            if (response.IsSuccessStatusCode) 
+            {
+                TempData["SuccessMessage"] = "Banner added successfully!";
+            }
+            else 
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = $"Failed to add banner. API Error: {error}";
+            }
+
+            return RedirectToAction(nameof(ManageBanners));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteBanner(int id)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            var response = await client.DeleteAsync($"api/Banners/{id}");
+            if (response.IsSuccessStatusCode) TempData["SuccessMessage"] = "Banner deleted successfully!";
+            else TempData["ErrorMessage"] = "Failed to delete banner.";
+            return RedirectToAction(nameof(ManageBanners));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateBannerAction(int id, string? title, string? linkUrl, IFormFile? imageFile)
+        {
+            var client = _httpClientFactory.CreateClient("ShoesAPI");
+            
+            // Fetch current banner to preserve fields not in the modal
+            var getResponse = await client.GetAsync($"api/Banners");
+            string imageUrl = "/images/hero-bg.png";
+            string subtitle = "";
+            int displayOrder = 0;
+
+            if (getResponse.IsSuccessStatusCode)
+            {
+                var contentStr = await getResponse.Content.ReadAsStringAsync();
+                var banners = JsonSerializer.Deserialize<List<JsonElement>>(contentStr);
+                
+                var banner = banners?.FirstOrDefault(b => 
+                    (b.TryGetProperty("id", out var idProp) && idProp.GetInt32() == id) || 
+                    (b.TryGetProperty("Id", out var idProp2) && idProp2.GetInt32() == id)
+                );
+
+                if (banner.HasValue)
+                {
+                    imageUrl = (banner.Value.TryGetProperty("imageUrl", out var img) ? img.GetString() : 
+                               banner.Value.TryGetProperty("ImageUrl", out var img2) ? img2.GetString() : "") ?? "/images/hero-bg.png";
+                    
+                    subtitle = (banner.Value.TryGetProperty("subtitle", out var sub) ? sub.GetString() : 
+                               banner.Value.TryGetProperty("Subtitle", out var sub2) ? sub2.GetString() : "") ?? "";
+                    
+                    displayOrder = (banner.Value.TryGetProperty("displayOrder", out var ord) ? ord.GetInt32() : 
+                                   banner.Value.TryGetProperty("DisplayOrder", out var ord2) ? ord2.GetInt32() : 0);
+                }
+            }
+
+            // Handle New Image Upload
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var stream = imageFile.OpenReadStream();
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(imageFile.ContentType);
+                form.Add(streamContent, "file", imageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    imageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? imageUrl;
+                }
+            }
+
+            var updatedBanner = new { 
+                Id = id,
+                Title = string.IsNullOrWhiteSpace(title) ? "New Banner" : title, 
+                Subtitle = subtitle, 
+                ImageUrl = imageUrl, 
+                LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl, 
+                DisplayOrder = displayOrder, 
+                IsActive = true 
+            };
+            
+            var content = new StringContent(JsonSerializer.Serialize(updatedBanner), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"api/Banners/{id}", content);
+
+            if (response.IsSuccessStatusCode) 
+            {
+                TempData["SuccessMessage"] = "Banner updated successfully!";
+            }
+            else 
+            {
+                var apiError = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = $"Failed to update banner. API Error: {apiError}";
+            }
+
+            return RedirectToAction(nameof(ManageBanners));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateLogo(IFormFile logoFile)
+        {
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                var client = _httpClientFactory.CreateClient("ShoesAPI");
+                
+                // 1. Upload Logo
+                using var form = new MultipartFormDataContent();
+                using var stream = logoFile.OpenReadStream();
+                var streamContent = new StreamContent(stream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(logoFile.ContentType);
+                form.Add(streamContent, "file", logoFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    var logoUrl = uploadJson.GetProperty("imageUrl").GetString();
+
+                    // 2. Fetch Current Settings to Update
+                    var settingsResponse = await client.GetAsync("api/LandingPage");
+                    if (settingsResponse.IsSuccessStatusCode)
+                    {
+                        var settingsJson = await settingsResponse.Content.ReadAsStringAsync();
+                        var landingData = JsonSerializer.Deserialize<JsonElement>(settingsJson);
+                        var settings = landingData.GetProperty("settings");
+
+                        var updateDto = new {
+                            EidOfferTitle = settings.GetProperty("eidOfferTitle").GetString(),
+                            EidOfferSubtitle = settings.GetProperty("eidOfferSubtitle").GetString(),
+                            DiscountPercentage = settings.GetProperty("discountPercentage").GetInt32(),
+                            EidOfferEndTime = settings.GetProperty("eidOfferEndTime").GetDateTime(),
+                            IsOfferActive = settings.GetProperty("isOfferActive").GetBoolean(),
+                            CompanyName = settings.GetProperty("companyName").GetString(),
+                            CompanyDescription = settings.GetProperty("companyDescription").GetString(),
+                            ProductSectionDescription = settings.GetProperty("productSectionDescription").GetString(),
+                            FacebookPageLink = settings.GetProperty("facebookPageLink").GetString(),
+                            ContactEmail = settings.GetProperty("contactEmail").GetString(),
+                            Phone = settings.GetProperty("phone").GetString(),
+                            LogoUrl = logoUrl, // New Logo
+                            HeroImageUrl = settings.GetProperty("heroImageUrl").GetString(),
+                            HeroBgImageUrl = settings.GetProperty("heroBgImageUrl").GetString(),
+                            BannerImageUrl = settings.GetProperty("bannerImageUrl").GetString(),
+                            BannerTitle = settings.GetProperty("bannerTitle").GetString(),
+                            BannerDescription = settings.GetProperty("bannerDescription").GetString(),
+                            OfferCardTitle = settings.GetProperty("offerCardTitle").GetString(),
+                            OfferCardSubtitle = settings.GetProperty("offerCardSubtitle").GetString(),
+                            OfferCardCouponCode = settings.GetProperty("offerCardCouponCode").GetString()
+                        };
+
+                        var updateContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
+                        var finalResponse = await client.PostAsync("api/LandingPage/UpdateSettings", updateContent);
+                        
+                        if (finalResponse.IsSuccessStatusCode)
+                            TempData["SuccessMessage"] = "Website Logo updated successfully!";
+                        else
+                            TempData["ErrorMessage"] = "Failed to save logo settings.";
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to upload logo image.";
+                }
             }
             return RedirectToAction(nameof(ManageDisplaySections));
         }

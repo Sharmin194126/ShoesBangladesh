@@ -82,7 +82,11 @@ namespace ShoesBangladeshWebApp.Controllers
             var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/products", content);
 
-            if (response.IsSuccessStatusCode) return RedirectToAction(nameof(Index));
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Product created successfully!";
+                return RedirectToAction(nameof(Index));
+            }
             await LoadDropdowns();
             return View(product);
         }
@@ -128,7 +132,11 @@ namespace ShoesBangladeshWebApp.Controllers
             var content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"api/products/{product.Id}", content);
 
-            if (response.IsSuccessStatusCode) return RedirectToAction(nameof(Index));
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Product updated successfully!";
+                return RedirectToAction(nameof(Edit), new { id = product.Id });
+            }
             await LoadDropdowns();
             return View(product);
         }
@@ -226,7 +234,7 @@ namespace ShoesBangladeshWebApp.Controllers
             }
 
             // Display Sections
-            var secRes = await client.GetAsync("api/displaysections");
+            var secRes = await client.GetAsync("api/Dashboard/DisplaySections");
             if (secRes.IsSuccessStatusCode) {
                 ViewBag.DisplaySections = JsonSerializer.Deserialize<IEnumerable<ShoesBangladesh.API.ViewModels.DisplaySectionViewModel>>(await secRes.Content.ReadAsStringAsync(), opts);
             }

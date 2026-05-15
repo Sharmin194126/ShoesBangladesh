@@ -507,6 +507,12 @@
                         <i class="bi bi-people"></i> Newsletter Subscribers
                     </a>
                 </li>
+                <li>
+                    <a asp-controller="Admin" asp-action="ManageHomePageSettings" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageHomePageSettings" ? "active" : "")">
+                        <i class="bi bi-house-gear"></i> Homepage Settings
+                    </a>
+                </li>
             </ul>
 
             <div class="nav-group-title">Order Management</div>
@@ -551,7 +557,12 @@
                 <li><a href="#" class="nav-link-item"><i class="bi bi-graph-up"></i> Employee Products-Sales</a></li>
                 <li><a href="#" class="nav-link-item"><i class="bi bi-person-circle"></i> My Profile</a></li>
                 <li><a href="#" class="nav-link-item"><i class="bi bi-credit-card"></i> Payment History</a></li>
-                <li><a href="#" class="nav-link-item"><i class="bi bi-window-sidebar"></i> Manage Banners</a></li>
+                <li>
+                    <a asp-controller="Admin" asp-action="ManageBanners" 
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageBanners" ? "active" : "")">
+                        <i class="bi bi-window-sidebar"></i> Manage Banners
+                    </a>
+                </li>
             </ul>
 
             <div class="nav-group-title">Tracking</div>
@@ -605,6 +616,32 @@
 
     <!-- Content -->
     <main class="main-content" id="mainContent">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 12px; background: #E8F5E9; color: #2E7D32;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+                    <div>
+                        <strong class="d-block">Success!</strong>
+                        <span class="small">@TempData["SuccessMessage"]</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 12px; background: #FFEBEE; color: #C40000;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                    <div>
+                        <strong class="d-block">Error!</strong>
+                        <span class="small">@TempData["ErrorMessage"]</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
         @RenderBody()
     </main>
 

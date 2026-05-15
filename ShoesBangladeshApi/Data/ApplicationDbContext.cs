@@ -25,6 +25,7 @@ namespace ShoesBangladesh.API.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Newsletter> Newsletters { get; set; }
         public DbSet<HomeBanner> HomeBanners { get; set; }
+        public DbSet<HomePageSettings> HomePageSettings { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

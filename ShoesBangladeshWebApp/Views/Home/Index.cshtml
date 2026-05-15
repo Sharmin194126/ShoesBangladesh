@@ -2,10 +2,19 @@
 @{
     ViewData["Title"] = "Home";
     var banners = ViewBag.Banners as List<JsonElement>;
-    var products = ViewBag.Products as List<JsonElement>;
-    // Safely handle nullable settings from ViewBag
-    JsonElement? settingsRaw = ViewBag.Settings as JsonElement?;
+    var allProducts = ViewBag.AllProducts as List<JsonElement>;
+    var sections = ViewBag.Sections as List<JsonElement>;
+    var hpSettings = ViewBag.HpSettings as JsonElement?;
+    var categories = ViewBag.Categories as List<JsonElement>;
+    
     string apiBase = "http://localhost:5190";
+
+    // Extract dynamic settings
+    string marqueeText = hpSettings?.TryGetProperty("marqueeText", out var mt) == true ? mt.GetString() ?? "" : "🚚 Cash on Delivery available all over Bangladesh! ⚡ Fast Delivery, Secure Shopping! 👟 Best Shoe Collection! ✨ Order Now for Exclusive Offers!";
+    string heroHeadline = hpSettings?.TryGetProperty("heroHeadline", out var hh) == true ? hh.GetString() ?? "" : "Best Shoe Collection in Bangladesh";
+    string heroSubtitle = hpSettings?.TryGetProperty("heroSubtitle", out var hs) == true ? hs.GetString() ?? "" : "Premium Quality, Best Price";
+    string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Shop Now";
+    string heroBtnLink = hpSettings?.TryGetProperty("heroBtnLink", out var hbl) == true ? hbl.GetString() ?? "#" : "#";
 }
 
 <style>
@@ -21,74 +30,61 @@
     .hero-slider-section {
         position: relative;
         overflow: hidden;
-        margin-top: -20px; /* Adjust if navbar is sticky */
+        margin-top: -20px;
     }
 
     .carousel-item {
-        height: 85vh;
-        min-height: 600px;
+        height: 65vh;
+        min-height: 400px;
         background-color: #000;
     }
 
     .carousel-image-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%);
+        background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
         z-index: 1;
     }
 
     .carousel-caption-custom {
         position: absolute;
         top: 50%;
-        left: 10%;
+        left: 8%;
         transform: translateY(-50%);
         z-index: 2;
-        max-width: 600px;
+        max-width: 700px;
         color: white;
         text-align: left;
     }
 
     .carousel-caption-custom h1 {
-        font-size: 4.5rem;
+        font-size: 4rem;
         font-weight: 900;
         line-height: 1.1;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         text-transform: uppercase;
-        letter-spacing: -2px;
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.8s ease 0.3s;
+        letter-spacing: -1px;
+        animation: fadeInUp 0.8s ease;
     }
 
     .carousel-caption-custom p {
-        font-size: 1.25rem;
-        margin-bottom: 2.5rem;
-        color: rgba(255,255,255,0.8);
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.8s ease 0.5s;
-    }
-
-    .active .carousel-caption-custom h1,
-    .active .carousel-caption-custom p,
-    .active .carousel-btn-group {
-        opacity: 1;
-        transform: translateY(0);
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: rgba(255,255,255,0.9);
+        animation: fadeInUp 1s ease;
     }
 
     .carousel-btn-group {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.8s ease 0.7s;
         display: flex;
         gap: 15px;
+        animation: fadeInUp 1.2s ease;
     }
 
     .btn-premium-red {
         background: var(--premium-red);
         color: white;
-        padding: 1rem 2.5rem;
-        border-radius: 100px;
+        padding: 0.8rem 2.2rem;
+        border-radius: 8px;
         font-weight: 700;
         text-decoration: none;
         transition: var(--transition);
@@ -98,218 +94,385 @@
     .btn-premium-red:hover {
         background: transparent;
         color: var(--premium-red);
-        box-shadow: 0 10px 25px rgba(208, 0, 0, 0.3);
     }
 
-    .btn-premium-outline {
+    /* SIDE NAV (Slim Circle Icons) */
+    .side-nav {
+        position: fixed;
+        left: 25px;
+        top: 75vh;
+        width: 50px;
         background: transparent;
+        z-index: 1000;
+        display: none;
+        overflow: visible;
+    }
+
+    @@media (min-width: 1200px) {
+        .side-nav { display: block; }
+    }
+
+    .side-nav a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--premium-red); /* Using theme color */
         color: white;
-        padding: 1rem 2.5rem;
-        border-radius: 100px;
-        font-weight: 700;
+        border-radius: 50%;
+        margin-bottom: 12px;
         text-decoration: none;
-        transition: var(--transition);
-        border: 2px solid white;
-    }
-
-    .btn-premium-outline:hover {
-        background: white;
-        color: black;
-    }
-
-    /* Features Section */
-    .features-grid {
-        background: white;
-        padding: 4rem 0;
-        border-bottom: 1px solid #eee;
-    }
-
-    .feature-item {
-        text-align: center;
-        padding: 2rem;
-        transition: var(--transition);
-    }
-
-    .feature-item i {
-        font-size: 2.5rem;
-        color: var(--premium-red);
-        margin-bottom: 1.5rem;
-        display: inline-block;
-    }
-
-    .feature-item h4 {
-        font-weight: 800;
         font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 15px rgba(208,0,0,0.3);
+        position: relative;
     }
 
-    .feature-item p {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0;
+    .side-nav a .nav-text {
+        position: absolute;
+        left: 55px;
+        background: var(--premium-dark);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        pointer-events: none;
     }
 
-    /* Product Grid */
-    .section-title {
+    .side-nav a:hover .nav-text {
+        opacity: 1;
+        visibility: visible;
+        left: 50px;
+    }
+
+    .side-nav a:hover {
+        transform: scale(1.15);
+        background: var(--premium-dark);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    /* Product Section */
+    .section-header-premium {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2.5rem;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 1rem;
+    }
+
+    .section-header-premium {
+        margin-bottom: 3.5rem;
+        position: relative;
         text-align: center;
-        margin-bottom: 4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .section-title h2 {
-        font-size: 3rem;
+    .section-title-premium {
+        font-size: 1.8rem;
         font-weight: 900;
         text-transform: uppercase;
-        margin-bottom: 1rem;
+        position: relative;
+        color: var(--premium-dark);
+        margin-bottom: 2rem;
     }
 
-    .section-title .divider {
-        width: 80px;
+    .section-title-premium::after {
+        content: '';
+        position: absolute;
+        bottom: -0.8rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
         height: 4px;
         background: var(--premium-red);
-        margin: 0 auto;
     }
 
-    .product-card-premium {
-        background: white;
+    /* Premium Sneaker Product Card */
+    .product-card-luxury {
+        background: #fff;
         border-radius: 20px;
         overflow: hidden;
-        transition: var(--transition);
-        border: 1px solid #f0f0f0;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 2px solid transparent;
         height: 100%;
         display: flex;
         flex-direction: column;
         position: relative;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
     }
 
-    .product-card-premium:hover {
-        transform: translateY(-15px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    .product-card-luxury:hover {
+        transform: translateY(-10px);
         border-color: var(--premium-red);
+        box-shadow: 0 15px 45px rgba(208,0,0,0.1);
     }
 
-    .product-img-wrapper {
+    .luxury-img-box {
         position: relative;
-        padding-top: 100%; /* 1:1 Aspect Ratio */
+        padding-top: 100%;
+        background: #f8f9fa;
         overflow: hidden;
-        background: #f8f8f8;
     }
 
-    .product-img-wrapper img {
+    .luxury-img-box img {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
         object-fit: contain;
-        padding: 20px;
-        transition: var(--transition);
+        padding: 25px;
+        transition: transform 0.6s ease;
     }
 
-    .product-card-premium:hover .product-img-wrapper img {
-        transform: scale(1.1);
+    .product-card-luxury:hover .luxury-img-box img {
+        transform: scale(1.1) rotate(-5deg);
     }
 
-    .product-badge {
+    .discount-badge-red {
         position: absolute;
         top: 15px;
-        left: 15px;
+        right: 15px;
         background: var(--premium-red);
         color: white;
-        padding: 5px 15px;
-        border-radius: 100px;
+        padding: 5px 12px;
+        border-radius: 50px;
         font-size: 0.75rem;
         font-weight: 800;
-        z-index: 2;
+        z-index: 10;
+        box-shadow: 0 4px 10px rgba(208,0,0,0.3);
     }
 
-    .product-info-premium {
+    .luxury-info {
         padding: 1.5rem;
-        text-align: center;
+        text-align: left;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .product-info-premium h5 {
+    .luxury-info h6 {
         font-weight: 800;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        color: var(--premium-dark);
+        margin-bottom: 0.25rem;
+        color: #1a1a1a;
+        font-size: 1.35rem; /* Increased from 1.1rem */
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 3.2rem;
     }
 
-    .product-info-premium .category {
-        font-size: 0.8rem;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 1rem;
+    .rating-box {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 0.75rem;
+        color: #ffc107;
+        font-size: 0.85rem;
+    }
+
+    .review-count {
+        color: #adb5bd;
+        font-size: 0.75rem;
+        margin-left: 5px;
     }
 
     .price-box {
-        margin-top: auto;
-        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 1rem;
     }
 
-    .curr-price {
-        font-size: 1.4rem;
+    .price-current {
+        color: #1a1a1a; /* Dark for current price */
         font-weight: 900;
-        color: var(--premium-red);
+        font-size: 1.4rem;
     }
 
-    .old-price {
-        font-size: 1rem;
+    .price-old {
+        color: var(--premium-red); /* Red for regular price (crossed out) */
         text-decoration: line-through;
-        color: #bbb;
-        margin-right: 8px;
+        font-size: 0.9rem;
+        margin-left: 5px;
     }
 
-    .btn-buy-now {
-        width: 100%;
-        padding: 0.8rem;
-        border-radius: 12px;
-        background: var(--premium-dark);
-        color: white;
-        font-weight: 700;
-        text-decoration: none;
-        transition: var(--transition);
-        border: 2px solid var(--premium-dark);
+    .size-selector {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
     }
 
-    .btn-buy-now:hover {
-        background: var(--premium-red);
-        border-color: var(--premium-red);
-        color: white;
-    }
-
-    /* Custom Controls for Carousel */
-    .carousel-control-prev, .carousel-control-next {
-        width: 5%;
-        opacity: 0.8;
-    }
-
-    .control-icon {
-        width: 50px;
-        height: 50px;
-        background: rgba(255,255,255,0.2);
-        backdrop-filter: blur(10px);
+    .size-btn {
+        width: 35px;
+        height: 35px;
+        border: 1.5px solid #e9ecef;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #495057;
+        transition: 0.2s;
+        cursor: pointer;
+        background: white;
+    }
+
+    .size-btn:hover {
+        border-color: var(--premium-red);
+        color: var(--premium-red);
+    }
+
+    .shop-now-card-btn {
+        background: var(--premium-red);
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 12px;
+        font-weight: 700;
+        width: 100%;
+        transition: 0.3s;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(208,0,0,0.2);
+    }
+
+    .product-card-luxury:hover .shop-now-card-btn {
+        background: var(--premium-dark);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+em;
+    }
+
+    .luxury-price {
         font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--premium-red);
+        margin-bottom: 1rem;
+    }
+
+    .btn-buy-luxury {
+        display: block;
+        width: 100%;
+        padding: 0.6rem;
+        background: var(--premium-dark);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: 0.3s;
+    }
+
+    .btn-buy-luxury:hover {
+        background: var(--premium-red);
+        color: white;
+    }
+
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Features Section */
+    .features-grid {
+        background: white;
+        padding: 3rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .feature-item {
+        text-align: center;
+        padding: 1.5rem;
         transition: var(--transition);
     }
 
-    .control-icon:hover {
-        background: var(--premium-red);
-        transform: scale(1.1);
+    .feature-item i {
+        font-size: 3.5rem;
+        color: var(--premium-red);
+        display: block;
+        margin-bottom: 1.5rem;
+        line-height: 1;
     }
 
+    .feature-item h4 {
+        font-weight: 800;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        color: var(--premium-dark);
+    }
+
+    .feature-item p {
+        color: #777;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    .feature-item:hover {
+        transform: translateY(-5px);
+    }
 </style>
 
-<div class="hero-slider-section">
-    <div id="homeHeroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+<!-- Update Layout Marquee Text Dynamically if possible, otherwise it will use default -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const marqueeEl = document.getElementById("marqueeTextContent");
+        if (marqueeEl) {
+            marqueeEl.innerText = "@marqueeText";
+            // Also update the duplicate for seamless loop
+            const track = document.querySelector(".marquee-track");
+            if (track) {
+                track.innerHTML = `<span style="font-size: 0.9rem; font-weight: 600; letter-spacing: 0.3px; padding: 0 60px;">@marqueeText</span>
+                                  <span style="font-size: 0.9rem; font-weight: 600; padding: 0 60px;">@marqueeText</span>`;
+            }
+        }
+    });
+</script>
+
+<div class="side-nav">
+    @if (sections != null)
+    {
+        foreach (var dispSection in sections)
+        {
+            string name = "Section";
+            if (dispSection.TryGetProperty("title", out var t)) name = t.GetString() ?? "Section";
+            else if (dispSection.TryGetProperty("Title", out var t2)) name = t2.GetString() ?? "Section";
+
+            var sectionId = name.Replace(" ", "").ToLower();
+            <a href="#@sectionId">
+                @if (name.Contains("Categor", StringComparison.OrdinalIgnoreCase)) { <text>🗂️</text> }
+                else if (name.Contains("Featured", StringComparison.OrdinalIgnoreCase)) { <text>⭐</text> }
+                else if (name.Contains("Exclusive", StringComparison.OrdinalIgnoreCase)) { <text>💎</text> }
+                else if (name.Contains("Offer", StringComparison.OrdinalIgnoreCase)) { <text>🔥</text> }
+                else if (name.Contains("You", StringComparison.OrdinalIgnoreCase)) { <text>❤️</text> }
+                else if (name.Contains("Restock", StringComparison.OrdinalIgnoreCase)) { <text>🔁</text> }
+                else { <text>📦</text> }
+                <span class="nav-text">@name</span>
+            </a>
+        }
+    }
+</div>
+
+<div class="page-wrapper-custom">
+    <div class="hero-slider-section">
+    <div id="homeHeroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
         <div class="carousel-inner">
             @if (banners != null && banners.Count > 0)
             {
@@ -317,14 +480,13 @@
                 {
                     var banner = banners[i];
                     <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <img src="@(banner.GetProperty("imageUrl").GetString()?.StartsWith("http") == true ? "" : apiBase)@banner.GetProperty("imageUrl").GetString()" class="d-block w-100 h-100" style="object-fit: cover;" alt="...">
+                        <img src="@(banner.GetProperty("imageUrl").GetString()?.StartsWith("http") == true ? "" : apiBase)@banner.GetProperty("imageUrl").GetString()" class="d-block w-100 h-100" style="object-fit: contain; background: #000;" alt="...">
                         <div class="carousel-image-overlay"></div>
                         <div class="carousel-caption-custom">
                             <h1>@banner.GetProperty("title").GetString()</h1>
                             <p>@banner.GetProperty("subtitle").GetString()</p>
                             <div class="carousel-btn-group">
-                                <a href="@banner.GetProperty("linkUrl").GetString()" class="btn-premium-red shadow-lg">Shop Collection</a>
-                                <a href="#" class="btn-premium-outline">Learn More</a>
+                                <a href="@banner.GetProperty("linkUrl").GetString()" class="btn-premium-red shadow-lg">Shop Now</a>
                             </div>
                         </div>
                     </div>
@@ -333,27 +495,22 @@
             else
             {
                 <div class="carousel-item active">
-                    <img src="/images/home-banner-fallback.png" class="d-block w-100 h-100" style="object-fit: cover;" alt="...">
+                    <img src="/images/hero-bg.png" class="d-block w-100 h-100" style="object-fit: contain; background: #000;" alt="...">
                     <div class="carousel-image-overlay"></div>
                     <div class="carousel-caption-custom">
-                        <h1>Premium Shoes</h1>
-                        <p>Discover the finest footwear collection in Bangladesh.</p>
+                        <h1>@heroHeadline</h1>
+                        <p>@heroSubtitle</p>
                         <div class="carousel-btn-group">
-                            <a href="#" class="btn-premium-red">Explore Now</a>
+                            <a href="@heroBtnLink" class="btn-premium-red">@heroBtnText</a>
                         </div>
                     </div>
                 </div>
             }
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="prev">
-            <div class="control-icon"><i class="bi bi-chevron-left text-white"></i></div>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="next">
-            <div class="control-icon"><i class="bi bi-chevron-right text-white"></i></div>
-        </button>
     </div>
 </div>
 
+<!-- Features Section (Restored) -->
 <section class="features-grid">
     <div class="container">
         <div class="row g-4">
@@ -382,56 +539,164 @@
     </div>
 </section>
 
-<section class="py-5 bg-white">
-    <div class="container py-5">
-        <div class="section-title">
-            <p class="text-danger fw-bold text-uppercase letter-spacing-2 mb-2">Our Best Collection</p>
-            <h2>Featured Footwear</h2>
-            <div class="divider"></div>
-        </div>
+<div class="container py-5">
+    @if (sections != null && sections.Count > 0)
+    {
+        foreach (var section in sections)
+        {
+            string sectionName = "Section";
+            if (section.TryGetProperty("title", out var t) && t.ValueKind == JsonValueKind.String) sectionName = t.GetString() ?? "Section";
+            else if (section.TryGetProperty("Title", out var t2) && t2.ValueKind == JsonValueKind.String) sectionName = t2.GetString() ?? "Section";
 
-        <div class="row g-4">
-            @if (products != null && products.Count > 0)
+            int categoryId = 0;
+            if (section.TryGetProperty("categoryId", out var c) && c.ValueKind == JsonValueKind.Number) categoryId = c.GetInt32();
+            else if (section.TryGetProperty("CategoryId", out var c2) && c2.ValueKind == JsonValueKind.Number) categoryId = c2.GetInt32();
+            
+            if (!sectionName.Equals("Featured items", StringComparison.OrdinalIgnoreCase) && categoryId == 0) continue;
+            
+            // Filter products for this category
+            List<JsonElement>? sectionProducts = null;
+
+            if (sectionName.Equals("Featured items", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var product in products)
-                {
-                    <div class="col-6 col-lg-3">
-                        <div class="product-card-premium">
-                            <div class="product-badge">New</div>
-                            <div class="product-img-wrapper">
-                                <img src="@(product.GetProperty("imageUrl").GetString()?.StartsWith("http") == true ? "" : apiBase)@product.GetProperty("imageUrl").GetString()" alt="@product.GetProperty("name").GetString()">
-                            </div>
-                            <div class="product-info-premium">
-                                <span class="category">Shoes</span>
-                                <h5>@product.GetProperty("name").GetString()</h5>
-                                <div class="price-box">
-                                    <span class="curr-price">৳@product.GetProperty("price").GetDecimal().ToString("#,##0")</span>
-                                </div>
-                                <a href="#" class="btn-buy-now">Add to Cart</a>
-                            </div>
-                        </div>
-                    </div>
-                }
+                sectionProducts = allProducts?.Where(p => {
+                    if (p.TryGetProperty("isFeatured", out var f) && f.ValueKind == JsonValueKind.True) return true;
+                    if (p.TryGetProperty("IsFeatured", out var f2) && f2.ValueKind == JsonValueKind.True) return true;
+                    return false;
+                }).Take(4).ToList();
             }
-            else
+            else if (categoryId != 0)
             {
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">No featured products found.</p>
+                sectionProducts = allProducts?.Where(p => {
+                    if (p.TryGetProperty("categoryId", out var pc) && pc.ValueKind == JsonValueKind.Number) return pc.GetInt32() == categoryId;
+                    if (p.TryGetProperty("CategoryId", out var pc2) && pc2.ValueKind == JsonValueKind.Number) return pc2.GetInt32() == categoryId;
+                    return false;
+                }).Take(4).ToList();
+            }
+
+            if (sectionProducts != null && sectionProducts.Any())
+            {
+                var sectionId = sectionName.Replace(" ", "").ToLower();
+                <div class="mb-5" id="@sectionId">
+                    <div class="section-header-premium">
+                        <h2 class="section-title-premium">@sectionName</h2>
+                    </div>
+                    
+                    <div class="row g-4">
+                        @foreach (var product in sectionProducts)
+                        {
+                            string pName = "";
+                            if (product.TryGetProperty("name", out var n) && n.ValueKind == JsonValueKind.String) pName = n.GetString() ?? "";
+                            else if (product.TryGetProperty("Name", out var n2) && n2.ValueKind == JsonValueKind.String) pName = n2.GetString() ?? "";
+
+                            decimal pPrice = 0;
+                            if (product.TryGetProperty("price", out var p) && p.ValueKind == JsonValueKind.Number) pPrice = p.GetDecimal();
+                            else if (product.TryGetProperty("Price", out var p2) && p2.ValueKind == JsonValueKind.Number) pPrice = p2.GetDecimal();
+
+                            string pImg = "";
+                            if (product.TryGetProperty("imageUrl", out var i) && i.ValueKind == JsonValueKind.String) pImg = i.GetString() ?? "";
+                            else if (product.TryGetProperty("ImageUrl", out var i2) && i2.ValueKind == JsonValueKind.String) pImg = i2.GetString() ?? "";
+
+                            decimal pDiscountPrice = 0;
+                            if (product.TryGetProperty("discountPrice", out var dp) && dp.ValueKind == JsonValueKind.Number) pDiscountPrice = dp.GetDecimal();
+                            else if (product.TryGetProperty("DiscountPrice", out var dp2) && dp2.ValueKind == JsonValueKind.Number) pDiscountPrice = dp2.GetDecimal();
+
+                            decimal pOffer = 0;
+                            if (product.TryGetProperty("offerPercentage", out var op) && op.ValueKind == JsonValueKind.Number) pOffer = op.GetDecimal();
+                            else if (product.TryGetProperty("OfferPercentage", out var op2) && op2.ValueKind == JsonValueKind.Number) pOffer = op2.GetDecimal();
+
+                            int pId = 0;
+                            if (product.TryGetProperty("id", out var pid) && pid.ValueKind == JsonValueKind.Number) pId = pid.GetInt32();
+                            else if (product.TryGetProperty("Id", out var pid2) && pid2.ValueKind == JsonValueKind.Number) pId = pid2.GetInt32();
+
+                            <div class="col-6 col-lg-3">
+                                <div class="product-card-luxury">
+                                    <div class="luxury-img-box">
+                                        @if (pOffer > 0)
+                                        {
+                                            <div class="discount-badge-red">SAVE @pOffer%</div>
+                                        }
+                                        <a href="/Product/Details/@pId">
+                                            <img src="@(pImg.StartsWith("http") == true ? "" : apiBase)@pImg" alt="@pName">
+                                        </a>
+                                    </div>
+                                    <div class="luxury-info">
+                                        <h6 class="mb-1">@pName</h6>
+                                        <div class="rating-box">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-half"></i>
+                                            <span class="review-count">(124)</span>
+                                        </div>
+                                        <div class="price-box">
+                                            <span class="price-current">৳@pPrice.ToString("#,##0")</span>
+                                            @if (pDiscountPrice > pPrice)
+                                            {
+                                                <span class="price-old">৳@pDiscountPrice.ToString("#,##0")</span>
+                                            }
+                                        </div>
+                                        
+                                        <div class="size-selector">
+                                            <span class="size-btn">40</span>
+                                            <span class="size-btn">41</span>
+                                            <span class="size-btn">42</span>
+                                            <span class="size-btn">43</span>
+                                            <span class="size-btn">44</span>
+                                        </div>
+
+                                        <a href="/Product/Details/@pId" class="shop-now-card-btn text-center text-decoration-none">Shop Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             }
+        }
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <h4 class="text-muted">No homepage sections active.</h4>
+            <p>Please enable sections in Admin -> Homepage Sections.</p>
         </div>
+    }
+</div>
 
-        <div class="text-center mt-5">
-            <a href="#" class="btn btn-outline-danger rounded-pill px-5 py-3 fw-bold">View All Collection</a>
-        </div>
-    </div>
-</section>
-
-<!-- Promotional Banner -->
-<section class="py-5" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/promo-bg.jpg') center/cover fixed;">
+<!-- Extra Promo Section -->
+<section class="py-5 my-5" style="background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/banner-red.png') center/cover;">
     <div class="container py-5 text-center text-white">
-        <h3 class="display-4 fw-black mb-3">EXCLUSIVE SHOES COLLECTION</h3>
-        <p class="lead mb-5">Experience the ultimate comfort and luxury with our limited edition series.</p>
-        <a href="#" class="btn-premium-red">Claim Offer Now</a>
+        <h2 class="display-5 fw-black mb-3">PREMIUM QUALITY ASSURED</h2>
+        <p class="lead mb-4">Cash on Delivery across Bangladesh with the fastest delivery service.</p>
+        <a href="#" class="btn btn-warning btn-lg rounded-pill px-5 fw-bold">SHOP ALL COLLECTION</a>
     </div>
 </section>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var myCarouselElement = document.querySelector('#homeHeroCarousel');
+            if (myCarouselElement) {
+                // Remove any existing instance to avoid conflicts
+                var existing = bootstrap.Carousel.getInstance(myCarouselElement);
+                if (existing) existing.dispose();
+
+                var carousel = new bootstrap.Carousel(myCarouselElement, {
+                    interval: 3000,
+                    ride: 'carousel',
+                    pause: 'hover',
+                    wrap: true
+                });
+                carousel.cycle();
+                
+                // Force slide next after 3s to prove it works
+                setTimeout(() => {
+                    carousel.next();
+                }, 3000);
+            }
+        });
+    </script>
+}

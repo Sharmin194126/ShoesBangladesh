@@ -49,10 +49,26 @@
         </div>
 
         <div class="mb-3">
+            <label class="form-label-custom">Select Category <span class="text-danger">*</span></label>
+            <select asp-for="CategoryId" class="form-control-custom" required>
+                <option value="">-- Choose Category --</option>
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat.GetProperty("id").GetInt32()">@cat.GetProperty("name").GetString()</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+            <small class="text-muted">Products from this category will show in this section.</small>
+        </div>
+
+        <div class="mb-3">
             <label class="form-label-custom">Display Order</label>
             <input asp-for="DisplayOrder" type="number" class="form-control-custom" value="0" />
             <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
-            <small class="text-muted">Lower numbers appear first on homepage sidebar.</small>
+            <small class="text-muted">Lower numbers appear first on homepage.</small>
         </div>
         <div class="mb-4">
             <label class="form-label-custom">Status</label>

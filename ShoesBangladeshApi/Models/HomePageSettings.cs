@@ -1,0 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace ShoesBangladesh.API.Models
+{
+    public class HomePageSettings
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string MarqueeText { get; set; } = "🚚 সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা! ⚡ দ্রুত ডেলিভারি, নিশ্চিন্ত শপিং! 👟 সেরা মানের জুতার কালেকশন! ✨ এক্সক্লুসিভ অফার পেতে এখনই অর্ডার করুন!";
+        public string HeroHeadline { get; set; } = "বাংলাদেশের সেরা জুতার কালেকশন";
+        public string HeroSubtitle { get; set; } = "প্রিমিয়াম কোয়ালিটি, সেরা দাম";
+        public string HeroBtnText { get; set; } = "এখনই কিনুন";
+        public string HeroBtnLink { get; set; } = "#";
+        public bool IsActive { get; set; } = true;
+    }
+}

@@ -73,5 +73,6 @@ namespace ShoesBangladesh.API.Models
         public string SectionType { get; set; } = "Grid"; // Grid, Slider, Banner
         public bool IsActive { get; set; } = true;
         public int DisplayOrder { get; set; }
+        public int? CategoryId { get; set; }
     }
 }

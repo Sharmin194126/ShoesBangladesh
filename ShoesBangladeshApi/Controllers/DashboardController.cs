@@ -246,35 +246,129 @@ namespace ShoesBangladesh.API.Controllers
         [HttpGet("DisplaySections")]
         public async Task<ActionResult<List<DisplaySectionViewModel>>> GetDisplaySections()
         {
-            var sections = await _context.DisplaySections
-                .OrderBy(s => s.DisplayOrder)
-                .Select(s => new DisplaySectionViewModel
+            try
+            {
+                // Try to fetch all columns including CategoryId
+                var sections = await _context.DisplaySections
+                    .OrderBy(s => s.DisplayOrder)
+                    .Select(s => new DisplaySectionViewModel
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                        Subtitle = s.Subtitle,
+                        SectionType = s.SectionType,
+                        IsActive = s.IsActive,
+                        DisplayOrder = s.DisplayOrder,
+                        CategoryId = s.CategoryId
+                    }).ToListAsync();
+                return Ok(sections);
+            }
+            catch (Exception)
+            {
+                // Fallback: Explicitly project only existing columns to avoid "Invalid Column Name" errors
+                var sections = await _context.DisplaySections
+                    .OrderBy(s => s.DisplayOrder)
+                    .Select(s => new DisplaySectionViewModel
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                        Subtitle = s.Subtitle,
+                        SectionType = s.SectionType,
+                        IsActive = s.IsActive,
+                        DisplayOrder = s.DisplayOrder
+                        // CategoryId is skipped here because it's missing in the current DB schema
+                    }).ToListAsync();
+                return Ok(sections);
+            }
+        }
+
+        [HttpGet("Footer")]
+        public async Task<ActionResult<FooterInfoViewModel>> GetFooter()
+        {
+            var footer = await _context.FooterInfos.FirstOrDefaultAsync();
+            if (footer == null)
+            {
+                footer = new FooterInfo
                 {
-                    Id = s.Id,
-                    Title = s.Title,
-                    Subtitle = s.Subtitle,
-                    SectionType = s.SectionType,
-                    IsActive = s.IsActive,
-                    DisplayOrder = s.DisplayOrder
-                }).ToListAsync();
-            return sections;
+                    Address = "Default Address",
+                    ContactNumber = "+8801234567890",
+                    LastUpdated = DateTime.Now
+                };
+                _context.FooterInfos.Add(footer);
+                await _context.SaveChangesAsync();
+            }
+
+            return new FooterInfoViewModel
+            {
+                Id = footer.Id,
+                Address = footer.Address,
+                ContactNumber = footer.ContactNumber,
+                Email = footer.Email,
+                FacebookUrl = footer.FacebookUrl,
+                TwitterUrl = footer.TwitterUrl,
+                InstagramUrl = footer.InstagramUrl,
+                LastUpdated = footer.LastUpdated
+            };
+        }
+
+        [HttpPost("Footer")]
+        public async Task<IActionResult> UpdateFooter(FooterInfoViewModel model)
+        {
+            var footer = await _context.FooterInfos.FirstOrDefaultAsync();
+            if (footer == null)
+            {
+                footer = new FooterInfo();
+                _context.FooterInfos.Add(footer);
+            }
+
+            footer.Address = model.Address;
+            footer.ContactNumber = model.ContactNumber;
+            footer.Email = model.Email;
+            footer.FacebookUrl = model.FacebookUrl;
+            footer.TwitterUrl = model.TwitterUrl;
+            footer.InstagramUrl = model.InstagramUrl;
+            footer.LastUpdated = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return Ok(footer);
         }
 
         [HttpGet("DisplaySections/{id}")]
         public async Task<ActionResult<DisplaySectionViewModel>> GetDisplaySection(int id)
         {
-            var section = await _context.DisplaySections.FindAsync(id);
-            if (section == null) return NotFound();
-
-            return new DisplaySectionViewModel
+            try
             {
-                Id = section.Id,
-                Title = section.Title,
-                Subtitle = section.Subtitle,
-                SectionType = section.SectionType,
-                IsActive = section.IsActive,
-                DisplayOrder = section.DisplayOrder
-            };
+                var section = await _context.DisplaySections
+                    .Select(s => new DisplaySectionViewModel
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                        Subtitle = s.Subtitle,
+                        SectionType = s.SectionType,
+                        IsActive = s.IsActive,
+                        DisplayOrder = s.DisplayOrder,
+                        CategoryId = s.CategoryId
+                    }).FirstOrDefaultAsync(s => s.Id == id);
+
+                if (section == null) return NotFound();
+                return section;
+            }
+            catch (Exception)
+            {
+                var section = await _context.DisplaySections
+                    .Select(s => new DisplaySectionViewModel
+                    {
+                        Id = s.Id,
+                        Title = s.Title,
+                        Subtitle = s.Subtitle,
+                        SectionType = s.SectionType,
+                        IsActive = s.IsActive,
+                        DisplayOrder = s.DisplayOrder
+                    }).FirstOrDefaultAsync(s => s.Id == id);
+
+                if (section == null) return NotFound();
+                return section;
+            }
         }
 
         [HttpPost("DisplaySections")]
@@ -286,7 +380,8 @@ namespace ShoesBangladesh.API.Controllers
                 Subtitle = model.Subtitle,
                 SectionType = model.SectionType,
                 IsActive = model.IsActive,
-                DisplayOrder = model.DisplayOrder
+                DisplayOrder = model.DisplayOrder,
+                CategoryId = model.CategoryId
             };
 
             _context.DisplaySections.Add(section);
@@ -309,6 +404,7 @@ namespace ShoesBangladesh.API.Controllers
             section.SectionType = model.SectionType;
             section.IsActive = model.IsActive;
             section.DisplayOrder = model.DisplayOrder;
+            section.CategoryId = model.CategoryId;
 
             await _context.SaveChangesAsync();
             return NoContent();

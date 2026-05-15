@@ -20,56 +20,102 @@ public class HomeController : Controller
         var client = _httpClientFactory.CreateClient("ShoesAPI");
         var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-        // 1. Fetch Banners (safe)
+        try
+        {
+            var r = await client.GetAsync("api/LandingPage");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                {
+                    var landingData = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(j, jsonOptions);
+                    if (landingData.TryGetProperty("settings", out var s))
+                    {
+                        ViewBag.Settings = s;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("LandingPage fetch failed: {0}", ex.Message); }
+
+        // 1. Fetch HomePage Settings (marquee, hero text)
+        System.Text.Json.JsonElement? hpSettings = null;
+        try
+        {
+            var r = await client.GetAsync("api/HomePageSettings");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    hpSettings = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(j, jsonOptions);
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("HomePageSettings fetch failed: {0}", ex.Message); }
+
+        // 2. Fetch Banners
         List<System.Text.Json.JsonElement>? banners = null;
         try
         {
-            var bannersResponse = await client.GetAsync("api/Banners");
-            if (bannersResponse.IsSuccessStatusCode)
+            var r = await client.GetAsync("api/Banners");
+            if (r.IsSuccessStatusCode)
             {
-                var bannersJson = await bannersResponse.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(bannersJson))
-                    banners = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(bannersJson, jsonOptions);
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    banners = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
             }
         }
         catch (Exception ex) { _logger.LogWarning("Banners fetch failed: {0}", ex.Message); }
 
-        // 2. Fetch Featured Products (safe)
-        List<System.Text.Json.JsonElement>? products = null;
+        // 3. Fetch Categories
+        List<System.Text.Json.JsonElement>? categories = null;
         try
         {
-            var productsResponse = await client.GetAsync("api/Products");
-            if (productsResponse.IsSuccessStatusCode)
+            var r = await client.GetAsync("api/Categories");
+            if (r.IsSuccessStatusCode)
             {
-                var productsJson = await productsResponse.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(productsJson))
-                {
-                    var allProducts = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(productsJson, jsonOptions);
-                    products = allProducts?
-                        .Where(p => p.TryGetProperty("isFeatured", out var f) && f.GetBoolean())
-                        .Take(8).ToList();
-                }
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    categories = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("Categories fetch failed: {0}", ex.Message); }
+
+        // 4. Fetch All Products
+        List<System.Text.Json.JsonElement>? allProducts = null;
+        try
+        {
+            var r = await client.GetAsync("api/Products");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    allProducts = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
             }
         }
         catch (Exception ex) { _logger.LogWarning("Products fetch failed: {0}", ex.Message); }
 
-        // 3. Fetch Settings (safe)
-        System.Text.Json.JsonElement? settings = null;
+        // 5. Active Display Sections
+        List<System.Text.Json.JsonElement>? sections = null;
         try
         {
-            var settingsResponse = await client.GetAsync("api/LandingPage/Settings");
-            if (settingsResponse.IsSuccessStatusCode)
+            var r = await client.GetAsync("api/Dashboard/DisplaySections");
+            if (r.IsSuccessStatusCode)
             {
-                var settingsJson = await settingsResponse.Content.ReadAsStringAsync();
-                if (!string.IsNullOrWhiteSpace(settingsJson))
-                    settings = System.Text.Json.JsonSerializer.Deserialize<System.Text.Json.JsonElement>(settingsJson, jsonOptions);
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                {
+                    var all = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
+                    sections = all?.Where(s => s.TryGetProperty("isActive", out var a) && a.GetBoolean()).ToList();
+                }
             }
         }
-        catch (Exception ex) { _logger.LogWarning("Settings fetch failed: {0}", ex.Message); }
+        catch (Exception ex) { _logger.LogWarning("DisplaySections fetch failed: {0}", ex.Message); }
 
+        ViewBag.HpSettings = hpSettings;
         ViewBag.Banners = banners;
-        ViewBag.Products = products;
-        ViewBag.Settings = settings;
+        ViewBag.Categories = categories;
+        ViewBag.AllProducts = allProducts;
+        ViewBag.Sections = sections;
 
         return View();
     }
