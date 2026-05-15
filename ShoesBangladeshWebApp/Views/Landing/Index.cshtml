@@ -19,12 +19,12 @@
     /* Hero Section */
     .hero-luxury {
         position: relative;
-        min-height: 85vh;
+        min-height: 90vh;
         display: flex;
         align-items: center;
         background-color: #0a0a0a;
         background-image: linear-gradient(135deg, rgba(74, 0, 0, 0.7) 0%, rgba(10, 10, 10, 0.8) 100%), url('@ResolveUrl(Model.Settings.HeroBgImageUrl)');
-        background-size: 100% 100%; /* Ensuring full image shows without side bars, stretching to fill */
+        background-size: 100% 100%;
         background-repeat: no-repeat;
         background-position: center;
         overflow: hidden;
@@ -76,15 +76,15 @@
 
     .hero-shoe-image {
         position: absolute;
-        right: 8%;
+        right: 5%; /* Moved closer to edge */
         top: 50%;
         transform: translateY(-50%);
-        width: 35%;
-        max-height: 400px;
+        width: 48%; /* Increased size as requested */
+        max-height: 550px; /* Increased max-height */
         object-fit: contain;
         z-index: 15;
         animation: float 4s ease-in-out infinite;
-        filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
+        filter: drop-shadow(0 20px 60px rgba(0,0,0,0.6));
     }
 
     /* Countdown Timer */
@@ -113,7 +113,7 @@
     }
     .timer-label { font-size: 0.7rem; text-transform: uppercase; color: rgba(255,255,255,0.6); letter-spacing: 1px; }
 
-    /* Banner Section (Classic Red) */
+    /* Banner Section */
     .banner-grid {
         padding: 6rem 4rem;
         background: #0a0a0a;
@@ -121,7 +121,7 @@
 
     .sale-card {
         position: relative;
-        height: 450px;
+        height: 380px; /* Decreased from 450px */
         border-radius: 30px;
         overflow: hidden;
         background: #151515;
@@ -139,7 +139,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        padding: 3rem;
+        padding: 2.5rem; /* Decreased padding */
         width: 100%;
         background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
         color: #fff;
@@ -153,7 +153,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        padding: 3rem;
+        padding: 2.5rem; /* Decreased padding */
         text-align: center;
         color: #fff;
         border: 1px solid var(--gold-accent);
@@ -214,15 +214,26 @@
 
     /* Footer */
     .premium-footer {
-        background: #050505; /* Reverting to original dark charcoal/black */
+        position: relative;
+        background-color: #0a0a0a;
+        background-image: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8)), url('@ResolveUrl(Model.Settings.HeroBgImageUrl)');
+        background-size: cover;
+        background-position: bottom;
         color: #fff;
-        padding: 5rem 4rem 2rem;
-        border-top: 1px solid rgba(212, 175, 55, 0.1);
+        padding: 6rem 4rem 2rem;
+        border-top: 2px solid var(--gold-accent);
     }
     .footer-logo { height: 50px; margin-bottom: 1.5rem; }
-    .footer-link { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; margin-bottom: 0.8rem; display: block; }
-    .footer-link:hover { color: var(--gold-accent); padding-left: 5px; }
-    .footer-title { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; font-size: 1rem; }
+    .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; transition: 0.3s; margin-bottom: 0.8rem; display: block; font-weight: 500; }
+    .footer-link:hover { color: var(--gold-accent); transform: translateX(5px); }
+    .footer-title { color: var(--gold-accent); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.8rem; font-size: 1.1rem; }
+
+    .newsletter-box {
+        background: rgba(255,255,255,0.05);
+        padding: 2rem;
+        border-radius: 20px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+    }
 
     /* Shop Now Button */
     .btn-luxury-shop {
@@ -246,12 +257,12 @@
     /* Animations */
     @@keyframes float {
         0%, 100% { transform: translateY(-50%) translateX(0); }
-        50% { transform: translateY(-55%) translateX(-15px); }
+        50% { transform: translateY(-58%) translateX(-20px); }
     }
 
     @@keyframes bounceUpDown {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+        50% { transform: translateY(-12px); }
     }
 
     @@media (max-width: 1200px) {
@@ -386,42 +397,51 @@
 
     <!-- Premium Footer -->
     <footer class="premium-footer">
-        <div class="row g-4">
+        <div class="row g-5">
             <div class="col-lg-4">
                 @if (!string.IsNullOrEmpty(Model.Settings.LogoUrl))
                 {
                     <img src="@ResolveUrl(Model.Settings.LogoUrl)" class="footer-logo" alt="Logo">
                 }
-                <p class="text-white-50 pe-lg-5">@Model.Settings.CompanyDescription</p>
+                <p class="text-white-50 pe-lg-4">@Model.Settings.CompanyDescription</p>
                 <div class="d-flex gap-3 mt-4">
-                    <a href="@Model.Settings.FacebookPageLink" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-whatsapp"></i></a>
+                    <a href="@Model.Settings.FacebookPageLink" class="btn btn-outline-warning btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-outline-warning btn-sm rounded-circle"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="btn btn-outline-warning btn-sm rounded-circle"><i class="bi bi-whatsapp"></i></a>
                 </div>
             </div>
             <div class="col-lg-2">
-                <h6 class="footer-title">Quick Links</h6>
-                <a href="#" class="footer-link">New Arrivals</a>
+                <h6 class="footer-title">Explore</h6>
+                <a href="#" class="footer-link">Latest Shoes</a>
+                <a href="#" class="footer-link">Red Collection</a>
                 <a href="#" class="footer-link">Special Offers</a>
-                <a href="#" class="footer-link">Order Tracking</a>
-                <a href="#" class="footer-link">Contact Us</a>
+                <a href="#" class="footer-link">Track Order</a>
             </div>
             <div class="col-lg-2">
-                <h6 class="footer-title">Policy</h6>
+                <h6 class="footer-title">Support</h6>
+                <a href="#" class="footer-link">Terms of Service</a>
                 <a href="#" class="footer-link">Privacy Policy</a>
-                <a href="#" class="footer-link">Return Policy</a>
-                <a href="#" class="footer-link">Terms & Conditions</a>
-                <a href="#" class="footer-link">Shipping Guide</a>
+                <a href="#" class="footer-link">Refund Policy</a>
+                <a href="#" class="footer-link">FAQs</a>
             </div>
             <div class="col-lg-4">
-                <h6 class="footer-title">Contact Support</h6>
-                <p class="text-white-50 mb-1"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Dhaka, Bangladesh</p>
-                <p class="text-white-50 mb-1"><i class="bi bi-envelope-fill text-danger me-2"></i> @Model.Settings.ContactEmail</p>
-                <p class="text-white-50 mb-1"><i class="bi bi-telephone-fill text-danger me-2"></i> @Model.Settings.Phone</p>
+                <div class="newsletter-box">
+                    <h6 class="footer-title mb-3">Newsletter</h6>
+                    <p class="small text-white-50 mb-3">Get the latest updates on new collections and exclusive offers.</p>
+                    <div class="input-group">
+                        <input type="text" class="form-control bg-transparent border-warning text-white" placeholder="Email Address">
+                        <button class="btn btn-warning px-3" type="button"><i class="bi bi-send"></i></button>
+                    </div>
+                </div>
+                <div class="mt-4 ps-2">
+                    <p class="text-white-50 mb-1"><i class="bi bi-geo-alt-fill text-warning me-2"></i> Dhaka, Bangladesh</p>
+                    <p class="text-white-50 mb-1"><i class="bi bi-envelope-fill text-warning me-2"></i> @Model.Settings.ContactEmail</p>
+                    <p class="text-white-50 mb-1"><i class="bi bi-telephone-fill text-warning me-2"></i> @Model.Settings.Phone</p>
+                </div>
             </div>
         </div>
         <div class="text-center mt-5 pt-4 border-top border-white border-opacity-10 text-white-50 small">
-            &copy; @DateTime.Now.Year @Model.Settings.CompanyName. All Rights Reserved. Designed for Premium Experience.
+            &copy; @DateTime.Now.Year @Model.Settings.CompanyName. All Rights Reserved. Empowered by Premium Technology.
         </div>
     </footer>
 </div>
