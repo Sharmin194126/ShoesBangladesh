@@ -200,15 +200,17 @@
     /* Premium Sneaker Product Card */
     .product-card-luxury {
         background: #fff;
-        border-radius: 20px;
+        border-radius: 15px; /* Smaller radius */
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         border: 2px solid transparent;
-        height: 100%;
+        height: auto; /* Shorter length */
         display: flex;
         flex-direction: column;
         position: relative;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        max-width: 280px; /* Constrain width */
+        margin: 0 auto;
     }
 
     .product-card-luxury:hover {
@@ -219,20 +221,17 @@
 
     .luxury-img-box {
         position: relative;
-        padding-top: 100%;
-        background: #f8f9fa;
+        height: 180px; /* Shortened image height */
         overflow: hidden;
+        background: #f8f8f8;
     }
 
     .luxury-img-box img {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        padding: 25px;
-        transition: transform 0.6s ease;
+        object-fit: contain; /* Prevents stretching */
+        padding: 10px;
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .product-card-luxury:hover .luxury-img-box img {
@@ -263,15 +262,15 @@
 
     .luxury-info h6 {
         font-weight: 800;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.15rem;
         color: #1a1a1a;
-        font-size: 1.35rem; /* Increased from 1.1rem */
+        font-size: 1.05rem; /* Smaller title */
         line-height: 1.2;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        height: 3.2rem;
+        height: 2.6rem;
     }
 
     .rating-box {
@@ -297,16 +296,19 @@
     }
 
     .price-current {
-        color: #1a1a1a; /* Dark for current price */
+        color: #1a1a1a;
         font-weight: 900;
-        font-size: 1.4rem;
+        font-size: 1.2rem; /* Smaller price */
     }
 
     .price-old {
-        color: var(--premium-red); /* Red for regular price (crossed out) */
+        color: var(--premium-red); /* Red for regular price */
         text-decoration: line-through;
-        font-size: 0.9rem;
-        margin-left: 5px;
+        text-decoration-thickness: 3px; /* Extra thick "cross" line */
+        font-size: 0.75rem; /* Even smaller as requested */
+        margin-left: 10px;
+        font-weight: 800;
+        opacity: 0.9;
     }
 
     .size-selector {
@@ -341,15 +343,24 @@
         background: var(--premium-red);
         color: white;
         border: none;
-        padding: 0.8rem;
-        border-radius: 12px;
+        padding: 0.6rem; /* Smaller padding */
+        border-radius: 10px;
         font-weight: 700;
         width: 100%;
         transition: 0.3s;
         text-transform: uppercase;
-        font-size: 0.8rem;
+        font-size: 0.75rem; /* Smaller font */
         letter-spacing: 1px;
         box-shadow: 0 4px 15px rgba(208,0,0,0.2);
+        animation: widthPulse 2s infinite ease-in-out;
+    }
+
+    @@keyframes widthPulse {
+        0% { transform: scaleX(1); box-shadow: 0 4px 10px rgba(208,0,0,0.2); }
+        25% { transform: scaleX(0.85); box-shadow: 0 2px 5px rgba(208,0,0,0.1); }
+        50% { transform: scaleX(1.05); box-shadow: 0 6px 15px rgba(208,0,0,0.3); }
+        75% { transform: scaleX(0.9); box-shadow: 0 2px 5px rgba(208,0,0,0.1); }
+        100% { transform: scaleX(1); box-shadow: 0 4px 10px rgba(208,0,0,0.2); }
     }
 
     .product-card-luxury:hover .shop-now-card-btn {

@@ -57,10 +57,17 @@
                 {
                     @foreach (var banner in Model)
                     {
-                        var imgUrl = banner.GetProperty("imageUrl").GetString() ?? "";
+                        // Robust ID extraction
+                        int id = 0;
+                        if (banner.TryGetProperty("id", out var idProp)) id = idProp.GetInt32();
+                        else if (banner.TryGetProperty("Id", out var idProp2)) id = idProp2.GetInt32();
+                        
+                        var imgUrl = "";
+                        if (banner.TryGetProperty("imageUrl", out var iu)) imgUrl = iu.GetString() ?? "";
+                        else if (banner.TryGetProperty("ImageUrl", out var iu2)) imgUrl = iu2.GetString() ?? "";
+
                         var title = (banner.TryGetProperty("title", out var t) ? t.GetString() : 
                                     banner.TryGetProperty("Title", out var t2) ? t2.GetString() : "") ?? "Untitled";
-                        var id = banner.GetProperty("id").GetInt32();
 
                         <div class="col-md-4 col-lg-3">
                             <div class="card h-100 border-0 shadow-sm" style="border-radius:12px; overflow:hidden;">
@@ -68,7 +75,7 @@
                                 <div class="card-body text-center p-3">
                                     <h6 class="fw-bold mb-2 text-truncate">@title</h6>
                                     <div class="d-flex gap-2">
-                                        <button class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#editModal@id">
+                                        <button class="btn btn-sm btn-outline-primary w-100 py-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#bannerEditModal_@id">
                                             <i class="bi bi-pencil me-1"></i> Edit
                                         </button>
                                         <form asp-action="DeleteBanner" method="post" class="w-100">
@@ -79,12 +86,12 @@
                                         </form>
                                     </div>
 
-                                    <!-- Edit Modal for each banner (Updated with Image Upload) -->
-                                    <div class="modal fade" id="editModal@id" tabindex="-1">
+                                    <!-- Edit Modal for each banner (Unique ID ensures correct banner is edited) -->
+                                    <div class="modal fade" id="bannerEditModal_@id" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content border-0 shadow-lg" style="border-radius:20px;">
                                                 <div class="modal-header border-0 pb-0">
-                                                    <h5 class="fw-bold">Edit Banner</h5>
+                                                    <h5 class="fw-bold">Edit Banner: @title</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <form asp-action="UpdateBannerAction" method="post" enctype="multipart/form-data">
@@ -101,7 +108,12 @@
                                                         </div>
                                                         <div class="mb-3">
                                                             <label class="form-label small fw-bold text-muted text-uppercase">Link URL (Optional)</label>
-                                                            <input type="text" name="linkUrl" class="form-control" value="@(banner.GetProperty("linkUrl").GetString())" />
+                                                            @{
+                                                                string lUrl = "";
+                                                                if (banner.TryGetProperty("linkUrl", out var lu)) lUrl = lu.GetString() ?? "";
+                                                                else if (banner.TryGetProperty("LinkUrl", out var lu2)) lUrl = lu2.GetString() ?? "";
+                                                            }
+                                                            <input type="text" name="linkUrl" class="form-control" value="@lUrl" />
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer border-0 pt-0">

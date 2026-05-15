@@ -572,7 +572,7 @@ namespace ShoesBangladeshWebApp.Controllers
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
             
-            // Fetch current banner to preserve fields not in the modal
+            // 1. Fetch current banner data from the API
             var getResponse = await client.GetAsync($"api/Banners");
             string imageUrl = "/images/hero-bg.png";
             string subtitle = "";
@@ -583,6 +583,7 @@ namespace ShoesBangladeshWebApp.Controllers
                 var contentStr = await getResponse.Content.ReadAsStringAsync();
                 var banners = JsonSerializer.Deserialize<List<JsonElement>>(contentStr);
                 
+                // Find by ID (checking both casings for robustness)
                 var banner = banners?.FirstOrDefault(b => 
                     (b.TryGetProperty("id", out var idProp) && idProp.GetInt32() == id) || 
                     (b.TryGetProperty("Id", out var idProp2) && idProp2.GetInt32() == id)
@@ -591,7 +592,7 @@ namespace ShoesBangladeshWebApp.Controllers
                 if (banner.HasValue)
                 {
                     imageUrl = (banner.Value.TryGetProperty("imageUrl", out var img) ? img.GetString() : 
-                               banner.Value.TryGetProperty("ImageUrl", out var img2) ? img2.GetString() : "") ?? "/images/hero-bg.png";
+                               banner.Value.TryGetProperty("ImageUrl", out var img2) ? img2.GetString() : "") ?? imageUrl;
                     
                     subtitle = (banner.Value.TryGetProperty("subtitle", out var sub) ? sub.GetString() : 
                                banner.Value.TryGetProperty("Subtitle", out var sub2) ? sub2.GetString() : "") ?? "";
@@ -601,7 +602,7 @@ namespace ShoesBangladeshWebApp.Controllers
                 }
             }
 
-            // Handle New Image Upload
+            // 2. Handle Image Upload if provided
             if (imageFile != null && imageFile.Length > 0)
             {
                 using var form = new MultipartFormDataContent();
@@ -619,17 +620,19 @@ namespace ShoesBangladeshWebApp.Controllers
                 }
             }
 
-            var updatedBanner = new { 
-                Id = id,
-                Title = string.IsNullOrWhiteSpace(title) ? "New Banner" : title, 
-                Subtitle = subtitle, 
-                ImageUrl = imageUrl, 
-                LinkUrl = string.IsNullOrWhiteSpace(linkUrl) ? "#" : linkUrl, 
-                DisplayOrder = displayOrder, 
-                IsActive = true 
+            // 3. Construct the updated banner object as a Dictionary for maximum compatibility
+            var updateData = new Dictionary<string, object>
+            {
+                { "Id", id },
+                { "Title", title ?? "New Banner" },
+                { "Subtitle", subtitle },
+                { "ImageUrl", imageUrl },
+                { "LinkUrl", linkUrl ?? "/products" },
+                { "DisplayOrder", displayOrder },
+                { "IsActive", true }
             };
             
-            var content = new StringContent(JsonSerializer.Serialize(updatedBanner), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(updateData), Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"api/Banners/{id}", content);
 
             if (response.IsSuccessStatusCode) 
@@ -638,8 +641,8 @@ namespace ShoesBangladeshWebApp.Controllers
             }
             else 
             {
-                var apiError = await response.Content.ReadAsStringAsync();
-                TempData["ErrorMessage"] = $"Failed to update banner. API Error: {apiError}";
+                var errorMsg = await response.Content.ReadAsStringAsync();
+                TempData["ErrorMessage"] = $"Failed to update banner. API Status: {response.StatusCode}. Error: {errorMsg}";
             }
 
             return RedirectToAction(nameof(ManageBanners));
