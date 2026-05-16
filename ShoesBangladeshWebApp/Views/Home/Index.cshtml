@@ -28,6 +28,10 @@
         --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
     /* Hero Slider */
     .hero-slider-section {
         position: relative;
@@ -42,10 +46,7 @@
     }
 
     .carousel-image-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0) 100%);
-        z-index: 1;
+        display: none; /* Completely removed overlay for full clarity */
     }
 
     .carousel-caption-custom {
@@ -584,7 +585,7 @@ em;
                             <h1>@bTitle</h1>
                             <p>@bSub</p>
                             <div class="carousel-btn-group">
-                                <a href="#featureditems" class="btn-premium-red shadow-lg">Buy Now</a>
+                                <a href="#product-sections" class="btn-premium-red shadow-lg">Buy Now</a>
                             </div>
                         </div>
                     </div>
@@ -600,7 +601,7 @@ em;
                         <h1>@heroHeadline</h1>
                         <p>@heroSubtitle</p>
                         <div class="carousel-btn-group">
-                            <a href="#featureditems" class="btn-premium-red">@heroBtnText</a>
+                            <a href="#product-sections" class="btn-premium-red">@heroBtnText</a>
                         </div>
                     </div>
                 </div>
@@ -610,7 +611,7 @@ em;
 </div>
 
 
-<div class="container py-5">
+<div class="container py-5" id="product-sections">
     @if (sections != null && sections.Count > 0)
     {
         foreach (var section in sections)
