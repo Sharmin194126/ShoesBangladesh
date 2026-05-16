@@ -1,82 +1,154 @@
+@* No specific model bound yet, using dynamic mock data to match the design *@
 @{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    // Mock Data
+    int totalItems = 1;
+    decimal subtotal = 4500;
+    decimal totalVat = 675;
+    decimal grandTotal = 5175;
 }
 
-<div class="container py-5 my-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold" style="color: #1F1F1F;">Secure Checkout</h1>
-        <p class="text-muted fs-5">Complete your purchase to step into premium comfort.</p>
-    </div>
+<style>
+    .checkout-container {
+        background: #fdfdfd;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: none;
+        color: #333;
+    }
+    .form-control, .form-select {
+        background-color: #f2efe9 !important;
+        color: #212529 !important;
+        border: 1px solid #ced4da !important;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: #f2efe9 !important;
+        border-color: #86b7fe !important;
+    }
+    .order-summary {
+        background: #f2efe9;
+        padding: 20px;
+        border-radius: 8px;
+    }
+    .theme-back-btn { background: #F5F5F5; color: #1F1F1F; border: 1px solid #ECECEC; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: 0.2s; }
+    .theme-back-btn:hover { background: #ECECEC; color: #000; text-decoration: none; }
+</style>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-lg rounded-4 p-5">
-                <div class="row g-5">
-                    <div class="col-md-7 border-end pe-md-5">
-                        <h4 class="fw-bold mb-4"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Shipping Details</h4>
-                        
-                        <form>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label text-muted small fw-bold text-uppercase">Full Name</label>
-                                    <input type="text" class="form-control form-control-lg bg-light border-0" value="@User.Identity.Name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-muted small fw-bold text-uppercase">Phone Number</label>
-                                    <input type="text" class="form-control form-control-lg bg-light border-0" placeholder="e.g. 01700000000" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label text-muted small fw-bold text-uppercase">Email</label>
-                                    <input type="email" class="form-control form-control-lg bg-light border-0" placeholder="e.g. name@example.com">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label text-muted small fw-bold text-uppercase">Delivery Address</label>
-                                    <textarea class="form-control form-control-lg bg-light border-0" rows="3" placeholder="Enter your full address in Bangladesh" required></textarea>
-                                </div>
+<div class="container mt-5 mb-5">
+    <div class="checkout-container">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0 fw-bold">Checkout</h2>
+            <a href="javascript:history.back()" class="theme-back-btn mb-0">Back</a>
+        </div>
+
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-md-5 order-md-2 mb-4">
+                <div class="order-summary">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="color: #555;">Your Summary</span>
+                        <span class="badge bg-danger rounded-pill">@totalItems</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent; border-color: #ccc;">
+                            <div>
+                                <h6 class="my-0">Premium Leather Oxford</h6>
+                                <small class="text-muted">Qty: 1</small>
+                                <br/><small class="text-muted">Size: 41</small>
                             </div>
-                        </form>
-                    </div>
-                    
-                    <div class="col-md-5 ps-md-4">
-                        <h4 class="fw-bold mb-4"><i class="bi bi-bag-check-fill text-danger me-2"></i>Order Summary</h4>
+                            <div class="text-end">
+                                <span style="font-weight: bold; color: #2c3e50; display: block;">৳5,175</span>
+                                <small class="text-success" style="font-size: 0.7rem;">(incl. VAT: ৳675)</small>
+                            </div>
+                        </li>
                         
-                        <div class="bg-light p-4 rounded-3 mb-4">
-                            <p class="text-muted small mb-2">You are proceeding to checkout.</p>
-                            @if (ViewBag.ProductId != null)
-                            {
-                                <p class="mb-1 fw-bold">Product ID: @ViewBag.ProductId</p>
-                                <p class="mb-1">Size: @ViewBag.Size</p>
-                                <p class="mb-1">Quantity: @ViewBag.Qty</p>
-                            }
-                            else
-                            {
-                                <p class="fw-bold">Cart Items (Pending DB Connection)</p>
-                            }
-                        </div>
-
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold">৳0.00</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                            <span class="text-muted">Delivery Charge</span>
-                            <span class="fw-bold">৳0.00</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4">
-                            <span class="fs-5 fw-bold text-dark">Total</span>
-                            <span class="fs-5 fw-bold" style="color: #D00000;">৳0.00</span>
-                        </div>
-
-                        <div class="alert alert-info rounded-3 border-0 small mb-4">
-                            <i class="bi bi-info-circle-fill me-2"></i> Cash on Delivery available!
-                        </div>
-
-                        <button type="button" class="btn btn-danger w-100 btn-lg rounded-pill fw-bold" style="background: linear-gradient(135deg, #D00000, #8B0000); border: none;" onclick="alert('Order Placement system will be connected to DB soon.')">
-                            Place Order
-                        </button>
-                    </div>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
+                            <span>Subtotal</span>
+                            <span class="fw-bold">৳@subtotal.ToString("#,##0")</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
+                            <span>Total VAT</span>
+                            <span class="fw-bold">৳@totalVat.ToString("#,##0")</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between" style="background: #ddd;">
+                            <span style="font-weight: bold;">Grand Total (with VAT)</span>
+                            <strong style="color: #d9534f; font-size: 1.2rem;">৳@grandTotal.ToString("#,##0")</strong>
+                        </li>
+                    </ul>
                 </div>
+            </div>
+
+            <!-- Billing Info Form -->
+            <div class="col-md-7 order-md-1">
+                <h4 class="mb-3 border-bottom pb-2">Step 1: Shipping Details</h4>
+                <form method="post" action="#">
+                    <!-- Name Box -->
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="fullName" class="form-label fw-bold text-danger">Customer Full Name</label>
+                            <input type="text" class="form-control fw-bold" id="fullName" value="@User.Identity?.Name" readonly placeholder="Name" style="background:#f2efe9 !important;">
+                        </div>
+                    </div>
+
+                    <!-- Contact Box -->
+                    <div class="mb-3">
+                        <label for="phone" class="form-label fw-bold text-danger">Active Contact Number</label>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               placeholder="e.g. 017xxxxxxxx" 
+                               pattern="^(?:\+88|88)?(01[3-9]\d{8})$" 
+                               title="Please enter a valid BD phone number (e.g. 017xxxxxxxx)" 
+                               required 
+                               style="color: #000 !important; font-weight: 500;">
+                        <small class="text-muted">Must be a valid Bangladesh phone number</small>
+                    </div>
+
+                    <!-- Address Box -->
+                    <div class="mb-3">
+                        <label for="address" class="form-label fw-bold text-danger">Full Delivery Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Address (House, Road, Area)" required style="color: #000 !important; font-weight: 500;"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label fw-bold text-danger">City Name</label>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="City" required style="color: #000 !important;">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="zipCode" class="form-label fw-bold text-danger">Zip/Postal Code</label>
+                            <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="Zip Code" required style="color: #000 !important;">
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+
+                    <h4 class="mb-3 border-bottom pb-2">Step 2: Payment Method</h4>
+
+                    <div class="d-block my-3">
+                        <!-- COD Option -->
+                        <div class="form-check mb-3 p-3 border rounded bg-white box-shadow-sm">
+                            <input id="cod" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
+                            <label class="form-check-label d-flex align-items-center gap-2" for="cod">
+                                <span class="fw-bold fs-5 text-dark"><i class="bi bi-cash-stack me-2"></i>Cash on Delivery</span>
+                                <span class="badge bg-secondary text-white p-1 ms-auto">PAY ON RECEIVE</span>
+                            </label>
+                            <div class="ms-4 mt-2 text-muted small">
+                                Pay with cash when you receive the parcel at your doorstep.
+                            </div>
+                        </div>
+
+                        <!-- Online Payment Options -->
+                        <h6 class="mt-4 mb-2 fw-bold text-success"><i class="bi bi-wallet2"></i> Online Payment</h6>
+                        <div class="online-payments border p-3 rounded bg-white">
+                            <div class="text-muted small">Online payment methods are currently being updated by Admin.</div>
+                        </div>
+                    </div>
+
+                    <hr class="mb-4">
+                    <button class="btn btn-success btn-lg w-100 py-3" type="submit" style="font-weight: 800; font-size: 1.2rem;">Confirm Order & Proceed</button>
+                </form>
             </div>
         </div>
     </div>
