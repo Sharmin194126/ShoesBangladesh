@@ -57,7 +57,7 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductViewModel product, IFormFile? imageFile)
+        public async Task<IActionResult> Create(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -76,6 +76,31 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? "";
+                }
+            }
+            
+            // Upload additional images
+            if (additionalImageFiles != null && additionalImageFiles.Count > 0)
+            {
+                foreach (var file in additionalImageFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        using var form = new MultipartFormDataContent();
+                        using var fileStream = file.OpenReadStream();
+                        var streamContent = new StreamContent(fileStream);
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                        form.Add(streamContent, "file", file.FileName);
+
+                        var uploadResponse = await client.PostAsync("api/products/upload", form);
+                        if (uploadResponse.IsSuccessStatusCode)
+                        {
+                            var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                            var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                            var url = uploadJson.GetProperty("imageUrl").GetString();
+                            if (!string.IsNullOrEmpty(url)) product.AdditionalImages.Add(url);
+                        }
+                    }
                 }
             }
 
@@ -107,7 +132,7 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ProductViewModel product, IFormFile? imageFile)
+        public async Task<IActionResult> Edit(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -126,6 +151,31 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? product.ImageUrl;
+                }
+            }
+
+            // Upload new additional images if provided
+            if (additionalImageFiles != null && additionalImageFiles.Count > 0)
+            {
+                foreach (var file in additionalImageFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        using var form = new MultipartFormDataContent();
+                        using var fileStream = file.OpenReadStream();
+                        var streamContent = new StreamContent(fileStream);
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                        form.Add(streamContent, "file", file.FileName);
+
+                        var uploadResponse = await client.PostAsync("api/products/upload", form);
+                        if (uploadResponse.IsSuccessStatusCode)
+                        {
+                            var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                            var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                            var url = uploadJson.GetProperty("imageUrl").GetString();
+                            if (!string.IsNullOrEmpty(url)) product.AdditionalImages.Add(url);
+                        }
+                    }
                 }
             }
 

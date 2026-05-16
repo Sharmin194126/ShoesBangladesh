@@ -50,7 +50,7 @@
 
         <div class="mb-3">
             <label class="form-label-custom">Select Category <span class="text-danger">*</span></label>
-            <select asp-for="CategoryId" class="form-control-custom" required>
+            <select asp-for="CategoryId" class="form-control-custom">
                 <option value="">-- Choose Category --</option>
                 @if (ViewBag.Categories != null)
                 {

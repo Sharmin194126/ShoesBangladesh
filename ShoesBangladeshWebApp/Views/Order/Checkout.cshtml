@@ -119,11 +119,15 @@
             <div class="col-md-7 order-md-1">
                 <h4 class="mb-3 border-bottom pb-2">Step 1: Shipping Details</h4>
                 <form method="post" asp-controller="Order" asp-action="CheckoutConfirmed">
-                    <!-- Name Box -->
                     <div class="row">
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="fullName" class="form-label fw-bold text-danger">Customer Full Name</label>
-                            <input type="text" class="form-control fw-bold" id="fullName" placeholder="Enter your full name" required style="background:#f2efe9 !important;">
+                            <input type="text" class="form-control fw-bold" id="fullName" name="fullName" value="@User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value" placeholder="Full name" required style="background:#f2efe9 !important;">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-danger">Invoice Email</label>
+                            <input type="text" class="form-control fw-bold" value="@User.Identity.Name" disabled style="background:#e9ecef !important; color: #666;">
+                            <small class="text-muted">Invoice will be sent to this email.</small>
                         </div>
                     </div>
 
@@ -135,7 +139,7 @@
                                pattern="^(?:\+88|88)?(01[3-9]\d{8})$" 
                                title="Please enter a valid BD phone number (e.g. 017xxxxxxxx)" 
                                required 
-                               style="color: #000 !important; font-weight: 500;">
+                               style="color: #000 !important; font-weight: 500; background:#f2efe9 !important;">
                         <small class="text-muted">Must be a valid Bangladesh phone number</small>
                     </div>
 

@@ -334,7 +334,7 @@ namespace ShoesBangladeshWebApp.Controllers
             return View(new List<DisplaySectionViewModel>());
         }
 
-        public async Task<IActionResult> CreateDisplaySection()
+        public async Task<IActionResult> CreateDisplaySection(string? sectionTitle = null)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
             var response = await client.GetAsync("api/Category");
@@ -344,7 +344,11 @@ namespace ShoesBangladeshWebApp.Controllers
                 var categories = JsonSerializer.Deserialize<List<JsonElement>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 ViewBag.Categories = categories;
             }
-            return View();
+            
+            var model = new DisplaySectionViewModel();
+            if (!string.IsNullOrEmpty(sectionTitle)) model.Title = sectionTitle;
+            
+            return View(model);
         }
 
         [HttpPost]

@@ -13,7 +13,7 @@
     string marqueeText = hpSettings?.TryGetProperty("marqueeText", out var mt) == true ? mt.GetString() ?? "" : "🚚 Cash on Delivery available all over Bangladesh! ⚡ Fast Delivery, Secure Shopping! 👟 Best Shoe Collection! ✨ Order Now for Exclusive Offers!";
     string heroHeadline = hpSettings?.TryGetProperty("heroHeadline", out var hh) == true ? hh.GetString() ?? "" : "Best Shoe Collection in Bangladesh";
     string heroSubtitle = hpSettings?.TryGetProperty("heroSubtitle", out var hs) == true ? hs.GetString() ?? "" : "Premium Quality, Best Price";
-    string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Buy Now";
+    string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Shop Now";
     string heroBtnLink = hpSettings?.TryGetProperty("heroBtnLink", out var hbl) == true ? hbl.GetString() ?? "#" : "#";
     string qTitle = hpSettings?.TryGetProperty("qualityTitle", out var qt) == true ? qt.GetString() ?? "" : "PREMIUM QUALITY ASSURED";
     string qDesc = hpSettings?.TryGetProperty("qualityDescription", out var qd) == true ? qd.GetString() ?? "" : "Cash on Delivery across Bangladesh with the fastest delivery service. We ensure that every pair of shoes meets our highest standards of comfort, durability, and style.";
@@ -25,7 +25,15 @@
         --premium-dark: #121212;
         --premium-gold: #D4AF37;
         --premium-gray: #f8f9fa;
+        --lukaz-teal: #3A9E75;
+        --lukaz-teal-dark: #2d7d5d;
         --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    @@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    .lukaz-font {
+        font-family: 'Space Grotesk', sans-serif;
     }
 
     html {
@@ -316,9 +324,8 @@
     .luxury-img-box img {
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        padding: 5px; /* User specified 5px padding */
-        border-radius: 8px; /* User specified 8px radius */
+        object-fit: cover; /* Changed from contain to cover to fill space */
+        border-radius: 15px;
         transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
@@ -529,6 +536,242 @@ em;
     .feature-item:hover {
         transform: translateY(-5px);
     }
+
+    /* Welcome Section */
+    .welcome-section {
+        padding: 60px 0;
+        text-align: center;
+        background: #fff;
+    }
+    .welcome-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--premium-dark);
+        margin-bottom: 15px;
+    }
+    .welcome-text {
+        font-size: 1rem;
+        color: #666;
+        max-width: 900px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Lukaz New In Section Refinement */
+    .lukaz-new-in {
+        padding: 80px 0;
+        background: #fff;
+        overflow: hidden;
+    }
+    .lukaz-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .lukaz-section-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 0;
+        letter-spacing: -1px;
+    }
+    .lukaz-tabs {
+        display: flex;
+        gap: 25px;
+    }
+    .lukaz-tab-btn {
+        padding: 5px 0;
+        background: transparent;
+        color: #888;
+        font-weight: 500;
+        text-decoration: none;
+        transition: 0.3s;
+        font-size: 0.95rem;
+        font-family: 'Space Grotesk', sans-serif;
+        border-bottom: 2px solid transparent;
+        text-transform: capitalize;
+    }
+    .lukaz-tab-btn.active {
+        color: #1A1A1A;
+        border-bottom-color: #1A1A1A;
+    }
+    .lukaz-tab-btn:hover {
+        color: #1A1A1A;
+    }
+
+    /* Lukaz Card Design (Same to Same) */
+    .lukaz-product-card {
+        background: transparent;
+        transition: 0.4s;
+        margin-bottom: 20px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .lukaz-img-wrapper {
+        position: relative;
+        background: transparent; /* Removed gray background */
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 12px; /* Reduced from 20px to remove khali jayga */
+        aspect-ratio: 4/5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 380px;
+    }
+    .lukaz-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .lukaz-product-card:hover .lukaz-img-wrapper img {
+        transform: scale(1.1);
+    }
+    .lukaz-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: var(--lukaz-teal);
+        color: #fff;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        z-index: 2;
+    }
+    .lukaz-product-info {
+        text-align: left;
+    }
+    .lukaz-product-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #1A1A1A;
+        margin-bottom: 2px;
+        display: block;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+    }
+    .lukaz-product-price {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--lukaz-teal);
+        line-height: 1.2;
+    }
+
+    /* Auto-playing Slider */
+    .lukaz-slider-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+    .lukaz-slider-track {
+        display: flex;
+        transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        gap: 30px;
+        padding: 10px 0;
+    }
+    .lukaz-slider-item {
+        flex: 0 0 calc(25% - 23px); /* Changed to 4 items on desktop for larger cards */
+        min-width: 280px;
+    }
+    @@media (max-width: 1200px) { .lukaz-slider-item { flex: 0 0 calc(33.33% - 20px); } }
+    @@media (max-width: 992px) { .lukaz-slider-item { flex: 0 0 calc(50% - 15px); } }
+    @@media (max-width: 480px) { .lukaz-slider-item { flex: 0 0 100%; } }
+
+    /* Slider Buttons Positioned Outside */
+    .lukaz-slider-container {
+        position: relative;
+        width: 100%;
+        padding: 0 60px; /* Space for buttons on sides */
+    }
+    .lukaz-slider-nav {
+        position: absolute;
+        top: 40%; /* Centered vertically relative to the image part */
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        z-index: 10;
+        transform: translateY(-50%);
+    }
+    .lukaz-nav-btn {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        pointer-events: auto;
+        transition: 0.3s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        font-size: 1rem;
+        color: #333;
+    }
+    .lukaz-nav-btn:hover {
+        background: #000;
+        color: #fff;
+        border-color: #000;
+    }
+    
+    .lukaz-slider-inner {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* Lukaz Shop by Category */
+    .lukaz-categories {
+        padding: 80px 0;
+        background: linear-gradient(180deg, #fff 0%, #f0f7f4 100%);
+    }
+    .lukaz-category-card {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        height: 400px;
+        margin-bottom: 30px;
+        transition: 0.5s;
+        cursor: pointer;
+    }
+    .lukaz-category-card:hover {
+        transform: translateY(-10px);
+    }
+    .lukaz-category-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .lukaz-category-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 30px;
+        background: linear-gradient(0deg, rgba(58, 158, 117, 0.9) 0%, rgba(58, 158, 117, 0) 100%);
+        color: #fff;
+        text-align: center;
+    }
+    .lukaz-category-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
 </style>
 
 <!-- Update Layout Marquee Text Dynamically if possible, otherwise it will use default -->
@@ -608,7 +851,7 @@ em;
                             <h1>@bTitle</h1>
                             <p>@bSub</p>
                             <div class="carousel-btn-group">
-                                <a href="#product-sections" class="btn-premium-red shadow-lg">Buy Now</a>
+                                <a href="#product-sections" class="btn-premium-red shadow-lg">Shop Now</a>
                             </div>
                         </div>
                     </div>
@@ -624,7 +867,7 @@ em;
                         <h1>@heroHeadline</h1>
                         <p>@heroSubtitle</p>
                         <div class="carousel-btn-group">
-                            <a href="#product-sections" class="btn-premium-red">@heroBtnText</a>
+                            <a href="#product-sections" class="btn-premium-red">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -632,6 +875,181 @@ em;
         </div>
     </div>
 </div>
+
+<!-- Welcome Section -->
+<section class="welcome-section">
+    <div class="container">
+        <h2 class="welcome-title">Welcome To Shoes Bangladesh</h2>
+        <p class="welcome-text">
+            Discover the ultimate destination for premium footwear in Bangladesh. At Shoes Bangladesh, we bring you an exclusive collection of sneakers, formal shoes, and luxury lifestyle products crafted with excellence.
+        </p>
+    </div>
+</section>
+
+<!-- Lukaz New In Section -->
+<section class="lukaz-new-in">
+    <div class="container">
+        <div class="lukaz-section-header">
+            <h2 class="lukaz-section-title">New In</h2>
+            <div class="lukaz-tabs">
+                <a href="#" class="lukaz-tab-btn active">All</a>
+                <a href="#" class="lukaz-tab-btn">Sneakers</a>
+                <a href="#" class="lukaz-tab-btn">Luxury</a>
+                <a href="#" class="lukaz-tab-btn">Apparel</a>
+            </div>
+        </div>
+        
+        <div class="lukaz-slider-container">
+            <div class="lukaz-slider-nav">
+                <div class="lukaz-nav-btn" id="prevNewIn"><i class="bi bi-chevron-left"></i></div>
+                <div class="lukaz-nav-btn" id="nextNewIn"><i class="bi bi-chevron-right"></i></div>
+            </div>
+            <div class="lukaz-slider-inner">
+                <div class="lukaz-slider-track" id="newInSlider">
+                @{
+                    var newProducts = allProducts?.OrderByDescending(p => p.TryGetProperty("id", out var id) ? id.GetInt32() : 0).Take(15).ToList();
+                }
+                @if (newProducts != null)
+                {
+                    foreach (var product in newProducts)
+                    {
+                        string pName = product.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "";
+                        decimal pPrice = product.TryGetProperty("price", out var p) ? p.GetDecimal() : 0;
+                        string pImg = product.TryGetProperty("imageUrl", out var i) ? i.GetString() ?? "" : "";
+                        int pId = product.TryGetProperty("id", out var pid) ? pid.GetInt32() : 0;
+
+                        <div class="lukaz-slider-item">
+                            <div class="lukaz-product-card">
+                                <div class="lukaz-img-wrapper">
+                                    <div class="lukaz-badge">New</div>
+                                    <a href="/Home/Details/@pId">
+                                        <img src="@(pImg.StartsWith("http") ? "" : apiBase)@pImg" alt="@pName">
+                                    </a>
+                                </div>
+                                <div class="lukaz-product-info">
+                                    <a href="/Home/Details/@pId" class="lukaz-product-name">@pName</a>
+                                    <div class="lukaz-product-price">৳@pPrice.ToString("#,##0")</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slider = document.getElementById('newInSlider');
+        const prevBtn = document.getElementById('prevNewIn');
+        const nextBtn = document.getElementById('nextNewIn');
+        let index = 0;
+        const items = document.querySelectorAll('.lukaz-slider-item');
+        const itemCount = items.length;
+        
+        function getVisibleCount() {
+            if (window.innerWidth > 1200) return 4;
+            if (window.innerWidth > 992) return 3;
+            if (window.innerWidth > 768) return 2;
+            return 1;
+        }
+
+        function updateSlider() {
+            const visibleCount = getVisibleCount();
+            const maxIndex = Math.max(0, itemCount - visibleCount);
+            if (index > maxIndex) index = 0;
+            if (index < 0) index = maxIndex;
+            
+            const gap = 30;
+            const itemWidth = items[0].offsetWidth;
+            const move = index * (itemWidth + gap);
+            slider.style.transform = `translateX(-${move}px)`;
+        }
+
+        function nextSlide() {
+            index++;
+            updateSlider();
+        }
+
+        function prevSlide() {
+            index--;
+            updateSlider();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetInterval();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetInterval();
+        });
+
+        let slideInterval = setInterval(nextSlide, 3000);
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(nextSlide, 3000);
+        }
+
+        slider.addEventListener('mouseenter', () => clearInterval(slideInterval));
+        slider.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 3000));
+        
+        window.addEventListener('resize', () => {
+            index = 0;
+            updateSlider();
+        });
+    });
+</script>
+
+<!-- Lukaz Shop by Category -->
+@if (sections?.Any(s => {
+    string t = "";
+    if (s.TryGetProperty("title", out var titleProp)) t = titleProp.GetString() ?? "";
+    else if (s.TryGetProperty("Title", out var titleProp2)) t = titleProp2.GetString() ?? "";
+    
+    bool active = false;
+    if (s.TryGetProperty("isActive", out var activeProp)) active = activeProp.GetBoolean();
+    else if (s.TryGetProperty("IsActive", out var activeProp2)) active = activeProp2.GetBoolean();
+    
+    return t.Equals("Shop by Category", StringComparison.OrdinalIgnoreCase) && active;
+}) == true)
+{
+    <section class="lukaz-categories">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="lukaz-section-title">Shop by Category</h2>
+                <p class="text-muted">Explore our wide range of footwear collections</p>
+            </div>
+            <div class="row">
+                @if (categories != null)
+                {
+                    foreach (var cat in categories.Take(6))
+                    {
+                        string catName = cat.TryGetProperty("name", out var cn) ? cn.GetString() ?? "" : "";
+                        string catImg = cat.TryGetProperty("imageUrl", out var ci) ? ci.GetString() ?? "/images/cat-placeholder.png" : "/images/cat-placeholder.png";
+                        int catId = cat.TryGetProperty("id", out var cid) ? cid.GetInt32() : 0;
+
+                        <div class="col-md-4">
+                            <a href="/Product/Index?categoryId=@catId" class="text-decoration-none">
+                                <div class="lukaz-category-card">
+                                    <img src="@(catImg.StartsWith("http") ? "" : apiBase)@catImg" alt="@catName">
+                                    <div class="lukaz-category-info">
+                                        <h3 class="lukaz-category-name">@catName</h3>
+                                        <span class="small text-uppercase fw-bold">Explore More <i class="bi bi-arrow-right"></i></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+}
 
 
 <div class="container py-5" id="product-sections">

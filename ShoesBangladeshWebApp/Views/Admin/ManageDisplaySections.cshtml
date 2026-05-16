@@ -52,7 +52,19 @@
     <form asp-action="UpdateLogo" method="post" enctype="multipart/form-data" class="row align-items-center">
         <div class="col-md-auto mb-2 mb-md-0">
             <div style="width: 150px; height: 60px; background: #f8f9fa; border: 1px dashed #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <img id="logoPreview" src="/images/logo.png" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                @{
+                    var settings = ViewBag.Settings as System.Text.Json.JsonElement?;
+                    string logoPath = "/images/logo.png";
+                    if (settings != null && settings.Value.TryGetProperty("logoUrl", out var lu))
+                    {
+                        var url = lu.GetString();
+                        if (!string.IsNullOrEmpty(url)) 
+                        {
+                            logoPath = url.StartsWith("http") ? url : (url.StartsWith("/") ? url : "/" + url);
+                        }
+                    }
+                }
+                <img id="logoPreview" src="@logoPath" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.src='/images/logo.png'" />
             </div>
         </div>
         <div class="col-md-4 mb-2 mb-md-0">
@@ -81,7 +93,33 @@
                 </tr>
             </thead>
             <tbody>
-                @{ var sl = 1; }
+                @{ 
+                    var sl = 1;
+                    var hasCategorySection = Model.Any(s => s.Title.Equals("Shop by Category", StringComparison.OrdinalIgnoreCase));
+                }
+                
+                @if (!hasCategorySection)
+                {
+                    <tr style="background: #FFF9C4;">
+                        <td class="text-center fw-bold text-muted">-</td>
+                        <td class="text-center">
+                            <span class="badge bg-warning text-dark">System</span>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-dark">Shop by Category</span>
+                            <div class="small text-muted">This is a core homepage section. Add it to manage visibility.</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">Not Initialized</span>
+                        </td>
+                        <td class="text-center">
+                            <a asp-controller="Admin" asp-action="CreateDisplaySection" asp-route-sectionTitle="Shop by Category" class="btn btn-sm btn-outline-primary fw-bold">
+                                <i class="bi bi-plus-circle me-1"></i> Initialize
+                            </a>
+                        </td>
+                    </tr>
+                }
+
                 @foreach (var item in Model)
                 {
                     <tr>
@@ -91,6 +129,10 @@
                         </td>
                         <td>
                             <span class="fw-bold text-dark">@item.Title</span>
+                            @if (item.Title.Equals("Shop by Category", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <span class="badge bg-info ms-2" style="font-size: 0.65rem;">Homepage System Section</span>
+                            }
                         </td>
                         <td>
                             @if (item.IsActive)

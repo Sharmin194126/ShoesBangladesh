@@ -21,48 +21,91 @@ namespace ShoesBangladeshWebApp.Services
             var smtpUser = _config["EmailSettings:SmtpUser"] ?? "";
             var smtpPass = _config["EmailSettings:SmtpPass"] ?? "";
             var senderName = _config["EmailSettings:SenderName"] ?? "Shoes Bangladesh";
-            var adminEmail = _config["EmailSettings:AdminEmail"] ?? smtpUser;
-
-            var htmlBody = BuildReceiptHtml(receipt);
-
-            // Send to Customer
-            if (!string.IsNullOrEmpty(receipt.CustomerEmail))
+            
+            var adminEmail = _config["EmailSettings:AdminEmail"];
+            if (string.IsNullOrEmpty(adminEmail) || adminEmail == "admin@shoesbangladesh.com")
             {
-                await SendEmailAsync(smtpHost, smtpPort, smtpUser, smtpPass, senderName,
-                    receipt.CustomerEmail, receipt.CustomerName,
-                    $"Order Confirmed! Invoice #{receipt.InvoiceNumber}",
-                    htmlBody);
+                adminEmail = _config["CompanySettings:Email"] ?? smtpUser;
             }
 
-            // Send to Admin
-            await SendEmailAsync(smtpHost, smtpPort, smtpUser, smtpPass, senderName,
-                adminEmail, "Admin",
-                $"New Order Received - Invoice #{receipt.InvoiceNumber}",
-                htmlBody);
-        }
-
-        private async Task SendEmailAsync(string host, int port, string user, string pass,
-            string senderName, string toEmail, string toName, string subject, string htmlBody)
-        {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(senderName, user));
-            message.To.Add(new MailboxAddress(toName, toEmail));
-            message.Subject = subject;
-
-            var builder = new BodyBuilder { HtmlBody = htmlBody };
-            message.Body = builder.ToMessageBody();
+            var htmlBody = BuildReceiptHtml(receipt);
+            var plainTextBody = BuildReceiptPlainText(receipt);
 
             using var client = new SmtpClient();
             try
             {
-                await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(user, pass);
-                await client.SendAsync(message);
-            }
-            finally
-            {
+                await client.ConnectAsync(smtpHost, smtpPort, SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(smtpUser, smtpPass);
+
+                // 1. Send to Customer
+                if (!string.IsNullOrEmpty(receipt.CustomerEmail))
+                {
+                    var customerMsg = new MimeMessage();
+                    customerMsg.From.Add(new MailboxAddress(senderName, smtpUser));
+                    customerMsg.To.Add(new MailboxAddress(receipt.CustomerName, receipt.CustomerEmail));
+                    customerMsg.Subject = $"Order Confirmation - #{receipt.InvoiceNumber}";
+                    
+                    var builder = new BodyBuilder { 
+                        HtmlBody = htmlBody,
+                        TextBody = plainTextBody 
+                    };
+                    customerMsg.Body = builder.ToMessageBody();
+                    
+                    await client.SendAsync(customerMsg);
+                }
+
+                // 2. Send to Admin
+                var adminMsg = new MimeMessage();
+                adminMsg.From.Add(new MailboxAddress(senderName, smtpUser));
+                adminMsg.To.Add(new MailboxAddress("Admin", adminEmail));
+                adminMsg.Subject = $"New Order Alert - Invoice #{receipt.InvoiceNumber}";
+                
+                var adminBuilder = new BodyBuilder { 
+                    HtmlBody = htmlBody,
+                    TextBody = plainTextBody 
+                };
+                adminMsg.Body = adminBuilder.ToMessageBody();
+                
+                await client.SendAsync(adminMsg);
+
                 await client.DisconnectAsync(true);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[EMAIL ERROR] {ex.Message}");
+                if (ex.InnerException != null) Console.WriteLine($"[INNER ERROR] {ex.InnerException.Message}");
+                throw;
+            }
+        }
+
+        private string BuildReceiptPlainText(OrderReceiptViewModel r)
+        {
+            var itemsText = "";
+            foreach (var item in r.Cart.Items)
+            {
+                itemsText += $"- {item.ProductName} (Size: {item.Size}) x {item.Quantity}: ৳{item.LineTotal.ToString("#,##0")}\n";
+            }
+
+            return $@"
+Order Invoice #{r.InvoiceNumber}
+Shoes Bangladesh - Your Trusted Footwear Partner
+
+Customer: {r.CustomerName}
+Email: {r.CustomerEmail}
+Order Date: {r.OrderDate:dd MMMM yyyy, hh:mm tt}
+
+Ordered Items:
+{itemsText}
+Subtotal: ৳{r.Cart.SubTotal.ToString("#,##0")}
+VAT: ৳{r.Cart.TotalVat.ToString("#,##0")}
+Grand Total: ৳{r.Cart.GrandTotal.ToString("#,##0")}
+
+Delivery Address:
+{r.Address}, {r.City}, {r.ZipCode}
+
+Thank you for your order!
+Shoes Bangladesh
+";
         }
 
         private string BuildReceiptHtml(OrderReceiptViewModel r)

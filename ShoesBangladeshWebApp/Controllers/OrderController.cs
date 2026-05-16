@@ -5,6 +5,7 @@ using System.Text.Json;
 
 namespace ShoesBangladesh.Web.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class OrderController : Controller
     {
         private const string CartSessionKey = "ShoesCart";

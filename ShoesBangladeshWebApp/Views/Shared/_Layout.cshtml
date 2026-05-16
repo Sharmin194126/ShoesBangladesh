@@ -228,7 +228,11 @@
 
                     @if (!string.IsNullOrEmpty(logoUrlStr))
                     {
-                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 50px; width: auto; max-width: 180px; object-fit: contain;">
+                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 50px; width: auto; max-width: 180px; object-fit: contain;" onerror="this.style.display='none'; document.getElementById('textLogo').style.display='flex';">
+                        <div id="textLogo" style="display:none; align-items:center;">
+                            <div style="width:38px; height:38px; background:linear-gradient(135deg,#D00000,#8B0000); border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:1.1rem; margin-right: 10px;">S</div>
+                            <span style="font-weight:900; letter-spacing:-1px; font-size: 1.5rem;">SHOES<span style="color:#D00000;">BD</span></span>
+                        </div>
                     }
                     else
                     {

@@ -36,7 +36,7 @@
                 <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
                 <h3 class="fw-bold mt-4">Your cart is empty.</h3>
                 <p class="text-muted" style="color: #666 !important;">Looks like you haven't added any shoes to your cart yet.</p>
-                <a href="/Product/Index" class="btn btn-danger mt-3 px-4 py-2 fw-bold" style="background: #D00000; border: none; border-radius: 8px;">Continue Shopping</a>
+                <a href="/" class="btn btn-danger mt-3 px-4 py-2 fw-bold" style="background: #D00000; border: none; border-radius: 8px;">Continue Shopping</a>
             </div>
         }
         else
@@ -129,8 +129,9 @@
 
             <div class="d-flex justify-content-between align-items-center mt-4 p-3" style="background: #f2efe9; border-radius: 8px;">
                 <div>
-                    <form asp-action="Clear" method="post">
+                    <form asp-action="Clear" method="post" class="d-flex gap-2">
                         <button type="submit" class="btn btn-danger btn-sm">Clear Cart</button>
+                        <a href="/" class="btn btn-outline-dark btn-sm">Continue Shopping</a>
                     </form>
                 </div>
                 <div class="d-flex align-items-center gap-4">
