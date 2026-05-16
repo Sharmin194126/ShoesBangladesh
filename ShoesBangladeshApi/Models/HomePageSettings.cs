@@ -12,6 +12,10 @@ namespace ShoesBangladesh.API.Models
         public string HeroSubtitle { get; set; } = "প্রিমিয়াম কোয়ালিটি, সেরা দাম";
         public string HeroBtnText { get; set; } = "এখনই কিনুন";
         public string HeroBtnLink { get; set; } = "#";
+        
+        public string QualityTitle { get; set; } = "PREMIUM QUALITY ASSURED";
+        public string QualityDescription { get; set; } = "Cash on Delivery across Bangladesh with the fastest delivery service. We ensure that every pair of shoes meets our highest standards of comfort, durability, and style.";
+
         public bool IsActive { get; set; } = true;
     }
 }
