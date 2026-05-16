@@ -32,7 +32,7 @@
         .navbar-premium {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            padding: 1.25rem 0;
+            padding: 0.25rem 0;
             transition: var(--transition);
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
@@ -209,21 +209,31 @@
                     @{
                         var settings = ViewBag.Settings as System.Text.Json.JsonElement?;
                         string logoUrlStr = null;
+                        bool isLandingPage = ViewContext.RouteData.Values["controller"]?.ToString() == "Landing";
+                        
                         if (settings != null && settings.Value.ValueKind != System.Text.Json.JsonValueKind.Undefined)
                         {
-                            if (settings.Value.TryGetProperty("logoUrl", out var lp)) logoUrlStr = lp.GetString();
-                            else if (settings.Value.TryGetProperty("LogoUrl", out var lp2)) logoUrlStr = lp2.GetString();
+                            if (isLandingPage)
+                            {
+                                if (settings.Value.TryGetProperty("landingPageLogoUrl", out var lpl)) logoUrlStr = lpl.GetString();
+                                else if (settings.Value.TryGetProperty("LandingPageLogoUrl", out var lpl2)) logoUrlStr = lpl2.GetString();
+                            }
+                            else
+                            {
+                                if (settings.Value.TryGetProperty("logoUrl", out var lp)) logoUrlStr = lp.GetString();
+                                else if (settings.Value.TryGetProperty("LogoUrl", out var lp2)) logoUrlStr = lp2.GetString();
+                            }
                         }
                     }
 
                     @if (!string.IsNullOrEmpty(logoUrlStr))
                     {
-                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 75px; width: auto; object-fit: contain;">
+                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 120px; width: 280px; object-fit: contain;">
                     }
                     else
                     {
                         <div style="width:38px; height:38px; background:linear-gradient(135deg,#D00000,#8B0000); border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:1.1rem; margin-right: 10px;">S</div>
-                        <span style="font-weight:900; letter-spacing:-1px;">SHOES<span style="color:#D00000;">BD</span></span>
+                        <span style="font-weight:900; letter-spacing:-1px; font-size: 1.5rem;">SHOES<span style="color:#D00000;">BD</span></span>
                     }
                 </a>
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

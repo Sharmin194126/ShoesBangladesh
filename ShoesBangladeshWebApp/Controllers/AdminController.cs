@@ -125,7 +125,7 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage, IFormFile? logoImage)
+        public async Task<IActionResult> UpdateSettings(SystemSettingsDTO settings, IFormFile? heroImage, IFormFile? bgImage, IFormFile? bannerImage, IFormFile? landingPageLogoImage)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -183,21 +183,21 @@ namespace ShoesBangladeshWebApp.Controllers
                 }
             }
 
-            // 4. Handle Logo Image Upload
-            if (logoImage != null && logoImage.Length > 0)
+            // 4. Handle Landing Page Logo Image Upload
+            if (landingPageLogoImage != null && landingPageLogoImage.Length > 0)
             {
                 using var form = new MultipartFormDataContent();
-                using var fileStream = logoImage.OpenReadStream();
+                using var fileStream = landingPageLogoImage.OpenReadStream();
                 var streamContent = new StreamContent(fileStream);
-                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(logoImage.ContentType);
-                form.Add(streamContent, "file", logoImage.FileName);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(landingPageLogoImage.ContentType);
+                form.Add(streamContent, "file", landingPageLogoImage.FileName);
 
                 var uploadResponse = await client.PostAsync("api/products/upload", form);
                 if (uploadResponse.IsSuccessStatusCode)
                 {
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
-                    settings.LogoUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.LogoUrl;
+                    settings.LandingPageLogoUrl = uploadJson.GetProperty("imageUrl").GetString() ?? settings.LandingPageLogoUrl;
                 }
             }
 

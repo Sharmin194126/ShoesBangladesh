@@ -277,9 +277,9 @@
 
 <div class="landing-v3">
     <!-- Header Logo -->
-    @if (!string.IsNullOrEmpty(Model.Settings.LogoUrl))
+    @if (!string.IsNullOrEmpty(Model.Settings.LandingPageLogoUrl ?? Model.Settings.LogoUrl))
     {
-        <img src="@ResolveUrl(Model.Settings.LogoUrl)" class="landing-logo" alt="Company Logo">
+        <img src="@ResolveUrl(Model.Settings.LandingPageLogoUrl ?? Model.Settings.LogoUrl)" class="landing-logo" alt="Company Logo">
     }
 
     <!-- Hero Section -->
@@ -389,7 +389,7 @@
                             }
                         </div>
 
-                        <a asp-action="ProductDetails" asp-route-id="@product.Id" class="btn-shop-mini">Order Now</a>
+                        <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="btn-shop-mini">Order Now</a>
                     </div>
                 </div>
             }

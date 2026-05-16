@@ -48,6 +48,7 @@ namespace ShoesBangladesh.API.Controllers
                         ContactEmail = settings?.ContactEmail ?? "info@shoesbangladesh.com",
                         Phone = settings?.Phone ?? "+880 1234 56789",
                         LogoUrl = settings?.LogoUrl ?? "/images/logo.png",
+                        LandingPageLogoUrl = settings?.LandingPageLogoUrl ?? "/images/logo-landing.png",
                         HeroImageUrl = settings?.HeroImageUrl ?? "/images/hero-shoe.png",
                         HeroBgImageUrl = settings?.HeroBgImageUrl ?? "/images/hero-bg.png",
                         BannerImageUrl = settings?.BannerImageUrl ?? "/images/banner-red.png",
@@ -105,6 +106,7 @@ namespace ShoesBangladesh.API.Controllers
             existing.ContactEmail = settings.ContactEmail;
             existing.Phone = settings.Phone;
             existing.LogoUrl = settings.LogoUrl ?? existing.LogoUrl;
+            existing.LandingPageLogoUrl = settings.LandingPageLogoUrl ?? existing.LandingPageLogoUrl;
             existing.HeroImageUrl = settings.HeroImageUrl ?? existing.HeroImageUrl;
             existing.HeroBgImageUrl = settings.HeroBgImageUrl ?? existing.HeroBgImageUrl;
             existing.BannerImageUrl = settings.BannerImageUrl ?? existing.BannerImageUrl;

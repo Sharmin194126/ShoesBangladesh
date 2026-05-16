@@ -123,7 +123,7 @@
         <input type="hidden" asp-for="HeroImageUrl" />
         <input type="hidden" asp-for="HeroBgImageUrl" />
         <input type="hidden" asp-for="BannerImageUrl" />
-        <input type="hidden" asp-for="LogoUrl" />
+        <input type="hidden" asp-for="LandingPageLogoUrl" />
 
         <div class="row">
             <div class="col-lg-8">
@@ -256,10 +256,10 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label-premium">Company Logo</label>
+                        <label class="form-label-premium">Landing Page Logo</label>
                         <div class="upload-preview-container">
-                            <img src="@ResolveUrl(Model.LogoUrl)" id="logoPreview" class="preview-img-premium">
-                            <input type="file" name="logoImage" class="form-control form-control-sm" onchange="previewImage(this, 'logoPreview')" accept="image/*" />
+                            <img src="@ResolveUrl(Model.LandingPageLogoUrl ?? "/images/logo-landing.png")" id="logoPreview" class="preview-img-premium">
+                            <input type="file" name="landingPageLogoImage" class="form-control form-control-sm" onchange="previewImage(this, 'logoPreview')" accept="image/*" />
                         </div>
                     </div>
                 </div>

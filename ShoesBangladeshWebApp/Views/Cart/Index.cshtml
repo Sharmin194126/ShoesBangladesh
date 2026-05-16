@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "Your Shopping Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5 my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #1F1F1F;">Shopping Cart</h1>
+        <p class="text-muted fs-5">Review your selected premium footwear.</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success rounded-3 border-0 mb-4 shadow-sm">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 text-center py-5">
+                <div class="card-body py-5">
+                    <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+                    <h3 class="fw-bold mt-4">Your cart is currently empty</h3>
+                    <p class="text-muted mb-4">Looks like you haven't added any shoes to your cart yet.</p>
+                    <a href="/Product/Index" class="btn btn-danger btn-lg rounded-pill px-5 fw-bold" style="background: linear-gradient(135deg, #D00000, #8B0000); border: none;">
+                        <i class="bi bi-shop me-2"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
