@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesBangladesh.API.Data;
 using ShoesBangladesh.API.Models;
+using ShoesBangladesh.API.ViewModels;
 
 namespace ShoesBangladesh.API.Controllers
 {
@@ -25,17 +26,101 @@ namespace ShoesBangladesh.API.Controllers
             return await _context.Products.Include(p => p.Category).ToListAsync();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        [HttpGet("{id}/Details")]
+        public async Task<ActionResult<ProductDetailsViewModel>> GetProductDetails(int id, int? currentUserId = null)
         {
-            var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.ProductType)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null)
+            if (product == null) return NotFound();
+
+            var reviews = await _context.Reviews
+                .Where(r => r.ProductId == id && r.Status == "Approved")
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            var reviewViewModels = new List<ReviewViewModel>();
+            foreach (var r in reviews)
             {
-                return NotFound();
+                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == r.UserId);
+                var replies = await _context.ReviewReplies.Where(rp => rp.ReviewId == r.Id).OrderBy(rp => rp.CreatedAt).ToListAsync();
+                
+                var isLiked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Like");
+                var isDisliked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Dislike");
+
+                reviewViewModels.Add(new ReviewViewModel
+                {
+                    Id = r.Id,
+                    ProductId = r.ProductId,
+                    UserId = r.UserId,
+                    CustomerName = customer?.Name ?? "Anonymous",
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    ImageUrls = r.ImageUrls,
+                    CreatedAt = r.CreatedAt,
+                    LikeCount = r.LikeCount,
+                    DislikeCount = r.DislikeCount,
+                    IsLikedByCurrentUser = isLiked,
+                    IsDislikedByCurrentUser = isDisliked,
+                    Replies = replies.Select(rp => new ReviewReplyViewModel
+                    {
+                        Id = rp.Id,
+                        ReviewId = rp.ReviewId,
+                        ReplierName = rp.ReplierName,
+                        ReplyText = rp.ReplyText,
+                        IsSeller = rp.IsSeller,
+                        AttachmentUrls = rp.AttachmentUrls,
+                        CreatedAt = rp.CreatedAt
+                    }).ToList()
+                });
             }
 
-            return product;
+            var avgRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+            var ratingSummary = reviews.GroupBy(r => r.Rating)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            var relatedProducts = await _context.Products
+                .Where(p => p.CategoryId == product.CategoryId && p.Id != id)
+                .Take(6)
+                .ToListAsync();
+
+            var viewModel = new ProductDetailsViewModel
+            {
+                Product = new ProductDetailsViewModel.ProductDetailItem
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    ImageUrl = product.ImageUrl,
+                    Price = product.DiscountPrice ?? product.Price,
+                    RegularPrice = product.Price,
+                    OfferPercentage = product.OfferPercentage,
+                    VatPercentage = product.VatPercentage,
+                    DeliveryCharge = product.DeliveryCharge,
+                    StockQty = product.StockQuantity,
+                    MaxOrderQty = product.MaxOrderLimit,
+                    AverageRating = avgRating,
+                    AvailableSizes = string.Join(", ", product.AvailableSizes),
+                    ProductTypeId = product.ProductTypeId,
+                    ProductType = product.ProductType != null ? new ProductDetailsViewModel.ProductTypeInfo { Id = product.ProductType.Id, Name = product.ProductType.Name } : null
+                },
+                RelatedImages = product.AdditionalImages,
+                TotalReviews = reviews.Count,
+                RatingSummary = ratingSummary,
+                Reviews = reviewViewModels,
+                SizeStocks = product.SizeQuantities.Select(sq => new ProductDetailsViewModel.SizeStockViewModel { Size = sq.Key, StockQty = sq.Value }).ToList(),
+                RelatedProducts = relatedProducts.Select(p => new ProductViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.DiscountPrice ?? p.Price,
+                    ImageUrl = p.ImageUrl
+                }).ToList()
+            };
+
+            return Ok(viewModel);
         }
 
         [HttpPost]

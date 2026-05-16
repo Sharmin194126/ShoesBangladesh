@@ -1,0 +1,999 @@
+@using ShoesBangladesh.API.ViewModels
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model ProductDetailsViewModel
+@functions {
+    public string RenderStars(double rating) {
+        int fullStars = (int)Math.Round(rating);
+        string stars = "";
+        for(int i=0; i<fullStars; i++) stars += "★";
+        for(int i=fullStars; i<5; i++) stars += "☆";
+        return stars;
+    }
+}
+@{
+    ViewData["Title"] = Model.Product.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var sizes = !string.IsNullOrEmpty(Model.Product.AvailableSizes)
+        ? Model.Product.AvailableSizes.Split(',').Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray()
+        : null;
+}
+
+<style>
+    .live-chat-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: linear-gradient(135deg, #532374, #8b1a6b);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(83, 35, 116, 0.35);
+        cursor: pointer;
+        transition: transform 0.3s;
+        border: none;
+    }
+    .live-chat-btn:hover {
+        transform: scale(1.05);
+        color: white;
+        background: linear-gradient(135deg, #3d1a55, #532374);
+    }
+    .chat-box {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        width: 350px;
+        height: 500px;
+        background: #f8f6f0;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        z-index: 9998;
+        display: none;
+        flex-direction: column;
+    }
+    .chat-box.active {
+        display: flex;
+    }
+    .chat-header {
+        background: linear-gradient(135deg, #532374, #8b1a6b);
+        color: white;
+        padding: 15px;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f5f5f5;
+    }
+    .chat-footer {
+        padding: 15px;
+        border-top: 1px solid #ddd;
+        display: flex;
+        gap: 10px;
+    }
+    .chat-message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 80%;
+    }
+    .chat-message.user {
+        background: #dcf8c6;
+        margin-left: auto;
+    }
+    .chat-message.support {
+        background: #f8f6f0;
+    }
+    .rating-bar {
+        height: 8px;
+        background: #eee;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .rating-fill {
+        height: 100%;
+        background: #ffc107;
+    }
+    .live-chat-banner {
+        background: linear-gradient(135deg, #532374 0%, #8b1a6b 100%);
+        color: white;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(83, 35, 116, 0.2);
+    }
+    /* Daraz Style Zoom */
+    .img-zoom-container {
+        position: relative;
+        width: 100%;
+        cursor: zoom-in !important;
+    }
+    .img-zoom-lens {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        width: 150px;
+        height: 150px;
+        background-color: rgba(255, 255, 255, 0.4);
+        display: none;
+        z-index: 10;
+        pointer-events: none; /* Allows cursor to interact with image below */
+        cursor: zoom-in !important; /* Strict cursor requirement */
+    }
+    .img-zoom-result {
+        position: absolute;
+        top: 0;
+        left: 105%;
+        border: 1px solid #e0e0e0;
+        width: 450px;
+        height: 450px;
+        background-color: #f8f6f0;
+        display: none; /* hidden until hover */
+        z-index: 999;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        background-repeat: no-repeat;
+    }
+    .thumb-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border: 2px solid transparent;
+        cursor: pointer;
+        background: #f8f6f0;
+        transition: border-color 0.3s;
+    }
+    .thumb-img:hover, .thumb-img.active {
+        border-color: #532374;
+    }
+    .delivery-info {
+        background: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-top: 10px;
+        border: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .delivery-info i {
+        color: #532374;
+        font-size: 1.2rem;
+    }
+    input[type="number"].no-spin::-webkit-inner-spin-button,
+    input[type="number"].no-spin::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    input[type="number"].no-spin {
+        -moz-appearance: textfield;
+    }
+    .size-label {
+        border-color: #532374 !important;
+        color: #532374 !important;
+    }
+    .size-label:hover, .size-select:checked + .size-label {
+        background-color: #532374 !important;
+        color: white !important;
+        border-color: #532374 !important;
+    }
+    .theme-back-btn {
+        display: inline-block;
+        color: #532374;
+        text-decoration: none;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+    .theme-back-btn:hover {
+        color: #8b1a6b;
+    }
+</style>
+
+<div class="live-chat-banner">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1" style="color: #FFD700 !important; font-weight: 800;"><i class="bi bi-chat-text-fill me-2"></i>@Localizer["Live Chat Support Available!"]</h4>
+            <p class="mb-0 small" style="color: #ffffff !important; font-weight: 600;">@Localizer["Connect with our product experts instantly via our Live Chat button for real-time assistance."]</p>
+        </div>
+        <button onclick="toggleChat()" class="btn btn-warning fw-bold px-4 text-dark shadow-sm">@Localizer["Start Chat Now"]</button>
+    </div>
+</div>
+
+<div class="container mt-2">
+    <a href="javascript:history.back()" class="theme-back-btn"><i class="bi bi-arrow-left"></i> @Localizer["Back to Exploration"]</a>
+    <div class="row">
+        <!-- Image Section -->
+        <div class="col-md-5 position-relative">
+            <div class="img-zoom-container" id="zoomContainer" onmouseenter="showZoom()" onmousemove="moveZoom(event)" onmouseleave="hideZoom()">
+                <img id="myimage" src="@(string.IsNullOrEmpty(Model.Product.ImageUrl) ? "/images/no-image.png" : (Model.Product.ImageUrl.StartsWith("/") ? Model.Product.ImageUrl : "/images/products/" + Model.Product.ImageUrl))" 
+                     class="img-fluid rounded border" alt="@Model.Product.Name" style="height: 500px; width: 100%; object-fit: contain; background: #f8f6f0; cursor: zoom-in !important;" />
+                <div id="mylens" class="img-zoom-lens"></div>
+            </div>
+            <!-- Daraz zoomed result pops out to the right here -->
+            <div id="myresult" class="img-zoom-result"></div>
+
+            <!-- Related Images Gallery -->
+            <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center">
+                <img src="@(string.IsNullOrEmpty(Model.Product.ImageUrl) ? "/images/no-image.png" : (Model.Product.ImageUrl.StartsWith("/") ? Model.Product.ImageUrl : "/images/products/" + Model.Product.ImageUrl))" 
+                     class="thumb-img rounded active" onclick="changeMainImage(this.src, this)" />
+                
+                @if (Model.RelatedImages != null && Model.RelatedImages.Any())
+                {
+                    foreach (var imgUrl in Model.RelatedImages)
+                    {
+                        <img src="@imgUrl" class="thumb-img rounded" onclick="changeMainImage(this.src, this)" />
+                    }
+                }
+            </div>
+            
+            <script>
+                function showZoom() {
+                    const img = document.getElementById('myimage');
+                    const lens = document.getElementById('mylens');
+                    const result = document.getElementById('myresult');
+                    
+                    if(!img.src || img.src.includes('no-image.png')) return;
+                    
+                    lens.style.display = 'block';
+                    result.style.display = 'block';
+                    
+                    result.style.backgroundImage = "url('" + img.src + "')";
+                    updateZoom(img, lens, result, null);
+                }
+                
+                function moveZoom(event) {
+                    const img = document.getElementById('myimage');
+                    const lens = document.getElementById('mylens');
+                    const result = document.getElementById('myresult');
+                    if (lens.style.display === 'block') {
+                        updateZoom(img, lens, result, event);
+                    }
+                }
+                
+                function hideZoom() {
+                    document.getElementById('mylens').style.display = 'none';
+                    document.getElementById('myresult').style.display = 'none';
+                }
+                
+                function updateZoom(img, lens, result, e) {
+                    const cx = result.offsetWidth / lens.offsetWidth;
+                    const cy = result.offsetHeight / lens.offsetHeight;
+                    result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+                    
+                    if(!e) return;
+                    
+                    const rect = img.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    let y = e.clientY - rect.top;
+                    
+                    let xPos = x - (lens.offsetWidth / 2);
+                    let yPos = y - (lens.offsetHeight / 2);
+                    
+                    if (xPos > img.width - lens.offsetWidth) { xPos = img.width - lens.offsetWidth; }
+                    if (xPos < 0) { xPos = 0; }
+                    if (yPos > img.height - lens.offsetHeight) { yPos = img.height - lens.offsetHeight; }
+                    if (yPos < 0) { yPos = 0; }
+                    
+                    lens.style.left = xPos + "px";
+                    lens.style.top = yPos + "px";
+                    
+                    result.style.backgroundPosition = "-" + (xPos * cx) + "px -" + (yPos * cy) + "px";
+                }
+
+                function changeMainImage(src, thumb) {
+                    const mainImg = document.getElementById('myimage');
+                    mainImg.src = src;
+                    
+                    // Update active thumbnail
+                    document.querySelectorAll('.thumb-img').forEach(img => img.classList.remove('active'));
+                    thumb.classList.add('active');
+                    
+                    // Reset zoom if visible
+                    hideZoom();
+                }
+            </script>
+        </div>
+        
+        <!-- Details Section -->
+        <div class="col-md-7">
+            @if (TempData["Message"] != null)
+            {
+                <div class="alert alert-success">@TempData["Message"]</div>
+            }
+            <h2>@Model.Product.Name</h2>
+            
+            <div class="delivery-info">
+                <i class="bi bi-truck"></i>
+                <div>
+                    <span class="text-muted small d-block">@Localizer["Delivery Charge"]</span>
+                    <span class="fw-bold text-dark">
+                        @if (Model.Product.DeliveryCharge > 0) {
+                            <text>৳ @Model.Product.DeliveryCharge.ToString("#,##0")</text>
+                        } else {
+                            @Localizer["Free"]
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-2 mt-2">
+                <span class="text-warning fs-5">@Html.Raw(RenderStars(Model.Product.AverageRating))</span>
+                <span class="text-muted">(@Model.Product.AverageRating.ToString("0.0")) | @Model.TotalReviews.ToString("#,##0") @Localizer["Reviews"]</span>
+            </div>
+            <div class="price-area mb-3 p-3 rounded" style="background: rgba(83,35,116,0.05); border-left: 4px solid #532374;">
+                @if (Model.Product.OfferPercentage > 0)
+                {
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-danger">@Model.Product.OfferPercentage% @Localizer["OFF"]</span>
+                        <span class="text-danger fw-bold small text-uppercase" style="letter-spacing: 1px;">@Localizer["Limited Time Offer!"]</span>
+                    </div>
+                }
+                
+                <div class="d-flex flex-column gap-1">
+                    @if (Model.Product.RegularPrice > Model.Product.Price)
+                    {
+                        <div>
+                            <span class="text-muted small">@Localizer["Regular Price"]: </span>
+                            <span class="text-muted text-decoration-line-through">৳ @Model.Product.RegularPrice.ToString("#,##0")</span>
+                        </div>
+                    }
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h3 class="text-danger fw-bold mb-0" style="font-size: 2rem;">৳ @Model.Product.Price.ToString("#,##0")</h3>
+                        @if (Model.Product.OfferPercentage > 0)
+                        {
+                            <span class="text-muted small">(@Localizer["Offer Price"])</span>
+                        }
+                    </div>
+                </div>
+
+                @if (Model.Product.VatPercentage > 0)
+                {
+                    decimal vAmt = (Model.Product.Price * Model.Product.VatPercentage) / 100;
+                    decimal totalWVat = Model.Product.Price + vAmt;
+                    
+                    <div class="mt-2 border-top pt-2">
+                        <div class="text-muted small d-flex justify-content-between" style="max-width: 250px;">
+                            <span>@Localizer["Price"]:</span>
+                            <span class="fw-bold">৳ @Model.Product.Price.ToString("#,##0")</span>
+                        </div>
+                        <div class="text-muted small d-flex justify-content-between" style="max-width: 250px;">
+                            <span>@Localizer["VAT"] (@Model.Product.VatPercentage%):</span>
+                            <span class="fw-bold text-success">+ ৳ @vAmt.ToString("#,##0")</span>
+                        </div>
+                        <div class="text-dark fw-bold d-flex justify-content-between" style="max-width: 250px; font-size: 1.1rem;">
+                            <span>@Localizer["Grand Total"]:</span>
+                            <span class="text-danger">৳ @totalWVat.ToString("#,##0")</span>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <p class="mt-3">@Model.Product.Description</p>
+            
+            <hr />
+            
+            <form method="get" id="addToCartForm">
+                <input type="hidden" name="productId" value="@Model.Product.Id" />
+                <input type="hidden" id="selectedSizeStock" value="@Model.Product.StockQty" /> @* Default to total stock, but will update on size select *@
+                
+                @if (sizes != null && sizes.Any())
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark fs-5">@Localizer["Select Size"]:</label>
+                        <div class="d-flex gap-2 mb-2">
+                            @foreach (var size in sizes)
+                            {
+                                <input type="radio" class="btn-check size-select" name="size" id="size-@size" value="@size" required autocomplete="off">
+                                <label class="btn size-label px-3 py-2 fw-bold" for="size-@size">@size</label>
+                            }
+                        </div>
+                        <div id="sizeStockDisplay" class="mt-2 p-2 rounded" style="display:none; background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                            <i class="bi bi-info-circle-fill me-1"></i>
+                            <span id="sizeStockText" class="fw-bold"></span>
+                        </div>
+                        
+                        <div id="sizeStockData" style="display:none;">
+                            @if (Model.SizeStocks != null)
+                            {
+                                foreach (var ss in Model.SizeStocks)
+                                {
+                                    <div class="size-data" data-size="@ss.Size" data-stock="@ss.StockQty"></div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-dark fs-5">@Localizer["Quantity"]:</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="input-group" style="width: 180px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; background: #f8f6f0; height: 38px;">
+                            <button class="btn btn-light px-2 fw-bold border-end" type="button" onclick="changeQty(-1)" style="font-size: 16px; color: #333; padding-bottom: 2px; width: 40px;">-</button>
+                            <input type="number" id="quantityInput" name="qty" value="1" min="1"
+                                    class="form-control text-center fw-bold border-0 p-0 no-spin" 
+                                    style="color: #000 !important; background-color: #f8f6f0 !important; font-size: 1.1rem; width: 100px;"
+                                    onchange="validateQty()" oninput="validateQty()" />
+                            <button class="btn btn-light px-2 fw-bold border-start" type="button" onclick="changeQty(1)" style="font-size: 16px; color: #333; padding-bottom: 2px; width: 40px;">+</button>
+                        </div>
+                        <span id="stockLimitMsg" class="text-muted small">
+                            (@Localizer["Stock"]: @Model.Product.StockQty.ToString("#,##0") @Localizer["units"] | @Localizer["Max"]: @(Model.Product.MaxOrderQty > 0 ? Model.Product.MaxOrderQty.Value.ToString("#,##0") : Localizer["No Limit"].Value))
+                        </span>
+                    </div>
+                    <div id="qtyMessage" class="text-danger small fw-bold mt-2" style="display: none;"></div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" formaction="/Cart/AddToCart" class="btn btn-warning text-white btn-lg px-4 fw-bold">@Localizer["Add to Cart"]</button>
+                    <button type="submit" formaction="/Cart/BuyNow" class="btn btn-danger btn-lg px-4 fw-bold">@Localizer["Buy Now"]</button>
+                    <a href="/Home/CategoryProducts?typeId=@Model.Product.ProductTypeId" class="btn btn-outline-secondary btn-lg px-4">@Localizer["View More"] @Model.Product.ProductType?.Name</a>
+                </div>
+
+                <script>
+                    function showMessage(msg) {
+                        const msgBox = document.getElementById('qtyMessage');
+                        msgBox.innerHTML = msg;
+                        msgBox.style.display = 'block';
+                        
+                        // Clear message after 4 seconds
+                        setTimeout(() => {
+                            msgBox.style.display = 'none';
+                        }, 4000);
+                    }
+
+                    function changeQty(amt) {
+                        const input = document.getElementById('quantityInput');
+                        let val = parseInt(input.value);
+                        if(isNaN(val)) val = 0;
+                        val += amt;
+                        applyValidation(val, input);
+                    }
+
+                    function validateQty() {
+                        const input = document.getElementById('quantityInput');
+                        if (input.value === "") return; // Allow empty while typing
+                        let val = parseInt(input.value);
+                        if(isNaN(val)) val = 1;
+                        applyValidation(val, input);
+                    }
+
+                    function applyValidation(val, input) {
+                        // Use the selected size's stock if available (from hidden field)
+                        let maxStock = parseInt(document.getElementById('selectedSizeStock').value) || 0;
+                        let maxOrder = parseInt('@(Model.Product.MaxOrderQty ?? 0)') || 0;
+                        
+                        // If it's pure zero or lower, restrict to 1 unless there is zero stock
+                        if (val < 1) val = 1;
+
+                        if (maxStock <= 0) {
+                            val = 0;
+                            showMessage("Sorry, this product/size is currently out of stock.");
+                        } else if (maxOrder > 0 && maxOrder < maxStock && val > maxOrder) {
+                            val = maxOrder;
+                            showMessage("Maximum purchase order limit is " + maxOrder + ". If you need more products, please <a href='/Home/Contact' class='text-primary text-decoration-underline fw-bold'>Contact Us</a>.");
+                        } else if (val > maxStock) {
+                            val = maxStock;
+                            showMessage("Requested quantity exceeds available stock of " + maxStock + " units for this selection.");
+                        }
+                        
+                        input.value = val;
+                    }
+
+                    document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+                        const input = document.getElementById('quantityInput');
+                        if (input.value === "" || parseInt(input.value) < 1) {
+                            input.value = 1;
+                        }
+
+                        @if (sizes != null && sizes.Any())
+                        {
+                            <text>
+                            if (!document.querySelector('input[name="size"]:checked')) {
+                                e.preventDefault();
+                                showMessage("Please select a size first!");
+                                return false;
+                            }
+                            </text>
+                        }
+                    });
+
+                    // Add Listener for size select to update stock
+                    document.addEventListener('DOMContentLoaded', function() {
+                        document.querySelectorAll('.size-select').forEach(radio => {
+                            radio.addEventListener('change', function() {
+                                const size = this.value;
+                                const sizeData = document.querySelector(`.size-data[data-size="${size}"]`);
+                                const displayContainer = document.getElementById('sizeStockDisplay');
+                                const textDisplay = document.getElementById('sizeStockText');
+                                const quantityInput = document.getElementById('quantityInput');
+                                const selectedStockInput = document.getElementById('selectedSizeStock');
+                                const stockLimitMsg = document.getElementById('stockLimitMsg');
+                                
+                                if (sizeData) {
+                                    const stock = parseInt(sizeData.getAttribute('data-stock')) || 0;
+                                    selectedStockInput.value = stock;
+                                    
+                                    displayContainer.style.display = 'block';
+                                    if (stock > 0) {
+                                        textDisplay.innerText = "Available Stock for Size " + size + ": " + stock + " units";
+                                        textDisplay.className = "fw-bold text-success";
+                                        displayContainer.style.borderColor = "#198754";
+                                    } else {
+                                        textDisplay.innerText = "Size " + size + " is Out of Stock!";
+                                        textDisplay.className = "fw-bold text-danger";
+                                        displayContainer.style.borderColor = "#dc3545";
+                                    }
+                                    
+                                    stockLimitMsg.innerText = `(Stock for ${size}: ${stock} units | Max: @(Model.Product.MaxOrderQty > 0 ? Model.Product.MaxOrderQty.Value.ToString("#,##0") : Localizer["No Limit"].Value))`;
+                                    
+                                    // Trigger validation to ensure quantity is capped to new stock
+                                    applyValidation(parseInt(quantityInput.value) || 1, quantityInput);
+                                }
+                            });
+                        });
+                    });
+                </script>
+                
+            </form>
+        </div>
+    </div>
+    
+    <hr class="mt-5 mb-5" />
+
+    <!-- Ratings Summary and Review List -->
+    <div class="row">
+        <div class="col-md-4">
+            <h4>@Localizer["Ratings & Reviews"]</h4>
+            <div class="text-center p-4 bg-light rounded">
+                <h1 class="display-3 fw-bold text-dark">@Model.Product.AverageRating.ToString("0.0")</h1>
+                <div class="text-warning fs-3">@Html.Raw(RenderStars(Model.Product.AverageRating))</div>
+                <div class="text-muted">@Localizer["Based on"] @Model.TotalReviews @Localizer["reviews"]</div>
+            </div>
+            
+            <div class="mt-4">
+                @for (int i = 5; i >= 1; i--)
+                {
+                    int count = Model.RatingSummary.ContainsKey(i) ? Model.RatingSummary[i] : 0;
+                    double percent = Model.TotalReviews > 0 ? (double)count / Model.TotalReviews * 100 : 0;
+                    <div class="d-flex align-items-center mb-1">
+                        <span class="me-2" style="width: 20px;">@i</span>
+                        <div class="flex-grow-1 rating-bar">
+                            <div class="rating-fill" style="width: @percent%;"></div>
+                        </div>
+                        <span class="ms-2 text-muted" style="width: 30px;">@count</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-8 ps-md-5">
+            <h4 class="mb-4">@Localizer["Customer Experience"]</h4>
+            
+            <!-- Submit Review Section -->
+            <div class="card mb-4 border-primary">
+                <div class="card-body">
+                    <h5>@Localizer["Give a Review"]</h5>
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <form asp-controller="Review" asp-action="SubmitReview" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="productId" value="@Model.Product.Id" />
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label fw-bold" style="color: #532374;">@Localizer["Select Stars"]</label>
+                                    <select name="rating" class="form-select border-primary" required>
+                                        <option value="5">★★★★★ (@Localizer["5 Stars"])</option>
+                                        <option value="4">★★★★☆ (@Localizer["4 Stars"])</option>
+                                        <option value="3">★★★☆☆ (@Localizer["3 Stars"])</option>
+                                        <option value="2">★★☆☆☆ (@Localizer["2 Stars"])</option>
+                                        <option value="1">★☆☆☆☆ (@Localizer["1 Star"])</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label fw-bold" style="color: #532374;">@Localizer["Comments"]</label>
+                                    <div class="position-relative">
+                                        <textarea id="mainReviewComment" name="comment" class="form-control border-primary" rows="3" placeholder="@Localizer["Write your experience..."]" required></textarea>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary border-0 position-absolute bottom-0 end-0 m-1" onclick="showEmojiPickerFor('mainReviewComment', this)" title="@Localizer["Insert Emoji"]">
+                                            <i class="bi bi-emoji-smile" style="font-size: 1.2rem;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold" style="color: #532374;">@Localizer["Add Photos (Optional)"]</label>
+                                <input type="file" name="images" class="form-control" accept="image/*" multiple onchange="previewImages(this)" />
+                                <small class="text-muted">@Localizer["You can upload up to 5 images"]</small>
+                                <div id="imagePreview" class="mt-2 d-flex gap-2 flex-wrap"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">@Localizer["Submit Review"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="mb-2">@Localizer["Please login to share your feedback."]</p>
+                        <a asp-controller="Account" asp-action="Login" class="theme-back-btn" style="padding: 5px 20px !important; display: inline-block;">@Localizer["Login Now"]</a>
+                    }
+                </div>
+            </div>
+
+            <!-- Review List -->
+            <div class="review-list">
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                    foreach (var review in Model.Reviews)
+                    {
+                        <div class="border-bottom mb-4 pb-3">
+                            <div class="d-flex justify-content-between">
+                                 <div>
+                                     <span class="text-warning">@Html.Raw(RenderStars(review.Rating))</span>
+                                     <span class="ms-2 fw-bold" style="color: #FF6B35;">@review.CustomerName</span>
+                                     <span class="badge bg-light text-success ms-2 small" style="font-size: 0.7rem;">@Localizer["Verified Purchase"]</span>
+                                 </div>
+                                 <small class="text-muted">@review.CreatedAt.ToString("MMM dd, yyyy | hh:mm tt")</small>
+                            </div>
+                            
+                            <p class="mt-2 mb-2 text-dark">@review.Comment</p>
+
+                            @if (!string.IsNullOrEmpty(review.ImageUrls))
+                            {
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    @foreach (var url in review.ImageUrls.Split(','))
+                                    {
+                                        <img src="@url" class="rounded review-image" style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;" onclick="window.open('@url', '_blank')" />
+                                    }
+                                </div>
+                            }
+
+                            <!-- Reactions -->
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <button class="btn btn-sm text-white fw-bold" style="background: #532374 !important; border: none;" onclick="reactToReview(@review.Id, 'Like')">
+                                    <i class="bi bi-hand-thumbs-up"></i> <span class="text-white fw-bold" id="like-count-@review.Id">@review.LikeCount</span>
+                                </button>
+                                <button class="btn btn-sm @(review.IsDislikedByCurrentUser ? "btn-danger" : "btn-outline-danger")" onclick="reactToReview(@review.Id, 'Dislike')">
+                                    <i class="bi bi-hand-thumbs-down"></i> <span id="dislike-count-@review.Id">@review.DislikeCount</span>
+                                </button>
+                                @if (User.Identity?.IsAuthenticated == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
+                                {
+                                    <button class="btn btn-link btn-sm text-decoration-none" onclick="toggleReplyBox(@review.Id)">@Localizer["Reply"]</button>
+                                }
+                            </div>
+
+                            <!-- Replies -->
+                            @if (review.Replies != null && review.Replies.Any())
+                            {
+                                <div class="ms-5 mt-3 border-start ps-3 py-1 bg-light rounded">
+                                    @foreach (var reply in review.Replies)
+                                    {
+                                        <div class="mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold small @(reply.IsSeller ? "text-danger" : "text-primary")">
+                                                    @(reply.IsSeller ? Localizer["Seller Response"].Value : reply.ReplierName)
+                                                </span>
+                                                <small class="text-muted" style="font-size: 0.7rem;">@reply.CreatedAt.ToString("MMM dd, HH:mm")</small>
+                                            </div>
+                                            <p class="small mb-0">@reply.ReplyText</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            <!-- Reply Box -->
+                            <div id="reply-box-@review.Id" class="ms-5 mt-2" style="display: none;">
+                                <div class="card p-2 border-primary shadow-sm">
+                                    <div class="d-flex gap-2 mb-2 p-1 bg-light rounded">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary border-0" onclick="insertTool(@review.Id, 'gallery', this)" title="@Localizer["Add from Gallery"]"><i class="bi bi-images"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary border-0" onclick="insertTool(@review.Id, 'attach', this)" title="@Localizer["Attach File"]"><i class="bi bi-paperclip"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary border-0" onclick="insertTool(@review.Id, 'emoji', this)" title="@Localizer["Insert Emoji"]"><i class="bi bi-emoji-smile"></i></button>
+                                    </div>
+                                    <textarea id="reply-text-@review.Id" class="form-control mb-2" rows="2" placeholder="@Localizer["Write your reply..."]"></textarea>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="toggleReplyBox(@review.Id)">@Localizer["Cancel"]</button>
+                                        <button type="button" class="btn btn-sm btn-primary" onclick="submitReply(@review.Id)">@Localizer["Post Reply"]</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">@Localizer["No reviews yet. Be the first to review this product!"]</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="mt-5 mb-5">
+        <h4 class="mb-4">@Localizer["Related Products"]</h4>
+        <div class="row">
+            @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+            {
+                foreach (var product in Model.RelatedProducts)
+                {
+                    <div class="col-md-2 col-6 mb-4">
+                        <div class="card h-100 border-0 text-center">
+                            <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none">
+                                <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : (product.ImageUrl.StartsWith("/") ? product.ImageUrl : "/images/products/" + product.ImageUrl))" 
+                                     class="card-img-top rounded" style="height: 150px; object-fit: cover;" />
+                                <div class="card-body p-2">
+                                    <h6 class="text-dark text-truncate mb-1">@product.Name</h6>
+                                    <div class="text-danger fw-bold">৳ @product.Price.ToString("#,##0")</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted col-12">@Localizer["No related products found."]</p>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Chat Box -->
+<div id="chatBox" class="chat-box">
+    <div class="chat-header">
+        <div class="text-white">
+            <h6 class="mb-0 text-white">Live Chat Support</h6>
+            <small class="text-white-50">We're here to help!</small>
+        </div>
+        <button onclick="toggleChat()" class="btn btn-sm text-white" style="font-size: 20px; padding: 0; border: none; background: transparent;">×</button>
+    </div>
+    <div class="chat-body" id="chatMessages" style="color: #333 !important;">
+        <div class="chat-message support">
+            <strong style="color: #532374;">Support Team</strong>
+            <p class="mb-0 small" style="color: #444 !important;">Hello! How can we help you today?</p>
+        </div>
+    </div>
+    <div class="chat-footer">
+        <input type="text" id="chatInput" class="form-control" style="color: #000 !important; font-weight: 500;" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button onclick="sendMessage()" class="btn btn-success"><i class="bi bi-send-fill"></i></button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Ensure functions are global for onclick handlers
+        window.toggleChat = function() {
+            var chatBox = document.getElementById('chatBox');
+            if (chatBox) {
+                if (chatBox.style.display === 'flex') {
+                    chatBox.style.display = 'none';
+                    chatBox.classList.remove('active');
+                } else {
+                    chatBox.style.display = 'flex';
+                    chatBox.classList.add('active');
+                    var input = document.getElementById('chatInput');
+                    if(input) setTimeout(function() { input.focus(); }, 100);
+                }
+            }
+        };
+
+        window.showEmojiPickerFor = function(targetId, btn) {
+            var picker = document.getElementById('emojiPickerTemplate');
+            if (!picker) return;
+            
+            var isVisible = picker.style.display === 'block';
+            var currentTarget = picker.getAttribute('data-target-id');
+            
+            if (isVisible && currentTarget === targetId) {
+                picker.style.display = 'none';
+                return;
+            }
+            
+            picker.setAttribute('data-target-id', targetId);
+            picker.style.display = 'block';
+            
+            var rect = btn.getBoundingClientRect();
+            picker.style.position = 'fixed';
+            picker.style.zIndex = '10010';
+            
+            // Adjust left position to not go off screen
+            var leftPos = rect.left - 250;
+            if (leftPos < 10) leftPos = 10;
+            picker.style.left = leftPos + 'px';
+            picker.style.top = (rect.top + rect.height + 5) + 'px';
+            
+            setTimeout(function() {
+                const closePicker = function(e) {
+                    if (!picker.contains(e.target) && !btn.contains(e.target)) {
+                        picker.style.display = 'none';
+                        document.removeEventListener('click', closePicker);
+                    }
+                };
+                document.addEventListener('click', closePicker);
+            }, 50);
+        };
+    </script>
+
+<!-- Emoji Picker Template -->
+@await Html.PartialAsync("_EmojiPicker")
+
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `<strong style="color: #198754;">You</strong><p class="mb-0 small" style="color: #222 !important;">${message}</p>`;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+     
+            $.post('/Home/SendLiveChatMessage', { message: message });
+
+            setTimeout(() => {
+                const supportMsg = document.createElement('div');
+                supportMsg.className = 'chat-message support';
+                supportMsg.innerHTML = `<strong style="color: #532374;">Support Team</strong><p class="mb-0 small" style="color: #444 !important;">Thank you for your message. An agent will respond shortly. For immediate assistance, please call us or visit our <a href="/Home/Contact" style="color: #532374; font-weight: 600;">Contact Page</a>.</p>`;
+                chatMessages.appendChild(supportMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        function reactToReview(reviewId, reactionType) {
+            @if (!(User.Identity?.IsAuthenticated ?? false))
+            {
+                <text>window.location.href = '/Account/Login'; return;</text>
+            }
+            $.post('/Review/React', { reviewId: reviewId, reactionType: reactionType }, function(data) {
+                if (data.success) { location.reload(); }
+            });
+        }
+
+        function toggleReplyBox(reviewId) {
+            const box = document.getElementById(`reply-box-${reviewId}`);
+            const isHidden = box.style.display === 'none';
+            const pickerTemplate = document.getElementById('emojiPickerTemplate');
+            if(pickerTemplate) pickerTemplate.style.display = 'none';
+            box.style.display = isHidden ? 'block' : 'none';
+            if(isHidden) {
+                if(!document.getElementById(`reply-file-${reviewId}`)) {
+                    const card = box.querySelector('.card');
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.id = `reply-file-${reviewId}`;
+                    fileInput.multiple = true;
+                    fileInput.style.display = 'none';
+                    fileInput.onchange = (e) => handleReplyFiles(reviewId, e.target);
+                    card.appendChild(fileInput);
+
+                    const previewDiv = document.createElement('div');
+                    previewDiv.id = `reply-preview-${reviewId}`;
+                    previewDiv.className = 'd-flex flex-wrap gap-2 mb-2 p-1';
+                    card.insertBefore(previewDiv, box.querySelector('textarea'));
+                }
+            }
+        }
+
+
+
+        function insertTool(reviewId, type, btn) {
+            if(type === 'emoji') {
+                showEmojiPickerFor('reply-text-' + reviewId, btn);
+            } else if(type === 'attach' || type === 'gallery') {
+                document.getElementById(`reply-file-${reviewId}`).click();
+            }
+        }
+
+        window.replyFiles = window.replyFiles || {};
+        function handleReplyFiles(reviewId, input) {
+            if(!window.replyFiles[reviewId]) window.replyFiles[reviewId] = [];
+            if(input.files) {
+                Array.from(input.files).forEach(f => window.replyFiles[reviewId].push(f));
+                renderReplyPreviews(reviewId);
+            }
+        }
+
+        function renderReplyPreviews(reviewId) {
+            const previewDiv = document.getElementById(`reply-preview-${reviewId}`);
+            previewDiv.innerHTML = '';
+            const dt = new DataTransfer();
+            window.replyFiles[reviewId].forEach((file, index) => {
+                dt.items.add(file);
+                const container = document.createElement('div');
+                container.className = 'position-relative d-inline-block';
+                container.style.width = '60px'; container.style.height = '60px';
+                if(file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+                        img.className = 'rounded border shadow-sm';
+                        container.appendChild(img);
+                        const delBtn = document.createElement('button');
+                        delBtn.innerHTML = '×';
+                        delBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 p-0';
+                        delBtn.style.width = '16px'; delBtn.style.height = '16px'; delBtn.style.fontSize = '12px'; delBtn.style.lineHeight = '1';
+                        delBtn.onclick = (ev) => {
+                            ev.preventDefault();
+                            window.replyFiles[reviewId].splice(index, 1);
+                            renderReplyPreviews(reviewId);
+                        };
+                        container.appendChild(delBtn);
+                    };
+                    reader.readAsDataURL(file);
+                }
+                previewDiv.appendChild(container);
+            });
+            const fileInput = document.getElementById(`reply-file-${reviewId}`);
+            if(fileInput) fileInput.files = dt.files;
+        }
+
+        function submitReply(reviewId) {
+            const textArea = document.getElementById(`reply-text-${reviewId}`);
+            const text = textArea.value;
+            if (!text.trim()) return;
+            const formData = new FormData();
+            formData.append('reviewId', reviewId);
+            formData.append('replyText', text);
+            const files = document.getElementById(`reply-file-${reviewId}`).files;
+            for(let i=0; i<files.length; i++) { formData.append('attachments', files[i]); }
+            $.ajax({
+                url: '/Review/Reply',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(data) { if (data.success) { location.reload(); } }
+            });
+        }
+
+        let selectedFiles = [];
+        function previewImages(input) {
+            if (input.files) {
+                selectedFiles = Array.from(input.files).slice(0, 5);
+                renderPreviews();
+            }
+        }
+
+        function renderPreviews() {
+            const preview = document.getElementById('imagePreview');
+            const input = document.querySelector('input[name="images"]');
+            preview.innerHTML = '';
+            const dt = new DataTransfer();
+            selectedFiles.forEach((file, index) => {
+                dt.items.add(file);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const container = document.createElement('div');
+                    container.className = 'position-relative';
+                    container.style.width = '80px'; container.style.height = '80px';
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+                    img.style.borderRadius = '8px'; img.style.border = '2px solid #ddd';
+                    const delBtn = document.createElement('button');
+                    delBtn.innerHTML = '×';
+                    delBtn.className = 'btn btn-danger btn-sm position-absolute top-0 end-0 p-0';
+                    delBtn.style.width = '20px'; delBtn.style.height = '20px'; delBtn.style.fontSize = '14px'; delBtn.style.lineHeight = '1';
+                    delBtn.onclick = (e) => {
+                        e.preventDefault();
+                        selectedFiles.splice(index, 1);
+                        renderPreviews();
+                    };
+                    container.appendChild(img);
+                    container.appendChild(delBtn);
+                    preview.appendChild(container);
+                };
+                reader.readAsDataURL(file);
+            });
+            input.files = dt.files;
+        }
+    </script>
+}

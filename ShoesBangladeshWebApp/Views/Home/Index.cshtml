@@ -305,7 +305,7 @@
         color: var(--premium-red); /* Red for regular price */
         text-decoration: line-through;
         text-decoration-thickness: 3px; /* Extra thick "cross" line */
-        font-size: 0.75rem; /* Even smaller as requested */
+        font-size: 1.1rem; /* Increased from 0.75rem */
         margin-left: 10px;
         font-weight: 800;
         opacity: 0.9;
@@ -642,10 +642,14 @@ em;
                                             <span class="review-count">(124)</span>
                                         </div>
                                         <div class="price-box">
-                                            <span class="price-current">৳@pPrice.ToString("#,##0")</span>
-                                            @if (pDiscountPrice > pPrice)
+                                            @if (pDiscountPrice > 0 && pDiscountPrice < pPrice)
                                             {
-                                                <span class="price-old">৳@pDiscountPrice.ToString("#,##0")</span>
+                                                <span class="price-current">৳@pDiscountPrice.ToString("#,##0")</span>
+                                                <span class="price-old">৳@pPrice.ToString("#,##0")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="price-current">৳@pPrice.ToString("#,##0")</span>
                                             }
                                         </div>
                                         

@@ -1,6 +1,8 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using ShoesBangladesh.API.ViewModels;
 using ShoesBangladesh.Web.Models;
+using System.Diagnostics;
+using System.Net.Http.Json;
 
 namespace ShoesBangladesh.Web.Controllers;
 
@@ -123,6 +125,59 @@ public class HomeController : Controller
     public IActionResult Privacy()
     {
         return View();
+    }
+
+    public async Task<IActionResult> Details(int id)
+    {
+        var client = _httpClientFactory.CreateClient("ShoesAPI");
+        var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        // Try to get current user ID if authenticated
+        string? currentUserId = null;
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        try
+        {
+            var url = $"api/Products/{id}/Details";
+            if (!string.IsNullOrEmpty(currentUserId)) url += $"?currentUserId={currentUserId}";
+
+            var r = await client.GetAsync(url);
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                var viewModel = System.Text.Json.JsonSerializer.Deserialize<ProductDetailsViewModel>(j, jsonOptions);
+                return View(viewModel);
+            }
+        }
+        catch (Exception ex) 
+        { 
+            _logger.LogError("Product Details fetch failed: {0}", ex.Message); 
+        }
+
+        return NotFound();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SendLiveChatMessage(string message)
+    {
+        var client = _httpClientFactory.CreateClient("ShoesAPI");
+        try
+        {
+            // Forward to API or handle locally
+            var contactMsg = new {
+                Name = User.Identity?.Name ?? "Guest",
+                Email = "chat@shoesbangladesh.com",
+                Subject = "Live Chat Message",
+                Message = message,
+                MessageType = "LiveChat"
+            };
+            await client.PostAsJsonAsync("api/Dashboard/ContactMessages", contactMsg);
+        }
+        catch { }
+        return Ok();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

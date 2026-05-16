@@ -1,0 +1,47 @@
+<!-- Emoji Picker Template -->
+<div id="emojiPickerTemplate" style="display: none; width: 300px; background: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); padding: 10px; overflow: hidden;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin-bottom: 8px; padding-bottom: 5px;">
+        <span style="font-weight: bold; font-size: 0.9rem;">Select Emoji</span>
+        <button type="button" class="btn-close" style="font-size: 0.7rem;" onclick="document.getElementById('emojiPickerTemplate').style.display='none'"></button>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; max-height: 200px; overflow-y: auto; padding: 2px;">
+        @{
+            string[] emojis = { 
+                "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", 
+                "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", 
+                "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "😦", "😧", "😨", "😰", 
+                "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", 
+                "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖", "😺", "😸", "😹", "😻", "😼", 
+                "😽", "🙀", "😿", "😾", "🙈", "🙉", "🙊", "💋", "💌", "💘", "💝", "💖", "💗", "💓", "💞", "💕", 
+                "💟", "❣️", "💔", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💯", "💢", "💥", "💫", 
+                "💦", "💨", "🕳️", "💣", "💬", "👁️‍🗨️", "🗨️", "🗯️", "💭", "💤", "👋", "🤚", "🖐️", "✋", "🖖", "👌", 
+                "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", 
+                "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦵", "🦿", "🦶", 
+                "👂", "🦻", "👃", "🧠", "🦷", "🦴", "👀", "👁️", "👅", "👄" 
+            };
+            foreach (var emoji in emojis)
+            {
+                <button type="button" class="btn btn-sm btn-light p-1" style="font-size: 1.2rem;" onclick="insertEmoji('@emoji')">@emoji</button>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    function insertEmoji(emoji) {
+        var picker = document.getElementById('emojiPickerTemplate');
+        var targetId = picker.getAttribute('data-target-id');
+        if (!targetId) return;
+        
+        var input = document.getElementById(targetId);
+        if (input) {
+            var start = input.selectionStart;
+            var end = input.selectionEnd;
+            var text = input.value;
+            input.value = text.substring(0, start) + emoji + text.substring(end);
+            input.focus();
+            input.setSelectionRange(start + emoji.length, start + emoji.length);
+        }
+        picker.style.display = 'none';
+    }
+</script>

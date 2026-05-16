@@ -61,7 +61,32 @@ namespace ShoesBangladesh.API.Models
         public int Rating { get; set; }
         public string Comment { get; set; } = string.Empty;
         public string Status { get; set; } = "Pending";
-        public string? ImageUrls { get; set; } // Semicolon separated
+        public string? ImageUrls { get; set; } // Semicolon or comma separated
+        public int LikeCount { get; set; }
+        public int DislikeCount { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public ICollection<ReviewReply> Replies { get; set; } = new List<ReviewReply>();
+    }
+
+    public class ReviewReply
+    {
+        public int Id { get; set; }
+        public int ReviewId { get; set; }
+        public int ReplierId { get; set; }
+        public string ReplierName { get; set; } = string.Empty;
+        public string ReplyText { get; set; } = string.Empty;
+        public bool IsSeller { get; set; }
+        public string? AttachmentUrls { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class ReviewReaction
+    {
+        public int Id { get; set; }
+        public int ReviewId { get; set; }
+        public int UserId { get; set; }
+        public string ReactionType { get; set; } = "Like"; // Like, Dislike
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 

@@ -20,6 +20,8 @@ namespace ShoesBangladesh.API.Data
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<PaymentHistory> PaymentHistories { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<ReviewReply> ReviewReplies { get; set; }
+        public DbSet<ReviewReaction> ReviewReactions { get; set; }
         public DbSet<DisplaySection> DisplaySections { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
