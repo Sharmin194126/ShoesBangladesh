@@ -41,6 +41,8 @@ namespace ShoesBangladesh.API.Controllers
                 existing.HeroSubtitle = model.HeroSubtitle;
                 existing.HeroBtnText = model.HeroBtnText;
                 existing.HeroBtnLink = model.HeroBtnLink;
+                existing.QualityTitle = model.QualityTitle;
+                existing.QualityDescription = model.QualityDescription;
                 existing.IsActive = model.IsActive;
             }
             await _context.SaveChangesAsync();

@@ -105,10 +105,19 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ManageHomePageSettings(string marqueeText, string heroHeadline, string heroSubtitle, string heroBtnText, string heroBtnLink)
+        public async Task<IActionResult> ManageHomePageSettings(string marqueeText, string heroHeadline, string heroSubtitle, string heroBtnText, string heroBtnLink, string qualityTitle, string qualityDescription)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
-            var payload = new { MarqueeText = marqueeText, HeroHeadline = heroHeadline, HeroSubtitle = heroSubtitle, HeroBtnText = heroBtnText, HeroBtnLink = heroBtnLink, IsActive = true };
+            var payload = new { 
+                MarqueeText = marqueeText, 
+                HeroHeadline = heroHeadline, 
+                HeroSubtitle = heroSubtitle, 
+                HeroBtnText = heroBtnText, 
+                HeroBtnLink = heroBtnLink, 
+                QualityTitle = qualityTitle,
+                QualityDescription = qualityDescription,
+                IsActive = true 
+            };
             var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
             await client.PostAsync("api/HomePageSettings", content);
             TempData["SuccessMessage"] = "Homepage settings updated successfully!";

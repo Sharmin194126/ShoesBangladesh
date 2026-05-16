@@ -8,6 +8,8 @@
     string heroSubtitle = Model?.TryGetProperty("heroSubtitle", out var hs) == true ? hs.GetString() ?? "" : "Premium Quality, Best Price";
     string heroBtnText = Model?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Shop Now";
     string heroBtnLink = Model?.TryGetProperty("heroBtnLink", out var hbl) == true ? hbl.GetString() ?? "" : "#";
+    string qualityTitle = Model?.TryGetProperty("qualityTitle", out var qt) == true ? qt.GetString() ?? "" : "PREMIUM QUALITY ASSURED";
+    string qualityDescription = Model?.TryGetProperty("qualityDescription", out var qd) == true ? qd.GetString() ?? "" : "Cash on Delivery across Bangladesh...";
 }
 
 <style>
@@ -69,6 +71,21 @@
                     <label class="form-label-premium">Button Link</label>
                     <input type="text" name="heroBtnLink" class="form-control form-control-premium" value="@heroBtnLink" placeholder="e.g. /products or #">
                 </div>
+            </div>
+        </div>
+
+        <!-- Quality Assurance Section -->
+        <div class="settings-card">
+            <h5 class="fw-bold mb-1"><i class="bi bi-shield-check-fill text-danger me-2"></i>Quality Assurance Section</h5>
+            <p class="text-muted small mb-3">This appears at the bottom of the product sections on the homepage.</p>
+
+            <div class="mb-3">
+                <label class="form-label-premium">Quality Box Title</label>
+                <input type="text" name="qualityTitle" class="form-control form-control-premium" value="@qualityTitle" placeholder="e.g. PREMIUM QUALITY ASSURED">
+            </div>
+            <div class="mb-0">
+                <label class="form-label-premium">Quality Box Description</label>
+                <textarea name="qualityDescription" class="form-control form-control-premium" rows="3" placeholder="Enter quality assurance description...">@qualityDescription</textarea>
             </div>
         </div>
 

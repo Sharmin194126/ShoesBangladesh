@@ -15,6 +15,8 @@
     string heroSubtitle = hpSettings?.TryGetProperty("heroSubtitle", out var hs) == true ? hs.GetString() ?? "" : "Premium Quality, Best Price";
     string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Buy Now";
     string heroBtnLink = hpSettings?.TryGetProperty("heroBtnLink", out var hbl) == true ? hbl.GetString() ?? "#" : "#";
+    string qTitle = hpSettings?.TryGetProperty("qualityTitle", out var qt) == true ? qt.GetString() ?? "" : "PREMIUM QUALITY ASSURED";
+    string qDesc = hpSettings?.TryGetProperty("qualityDescription", out var qd) == true ? qd.GetString() ?? "" : "Cash on Delivery across Bangladesh with the fastest delivery service. We ensure that every pair of shoes meets our highest standards of comfort, durability, and style.";
 }
 
 <style>
@@ -764,8 +766,8 @@ em;
         </div>
 
         <div class="premium-quality-box mb-5">
-            <h2>PREMIUM QUALITY ASSURED</h2>
-            <p class="mb-4">Cash on Delivery across Bangladesh with the fastest delivery service. We ensure that every pair of shoes meets our highest standards of comfort, durability, and style.</p>
+            <h2>@qTitle</h2>
+            <p class="mb-4">@qDesc</p>
             <a href="/Product/Index" class="btn btn-warning btn-lg rounded-pill px-5 fw-bold">SHOP ALL COLLECTION</a>
         </div>
     </section>
