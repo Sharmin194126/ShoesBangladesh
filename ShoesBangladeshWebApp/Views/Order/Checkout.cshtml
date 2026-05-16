@@ -23,6 +23,10 @@
         background-color: #f2efe9 !important;
         border-color: #86b7fe !important;
     }
+    .form-control::placeholder, .form-select::placeholder {
+        color: #999 !important; /* Ash color for placeholder */
+        opacity: 1;
+    }
     .order-summary {
         background: #f2efe9;
         padding: 20px;
@@ -30,6 +34,26 @@
     }
     .theme-back-btn { background: #F5F5F5; color: #1F1F1F; border: 1px solid #ECECEC; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: 0.2s; }
     .theme-back-btn:hover { background: #ECECEC; color: #000; text-decoration: none; }
+    
+    /* Custom Radio Button styling */
+    .custom-radio {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        border: 2px solid #ccc;
+        border-radius: 50%;
+        outline: none;
+        position: relative;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-top: 3px;
+        background-color: #fff; /* Blank white circle */
+    }
+    .custom-radio:checked {
+        border-color: #198754; /* Success green */
+        background-color: #198754; /* Full solid color circle */
+    }
 </style>
 
 <div class="container mt-5 mb-5">
@@ -77,12 +101,15 @@
                             <span>Subtotal</span>
                             <span class="fw-bold">৳@(Model?.SubTotal.ToString("#,##0") ?? "0")</span>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
-                            <span>Total VAT</span>
-                            <span class="fw-bold">৳@(Model?.TotalVat.ToString("#,##0") ?? "0")</span>
-                        </li>
+                        @if (Model != null && Model.TotalVat > 0)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
+                                <span>Total VAT</span>
+                                <span class="fw-bold">৳@Model.TotalVat.ToString("#,##0")</span>
+                            </li>
+                        }
                         <li class="list-group-item d-flex justify-content-between" style="background: #ddd;">
-                            <span style="font-weight: bold;">Grand Total (with VAT)</span>
+                            <span style="font-weight: bold;">Grand Total @(Model != null && Model.TotalVat > 0 ? "(with VAT)" : "")</span>
                             <strong style="color: #d9534f; font-size: 1.2rem;">৳@(Model?.GrandTotal.ToString("#,##0") ?? "0")</strong>
                         </li>
                     </ul>
@@ -136,14 +163,16 @@
 
                     <div class="d-block my-3">
                         <!-- COD Option -->
-                        <div class="form-check mb-3 p-3 border rounded bg-white box-shadow-sm">
-                            <input id="cod" name="paymentMethod" type="radio" class="form-check-input" value="COD" checked required>
-                            <label class="form-check-label d-flex align-items-center gap-2" for="cod">
-                                <span class="fw-bold fs-5 text-dark"><i class="bi bi-cash-stack me-2"></i>Cash on Delivery</span>
-                                <span class="badge bg-secondary text-white p-1 ms-auto">PAY ON RECEIVE</span>
-                            </label>
-                            <div class="ms-4 mt-2 text-muted small">
-                                Pay with cash when you receive the parcel at your doorstep.
+                        <div class="form-check mb-3 p-3 border rounded bg-white box-shadow-sm d-flex align-items-start">
+                            <input id="cod" name="paymentMethod" type="radio" class="custom-radio mt-1 me-3" value="COD" checked required>
+                            <div class="flex-grow-1">
+                                <label class="form-check-label d-flex align-items-center w-100" style="cursor: pointer;" for="cod">
+                                    <span class="fw-bold fs-5 text-dark"><i class="bi bi-cash-stack me-2"></i>Cash on Delivery</span>
+                                    <span class="badge bg-secondary text-white p-1 ms-auto">PAY ON RECEIVE</span>
+                                </label>
+                                <div class="mt-2 text-muted small">
+                                    Pay with cash when you receive the parcel at your doorstep.
+                                </div>
                             </div>
                         </div>
 
