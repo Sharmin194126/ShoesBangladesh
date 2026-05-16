@@ -197,20 +197,35 @@
         background: var(--premium-red);
     }
 
+    .product-grid-5 {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -10px;
+        margin-left: -10px;
+    }
+    .product-grid-5 > div {
+        padding: 10px;
+        width: 100%;
+    }
+    @@media (min-width: 576px) { .product-grid-5 > div { width: 50%; } }
+    @@media (min-width: 768px) { .product-grid-5 > div { width: 33.333%; } }
+    @@media (min-width: 992px) { .product-grid-5 > div { width: 25%; } }
+    @@media (min-width: 1200px) { .product-grid-5 > div { width: 20%; } }
+
     /* Premium Sneaker Product Card */
     .product-card-luxury {
         background: #fff;
-        border-radius: 15px; /* Smaller radius */
+        border-radius: 12px;
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         border: 2px solid transparent;
-        height: auto; /* Shorter length */
+        height: auto;
         display: flex;
         flex-direction: column;
         position: relative;
         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        max-width: 280px; /* Constrain width */
         margin: 0 auto;
+        padding-bottom: 12px; /* Slightly reduced */
     }
 
     .product-card-luxury:hover {
@@ -221,16 +236,17 @@
 
     .luxury-img-box {
         position: relative;
-        height: 220px; /* Increased from 180px */
+        height: 260px; /* Increased from 220px */
         overflow: hidden;
-        background: #f8f8f8;
+        background: #fff;
     }
 
     .luxury-img-box img {
         width: 100%;
         height: 100%;
-        object-fit: contain; /* Prevents stretching */
-        padding: 10px;
+        object-fit: contain;
+        padding: 5px; /* User specified 5px padding */
+        border-radius: 8px; /* User specified 8px radius */
         transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
@@ -253,35 +269,35 @@
     }
 
     .luxury-info {
-        padding: 1rem; /* Reduced padding */
+        padding: 0.75rem; /* Reduced from 1rem */
         text-align: left;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
-        line-height: 1.2; /* Tighter line spacing */
+        line-height: 1.1; /* Tighter line spacing */
     }
 
     .luxury-info h6 {
-        font-weight: 800; /* Title remains bold */
-        margin-bottom: 0.15rem;
+        font-weight: 800;
+        margin-bottom: 0.1rem; /* Reduced */
         color: #1a1a1a;
-        font-size: 0.95rem; 
+        font-size: 0.9rem; /* Slightly smaller to fit better */
         line-height: 1.2;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        height: 2.4rem;
+        height: 2.3rem;
     }
 
     .rating-box {
         display: flex;
         align-items: center;
-        gap: 3px;
-        margin-bottom: 0.4rem; /* Reduced margin */
+        gap: 2px;
+        margin-bottom: 0.25rem; /* Reduced margin */
         color: #ffc107;
-        font-size: 0.8rem;
-        font-weight: 400; /* Unbold */
+        font-size: 0.75rem;
+        font-weight: 400;
     }
 
     .review-count {
@@ -293,9 +309,9 @@
     .price-box {
         display: flex;
         align-items: baseline;
-        gap: 8px;
-        margin-bottom: 0.6rem; /* Reduced margin */
-        font-weight: 400; /* Unbold */
+        gap: 6px;
+        margin-bottom: 0.4rem; /* Reduced margin */
+        font-weight: 400;
     }
 
     .price-current {
@@ -595,7 +611,7 @@ em;
                         <h2 class="section-title-premium">@sectionName</h2>
                     </div>
                     
-                    <div class="row g-4">
+                    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
                         @foreach (var product in sectionProducts)
                         {
                             string pName = "";
@@ -622,7 +638,7 @@ em;
                             if (product.TryGetProperty("id", out var pid) && pid.ValueKind == JsonValueKind.Number) pId = pid.GetInt32();
                             else if (product.TryGetProperty("Id", out var pid2) && pid2.ValueKind == JsonValueKind.Number) pId = pid2.GetInt32();
 
-                            <div class="col-6 col-sm-4 col-md-3 col-lg-2"> @* 6 products per row on large screens *@
+                            <div class="col">
                                 <div class="product-card-luxury">
                                     <div class="luxury-img-box">
                                         @if (pOffer > 0)

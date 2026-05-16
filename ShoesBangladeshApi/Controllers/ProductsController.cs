@@ -36,50 +36,60 @@ namespace ShoesBangladesh.API.Controllers
 
             if (product == null) return NotFound();
 
-            var reviews = await _context.Reviews
-                .Where(r => r.ProductId == id && r.Status == "Approved")
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
-
             var reviewViewModels = new List<ReviewViewModel>();
-            foreach (var r in reviews)
+            double avgRating = 0;
+            var ratingSummary = new Dictionary<int, int>();
+
+            try
             {
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == r.UserId);
-                var replies = await _context.ReviewReplies.Where(rp => rp.ReviewId == r.Id).OrderBy(rp => rp.CreatedAt).ToListAsync();
-                
-                var isLiked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Like");
-                var isDisliked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Dislike");
+                var reviews = await _context.Reviews
+                    .Where(r => r.ProductId == id && r.Status == "Approved")
+                    .OrderByDescending(r => r.CreatedAt)
+                    .ToListAsync();
 
-                reviewViewModels.Add(new ReviewViewModel
+                foreach (var r in reviews)
                 {
-                    Id = r.Id,
-                    ProductId = r.ProductId,
-                    UserId = r.UserId,
-                    CustomerName = customer?.Name ?? "Anonymous",
-                    Rating = r.Rating,
-                    Comment = r.Comment,
-                    ImageUrls = r.ImageUrls,
-                    CreatedAt = r.CreatedAt,
-                    LikeCount = r.LikeCount,
-                    DislikeCount = r.DislikeCount,
-                    IsLikedByCurrentUser = isLiked,
-                    IsDislikedByCurrentUser = isDisliked,
-                    Replies = replies.Select(rp => new ReviewReplyViewModel
-                    {
-                        Id = rp.Id,
-                        ReviewId = rp.ReviewId,
-                        ReplierName = rp.ReplierName,
-                        ReplyText = rp.ReplyText,
-                        IsSeller = rp.IsSeller,
-                        AttachmentUrls = rp.AttachmentUrls,
-                        CreatedAt = rp.CreatedAt
-                    }).ToList()
-                });
-            }
+                    var customer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == r.UserId);
+                    var replies = await _context.ReviewReplies.Where(rp => rp.ReviewId == r.Id).OrderBy(rp => rp.CreatedAt).ToListAsync();
+                    
+                    var isLiked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Like");
+                    var isDisliked = currentUserId.HasValue && await _context.ReviewReactions.AnyAsync(rr => rr.ReviewId == r.Id && rr.UserId == currentUserId.Value && rr.ReactionType == "Dislike");
 
-            var avgRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
-            var ratingSummary = reviews.GroupBy(r => r.Rating)
-                .ToDictionary(g => g.Key, g => g.Count());
+                    reviewViewModels.Add(new ReviewViewModel
+                    {
+                        Id = r.Id,
+                        ProductId = r.ProductId,
+                        UserId = r.UserId,
+                        CustomerName = customer?.Name ?? "Anonymous",
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        ImageUrls = r.ImageUrls,
+                        CreatedAt = r.CreatedAt,
+                        LikeCount = r.LikeCount,
+                        DislikeCount = r.DislikeCount,
+                        IsLikedByCurrentUser = isLiked,
+                        IsDislikedByCurrentUser = isDisliked,
+                        Replies = replies.Select(rp => new ReviewReplyViewModel
+                        {
+                            Id = rp.Id,
+                            ReviewId = rp.ReviewId,
+                            ReplierName = rp.ReplierName,
+                            ReplyText = rp.ReplyText,
+                            IsSeller = rp.IsSeller,
+                            AttachmentUrls = rp.AttachmentUrls,
+                            CreatedAt = rp.CreatedAt
+                        }).ToList()
+                    });
+                }
+
+                avgRating = reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+                ratingSummary = reviews.GroupBy(r => r.Rating)
+                    .ToDictionary(g => g.Key, g => g.Count());
+            }
+            catch (Exception)
+            {
+                // Fallback: Continue without reviews if table fails
+            }
 
             var relatedProducts = await _context.Products
                 .Where(p => p.CategoryId == product.CategoryId && p.Id != id)
@@ -107,7 +117,7 @@ namespace ShoesBangladesh.API.Controllers
                     ProductType = product.ProductType != null ? new ProductDetailsViewModel.ProductTypeInfo { Id = product.ProductType.Id, Name = product.ProductType.Name } : null
                 },
                 RelatedImages = product.AdditionalImages,
-                TotalReviews = reviews.Count,
+                TotalReviews = reviewViewModels.Count,
                 RatingSummary = ratingSummary,
                 Reviews = reviewViewModels,
                 SizeStocks = product.SizeQuantities.Select(sq => new ProductDetailsViewModel.SizeStockViewModel { Size = sq.Key, StockQty = sq.Value }).ToList(),

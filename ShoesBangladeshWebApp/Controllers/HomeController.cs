@@ -151,13 +151,17 @@ public class HomeController : Controller
                 var viewModel = System.Text.Json.JsonSerializer.Deserialize<ProductDetailsViewModel>(j, jsonOptions);
                 return View(viewModel);
             }
+            else
+            {
+                var error = await r.Content.ReadAsStringAsync();
+                return Content($"API Error ({r.StatusCode}): {error}");
+            }
         }
         catch (Exception ex) 
         { 
             _logger.LogError("Product Details fetch failed: {0}", ex.Message); 
+            return Content($"Exception: {ex.Message}");
         }
-
-        return NotFound();
     }
 
     [HttpPost]
