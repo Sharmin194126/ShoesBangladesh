@@ -195,6 +195,22 @@
     .theme-back-btn:hover {
         color: #8b1a6b;
     }
+    .price-old {
+        color: #ff0000;
+        text-decoration: line-through;
+        font-size: 0.85rem;
+        font-weight: 400;
+        opacity: 0.8;
+    }
+    .price-current {
+        color: #532374;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+    .related-card-info {
+        line-height: 1.2;
+        padding: 0.5rem !important;
+    }
 </style>
 
 <div class="live-chat-banner">
@@ -717,14 +733,24 @@
             {
                 foreach (var product in Model.RelatedProducts)
                 {
-                    <div class="col-md-2 col-6 mb-4">
-                        <div class="card h-100 border-0 text-center">
+                    <div class="col-6 col-md-2 mb-4">
+                        <div class="card h-100 border-0 text-center shadow-sm" style="border-radius: 12px; overflow: hidden;">
                             <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none">
                                 <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : (product.ImageUrl.StartsWith("/") ? product.ImageUrl : "/images/products/" + product.ImageUrl))" 
-                                     class="card-img-top rounded" style="height: 150px; object-fit: cover;" />
-                                <div class="card-body p-2">
-                                    <h6 class="text-dark text-truncate mb-1">@product.Name</h6>
-                                    <div class="text-danger fw-bold">৳ @product.Price.ToString("#,##0")</div>
+                                     class="card-img-top" style="height: 180px; object-fit: contain; background: #f8f6f0; padding: 8px;" />
+                                <div class="card-body related-card-info">
+                                    <h6 class="text-dark text-truncate mb-1" style="font-weight: 700; font-size: 0.9rem;">@product.Name</h6>
+                                    <div class="d-flex justify-content-center align-items-baseline gap-2">
+                                        @if (product.DiscountPrice > 0 && product.DiscountPrice < product.Price)
+                                        {
+                                            <span class="price-old">৳@product.Price.ToString("#,##0")</span>
+                                            <span class="price-current">৳@product.DiscountPrice?.ToString("#,##0")</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="price-current">৳@product.Price.ToString("#,##0")</span>
+                                        }
+                                    </div>
                                 </div>
                             </a>
                         </div>

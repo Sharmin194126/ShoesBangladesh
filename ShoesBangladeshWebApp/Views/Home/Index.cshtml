@@ -13,7 +13,7 @@
     string marqueeText = hpSettings?.TryGetProperty("marqueeText", out var mt) == true ? mt.GetString() ?? "" : "🚚 Cash on Delivery available all over Bangladesh! ⚡ Fast Delivery, Secure Shopping! 👟 Best Shoe Collection! ✨ Order Now for Exclusive Offers!";
     string heroHeadline = hpSettings?.TryGetProperty("heroHeadline", out var hh) == true ? hh.GetString() ?? "" : "Best Shoe Collection in Bangladesh";
     string heroSubtitle = hpSettings?.TryGetProperty("heroSubtitle", out var hs) == true ? hs.GetString() ?? "" : "Premium Quality, Best Price";
-    string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Shop Now";
+    string heroBtnText = hpSettings?.TryGetProperty("heroBtnText", out var hbt) == true ? hbt.GetString() ?? "" : "Buy Now";
     string heroBtnLink = hpSettings?.TryGetProperty("heroBtnLink", out var hbl) == true ? hbl.GetString() ?? "#" : "#";
 }
 
@@ -58,7 +58,7 @@
     }
 
     .carousel-caption-custom h1 {
-        font-size: 4rem;
+        font-size: 2.5rem; /* Reduced from 4rem */
         font-weight: 900;
         line-height: 1.1;
         margin-bottom: 1rem;
@@ -221,7 +221,7 @@
 
     .luxury-img-box {
         position: relative;
-        height: 180px; /* Shortened image height */
+        height: 220px; /* Increased from 180px */
         overflow: hidden;
         background: #f8f8f8;
     }
@@ -253,33 +253,35 @@
     }
 
     .luxury-info {
-        padding: 1.5rem;
+        padding: 1rem; /* Reduced padding */
         text-align: left;
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+        line-height: 1.2; /* Tighter line spacing */
     }
 
     .luxury-info h6 {
-        font-weight: 800;
+        font-weight: 800; /* Title remains bold */
         margin-bottom: 0.15rem;
         color: #1a1a1a;
-        font-size: 1.05rem; /* Smaller title */
+        font-size: 0.95rem; 
         line-height: 1.2;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        height: 2.6rem;
+        height: 2.4rem;
     }
 
     .rating-box {
         display: flex;
         align-items: center;
-        gap: 5px;
-        margin-bottom: 0.75rem;
+        gap: 3px;
+        margin-bottom: 0.4rem; /* Reduced margin */
         color: #ffc107;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        font-weight: 400; /* Unbold */
     }
 
     .review-count {
@@ -291,24 +293,24 @@
     .price-box {
         display: flex;
         align-items: baseline;
-        gap: 10px;
-        margin-bottom: 1rem;
+        gap: 8px;
+        margin-bottom: 0.6rem; /* Reduced margin */
+        font-weight: 400; /* Unbold */
     }
 
     .price-current {
-        color: #1a1a1a;
-        font-weight: 900;
-        font-size: 1.2rem; /* Smaller price */
+        color: #532374; /* Brand Purple */
+        font-weight: 700;
+        font-size: 1.1rem;
     }
 
     .price-old {
-        color: var(--premium-red); /* Red for regular price */
+        color: #ff0000; /* Red for regular price */
         text-decoration: line-through;
-        text-decoration-thickness: 3px; /* Extra thick "cross" line */
-        font-size: 1.1rem; /* Increased from 0.75rem */
-        margin-left: 10px;
-        font-weight: 800;
-        opacity: 0.9;
+        text-decoration-thickness: 1px;
+        font-size: 0.9rem;
+        font-weight: 400; /* Unbold */
+        opacity: 0.8;
     }
 
     .size-selector {
@@ -497,7 +499,7 @@ em;
                             <h1>@banner.GetProperty("title").GetString()</h1>
                             <p>@banner.GetProperty("subtitle").GetString()</p>
                             <div class="carousel-btn-group">
-                                <a href="@banner.GetProperty("linkUrl").GetString()" class="btn-premium-red shadow-lg">Shop Now</a>
+                                <a href="@banner.GetProperty("linkUrl").GetString()" class="btn-premium-red shadow-lg">Buy Now</a>
                             </div>
                         </div>
                     </div>
@@ -574,7 +576,7 @@ em;
                     if (p.TryGetProperty("isFeatured", out var f) && f.ValueKind == JsonValueKind.True) return true;
                     if (p.TryGetProperty("IsFeatured", out var f2) && f2.ValueKind == JsonValueKind.True) return true;
                     return false;
-                }).Take(4).ToList();
+                }).ToList(); // Removed .Take(4) for unlimited products
             }
             else if (categoryId != 0)
             {
@@ -582,7 +584,7 @@ em;
                     if (p.TryGetProperty("categoryId", out var pc) && pc.ValueKind == JsonValueKind.Number) return pc.GetInt32() == categoryId;
                     if (p.TryGetProperty("CategoryId", out var pc2) && pc2.ValueKind == JsonValueKind.Number) return pc2.GetInt32() == categoryId;
                     return false;
-                }).Take(4).ToList();
+                }).ToList(); // Removed .Take(4) for unlimited products
             }
 
             if (sectionProducts != null && sectionProducts.Any())
@@ -620,14 +622,14 @@ em;
                             if (product.TryGetProperty("id", out var pid) && pid.ValueKind == JsonValueKind.Number) pId = pid.GetInt32();
                             else if (product.TryGetProperty("Id", out var pid2) && pid2.ValueKind == JsonValueKind.Number) pId = pid2.GetInt32();
 
-                            <div class="col-6 col-lg-3">
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2"> @* 6 products per row on large screens *@
                                 <div class="product-card-luxury">
                                     <div class="luxury-img-box">
                                         @if (pOffer > 0)
                                         {
                                             <div class="discount-badge-red">SAVE @pOffer%</div>
                                         }
-                                        <a href="/Product/Details/@pId">
+                                        <a href="/Home/Details/@pId">
                                             <img src="@(pImg.StartsWith("http") == true ? "" : apiBase)@pImg" alt="@pName">
                                         </a>
                                     </div>
@@ -644,8 +646,8 @@ em;
                                         <div class="price-box">
                                             @if (pDiscountPrice > 0 && pDiscountPrice < pPrice)
                                             {
-                                                <span class="price-current">৳@pDiscountPrice.ToString("#,##0")</span>
                                                 <span class="price-old">৳@pPrice.ToString("#,##0")</span>
+                                                <span class="price-current">৳@pDiscountPrice.ToString("#,##0")</span>
                                             }
                                             else
                                             {
@@ -661,7 +663,7 @@ em;
                                             <span class="size-btn">44</span>
                                         </div>
 
-                                        <a href="/Product/Details/@pId" class="shop-now-card-btn text-center text-decoration-none">Shop Now</a>
+                                        <a href="/Home/Details/@pId" class="shop-now-card-btn text-center text-decoration-none">Buy Now</a>
                                     </div>
                                 </div>
                             </div>

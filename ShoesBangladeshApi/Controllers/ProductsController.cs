@@ -115,7 +115,8 @@ namespace ShoesBangladesh.API.Controllers
                 {
                     Id = p.Id,
                     Name = p.Name,
-                    Price = p.DiscountPrice ?? p.Price,
+                    Price = p.Price,
+                    DiscountPrice = p.DiscountPrice,
                     ImageUrl = p.ImageUrl
                 }).ToList()
             };
