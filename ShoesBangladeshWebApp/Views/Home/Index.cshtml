@@ -149,6 +149,52 @@
     .side-nav a:hover .nav-text {
         opacity: 1;
         visibility: visible;
+        pointer-events: auto;
+    }
+
+    /* Carousel Indicators as Dots */
+    .carousel-indicators [data-bs-target] {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin: 0 6px;
+        background-color: white;
+        opacity: 0.5;
+        transition: all 0.3s;
+    }
+
+    .carousel-indicators .active {
+        opacity: 1;
+        background-color: var(--premium-red);
+        transform: scale(1.2);
+    }
+
+    /* Premium Quality Box */
+    .premium-quality-box {
+        background: #000;
+        color: white;
+        text-align: center;
+        padding: 3rem 1rem;
+        border-radius: 15px;
+        margin-top: 3rem;
+        border: 2px solid var(--premium-gold);
+    }
+
+    .premium-quality-box h2 {
+        font-weight: 900;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        letter-spacing: 2px;
+        color: var(--premium-gold);
+    }
+
+    .premium-quality-box p {
+        font-size: 1.1rem;
+        opacity: 0.8;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+        visibility: visible;
         left: 50px;
     }
 
@@ -501,21 +547,42 @@ em;
 
 <div class="page-wrapper-custom">
     <div class="hero-slider-section">
-    <div id="homeHeroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="3000">
+    <div id="homeHeroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4000">
+        <!-- Indicators (Dots) -->
+        <div class="carousel-indicators">
+            @if (banners != null && banners.Count > 0)
+            {
+                for (int i = 0; i < banners.Count; i++)
+                {
+                    <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i+1)"></button>
+                }
+            }
+            else
+            {
+                <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            }
+        </div>
+
         <div class="carousel-inner">
             @if (banners != null && banners.Count > 0)
             {
                 for (int i = 0; i < banners.Count; i++)
                 {
                     var banner = banners[i];
+                    string bImg = banner.TryGetProperty("imageUrl", out var img) ? img.GetString() ?? "" : "";
+                    string bTitle = banner.TryGetProperty("title", out var t) ? t.GetString() ?? "" : "";
+                    string bSub = banner.TryGetProperty("subtitle", out var s) ? s.GetString() ?? "" : "";
+                    
                     <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <img src="@(banner.GetProperty("imageUrl").GetString()?.StartsWith("http") == true ? "" : apiBase)@banner.GetProperty("imageUrl").GetString()" class="d-block w-100 h-100" style="object-fit: contain; background: #000;" alt="...">
+                        <img src="@(bImg.StartsWith("http") ? "" : apiBase)@bImg" 
+                             class="d-block w-100 h-100" style="object-fit: contain; background: #000; cursor: pointer;" alt="..."
+                             onclick="bootstrap.Carousel.getInstance(document.getElementById('homeHeroCarousel')).next()">
                         <div class="carousel-image-overlay"></div>
                         <div class="carousel-caption-custom">
-                            <h1>@banner.GetProperty("title").GetString()</h1>
-                            <p>@banner.GetProperty("subtitle").GetString()</p>
+                            <h1>@bTitle</h1>
+                            <p>@bSub</p>
                             <div class="carousel-btn-group">
-                                <a href="@banner.GetProperty("linkUrl").GetString()" class="btn-premium-red shadow-lg">Buy Now</a>
+                                <a href="#featureditems" class="btn-premium-red shadow-lg">Buy Now</a>
                             </div>
                         </div>
                     </div>
@@ -524,13 +591,14 @@ em;
             else
             {
                 <div class="carousel-item active">
-                    <img src="/images/hero-bg.png" class="d-block w-100 h-100" style="object-fit: contain; background: #000;" alt="...">
+                    <img src="/images/hero-bg.png" class="d-block w-100 h-100" style="object-fit: contain; background: #000; cursor: pointer;" alt="..."
+                         onclick="bootstrap.Carousel.getInstance(document.getElementById('homeHeroCarousel')).next()">
                     <div class="carousel-image-overlay"></div>
                     <div class="carousel-caption-custom">
                         <h1>@heroHeadline</h1>
                         <p>@heroSubtitle</p>
                         <div class="carousel-btn-group">
-                            <a href="@heroBtnLink" class="btn-premium-red">@heroBtnText</a>
+                            <a href="#featureditems" class="btn-premium-red">@heroBtnText</a>
                         </div>
                     </div>
                 </div>
@@ -539,34 +607,6 @@ em;
     </div>
 </div>
 
-<!-- Features Section (Restored) -->
-<section class="features-grid">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="bi bi-truck"></i>
-                    <h4>Free Delivery</h4>
-                    <p>On all orders over ৳2000</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="bi bi-shield-check"></i>
-                    <h4>Premium Quality</h4>
-                    <p>Authentic products guaranteed</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <i class="bi bi-arrow-repeat"></i>
-                    <h4>Easy Returns</h4>
-                    <p>7-day hassle-free replacement</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <div class="container py-5">
     @if (sections != null && sections.Count > 0)
@@ -696,6 +736,38 @@ em;
             <p>Please enable sections in Admin -> Homepage Sections.</p>
         </div>
     }
+
+    <!-- Bottom Features & Quality Assurance -->
+    <section class="mt-5 pt-5 border-top" id="features">
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="bi bi-truck"></i>
+                    <h4>Free Delivery</h4>
+                    <p>On all orders over ৳2000</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="bi bi-shield-check"></i>
+                    <h4>Premium Quality</h4>
+                    <p>Authentic products guaranteed</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="bi bi-arrow-repeat"></i>
+                    <h4>Easy Returns</h4>
+                    <p>7-day hassle-free replacement</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="premium-quality-box mb-5">
+            <h2>PREMIUM QUALITY ASSURED</h2>
+            <p>Cash on Delivery across Bangladesh with the fastest delivery service. We ensure that every pair of shoes meets our highest standards of comfort, durability, and style.</p>
+        </div>
+    </section>
 </div>
 
 <!-- Extra Promo Section -->
