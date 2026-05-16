@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using ShoesBangladeshWebApp.Models;
+using System.Text.Json;
 
 namespace ShoesBangladesh.Web.Controllers
 {
     public class OrderController : Controller
     {
-        public IActionResult Checkout(int productId, string? size, int qty)
+        private const string CartSessionKey = "ShoesCart";
+
+        public IActionResult Checkout()
         {
-            // Placeholder for checkout page
-            ViewBag.ProductId = productId;
-            ViewBag.Size = size;
-            ViewBag.Qty = qty;
-            return View();
+            var cartJson = HttpContext.Session.GetString(CartSessionKey);
+            var cart = cartJson == null ? new CartViewModel() : JsonSerializer.Deserialize<CartViewModel>(cartJson) ?? new CartViewModel();
+
+            return View(cart);
         }
     }
 }
+

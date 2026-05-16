@@ -32,7 +32,7 @@
         .navbar-premium {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            padding: 0.25rem 0;
+            padding: 0; /* Minimized padding to make header chikon */
             transition: var(--transition);
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
@@ -228,7 +228,7 @@
 
                     @if (!string.IsNullOrEmpty(logoUrlStr))
                     {
-                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 120px; width: 280px; object-fit: contain;">
+                        <img src="@(logoUrlStr.StartsWith("http") ? "" : "http://localhost:5190")@logoUrlStr" alt="Shoes Bangladesh" style="height: 50px; width: auto; max-width: 180px; object-fit: contain;">
                     }
                     else
                     {

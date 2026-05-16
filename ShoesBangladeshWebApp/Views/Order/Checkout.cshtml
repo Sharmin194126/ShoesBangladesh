@@ -1,13 +1,9 @@
-@* No specific model bound yet, using dynamic mock data to match the design *@
+@model ShoesBangladeshWebApp.Models.CartViewModel
 @{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
     
-    // Mock Data
-    int totalItems = 1;
-    decimal subtotal = 4500;
-    decimal totalVat = 675;
-    decimal grandTotal = 5175;
+    int totalItems = Model != null ? Model.Items.Sum(i => i.Quantity) : 0;
 }
 
 <style>
@@ -53,29 +49,41 @@
                         <span class="badge bg-danger rounded-pill">@totalItems</span>
                     </h4>
                     <ul class="list-group mb-3">
-                        <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent; border-color: #ccc;">
-                            <div>
-                                <h6 class="my-0">Premium Leather Oxford</h6>
-                                <small class="text-muted">Qty: 1</small>
-                                <br/><small class="text-muted">Size: 41</small>
-                            </div>
-                            <div class="text-end">
-                                <span style="font-weight: bold; color: #2c3e50; display: block;">৳5,175</span>
-                                <small class="text-success" style="font-size: 0.7rem;">(incl. VAT: ৳675)</small>
-                            </div>
-                        </li>
+                        @if (Model != null && Model.Items.Any())
+                        {
+                            foreach (var item in Model.Items)
+                            {
+                                <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent; border-color: #ccc;">
+                                    <div>
+                                        <h6 class="my-0">@item.ProductName</h6>
+                                        <small class="text-muted">Qty: @item.Quantity</small>
+                                        @if (!string.IsNullOrEmpty(item.Size))
+                                        {
+                                            <br/><small class="text-muted">Size: @item.Size</small>
+                                        }
+                                    </div>
+                                    <div class="text-end">
+                                        <span style="font-weight: bold; color: #2c3e50; display: block;">৳@item.LineTotal.ToString("#,##0")</span>
+                                        @if (item.VatAmount > 0)
+                                        {
+                                            <small class="text-success" style="font-size: 0.7rem;">(incl. VAT: ৳@((item.VatAmount * item.Quantity).ToString("#,##0")))</small>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        }
                         
                         <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
                             <span>Subtotal</span>
-                            <span class="fw-bold">৳@subtotal.ToString("#,##0")</span>
+                            <span class="fw-bold">৳@(Model?.SubTotal.ToString("#,##0") ?? "0")</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between lh-condensed" style="background: transparent;">
                             <span>Total VAT</span>
-                            <span class="fw-bold">৳@totalVat.ToString("#,##0")</span>
+                            <span class="fw-bold">৳@(Model?.TotalVat.ToString("#,##0") ?? "0")</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between" style="background: #ddd;">
                             <span style="font-weight: bold;">Grand Total (with VAT)</span>
-                            <strong style="color: #d9534f; font-size: 1.2rem;">৳@grandTotal.ToString("#,##0")</strong>
+                            <strong style="color: #d9534f; font-size: 1.2rem;">৳@(Model?.GrandTotal.ToString("#,##0") ?? "0")</strong>
                         </li>
                     </ul>
                 </div>
@@ -89,7 +97,7 @@
                     <div class="row">
                         <div class="col-md-12 mb-3">
                             <label for="fullName" class="form-label fw-bold text-danger">Customer Full Name</label>
-                            <input type="text" class="form-control fw-bold" id="fullName" value="@User.Identity?.Name" readonly placeholder="Name" style="background:#f2efe9 !important;">
+                            <input type="text" class="form-control fw-bold" id="fullName" placeholder="Enter your full name" required style="background:#f2efe9 !important;">
                         </div>
                     </div>
 

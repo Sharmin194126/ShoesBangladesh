@@ -1,10 +1,9 @@
-@* No specific model bound yet, using dynamic mock data to match the design *@
+@model ShoesBangladeshWebApp.Models.CartViewModel
 @{
     ViewData["Title"] = "My Cart";
     Layout = "~/Views/Shared/_Layout.cshtml";
     
-    // Mock data for design preview
-    bool hasItems = false; // Set to true if you want to see the filled cart design
+    bool hasItems = Model != null && Model.Items.Any();
 }
 
 <style>
@@ -57,63 +56,85 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>
-                                <img src="/images/hero-shoe.png" style="width:60px;height:60px;object-fit:cover;border-radius:4px; border: 1px solid #eee;" />
-                            </td>
-                            <td>
-                                <div style="font-weight: 600; color: #333;">Premium Leather Oxford</div>
-                            </td>
-                            <td style="color: #333;">
-                                <div class="fw-bold">৳4,500</div>
-                                <div class="text-success small" style="font-size: 11px; font-weight: 500;">+ ৳675 VAT (15%)</div>
-                                <div class="text-danger fw-bold" style="font-size: 0.9rem; border-top: 1px solid #ddd; margin-top: 2px; padding-top: 2px;">
-                                    Inc. VAT: ৳5,175
-                                </div>
-                            </td>
-                            <td>
-                                <select name="size" class="form-select form-select-sm" style="background: #f2efe9; color: #333; border: 1px solid #ccc;">
-                                    <option value="">Select Size</option>
-                                    <option value="40">40</option>
-                                    <option value="41" selected>41</option>
-                                    <option value="42">42</option>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center" style="border: 1px solid #999; border-radius: 5px; overflow: hidden; width: fit-content;">
-                                    <style>
-                                        input[type=number]::-webkit-inner-spin-button, 
-                                        input[type=number]::-webkit-outer-spin-button { 
-                                            -webkit-appearance: none; 
-                                            margin: 0; 
-                                        }
-                                        input[type=number] { -moz-appearance: textfield; }
-                                    </style>
-                                    <input type="number" name="quantity" value="1" min="1" 
-                                           class="form-control text-center fw-bold border-0" 
-                                           style="background: #f2efe9; color: #000 !important; font-size: 1.2rem; width: 100px; padding: 5px;" />
-                                    <div class="d-flex flex-column bg-light border-start">
-                                        <button type="button" class="btn btn-sm btn-light border-bottom py-0 px-2" style="font-size: 0.8rem; line-height: 1;">▲</button>
-                                        <button type="button" class="btn btn-sm btn-light py-0 px-2" style="font-size: 0.8rem; line-height: 1;">▼</button>
+                        @{ var sl = 1; }
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@(sl++)</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@(item.ImageUrl.StartsWith("http") ? item.ImageUrl : "http://localhost:5190" + item.ImageUrl)" style="width:60px;height:60px;object-fit:cover;border-radius:4px; border: 1px solid #eee;" />
+                                    }
+                                </td>
+                                <td>
+                                    <div style="font-weight: 600; color: #333;">@item.ProductName</div>
+                                </td>
+                                <td style="color: #333;">
+                                    <div class="fw-bold">৳@item.UnitPrice.ToString("#,##0")</div>
+                                    @if(item.VatAmount > 0) {
+                                        <div class="text-success small" style="font-size: 11px; font-weight: 500;">+ ৳@item.VatAmount.ToString("#,##0") VAT (@item.VatPercentage.ToString("0")%)</div>
+                                    }
+                                    <div class="text-danger fw-bold" style="font-size: 0.9rem; border-top: 1px solid #ddd; margin-top: 2px; padding-top: 2px;">
+                                        Inc. VAT: ৳@item.PriceWithVat.ToString("#,##0")
                                     </div>
-                                </div>
-                            </td>
-                            <td style="font-weight: bold; color: #2c3e50;">৳5,175</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-outline-danger">Remove</button>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <form asp-action="UpdateQuantity" method="post">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="hidden" name="size" value="@item.Size" />
+                                        <input type="hidden" name="quantity" value="@item.Quantity" />
+                                        <select name="newSize" class="form-select form-select-sm" disabled style="background: #f2efe9; color: #333; border: 1px solid #ccc;">
+                                            <option value="@item.Size" selected>@item.Size</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="hidden" name="size" value="@item.Size" />
+                                        <div class="d-flex align-items-center" style="border: 1px solid #999; border-radius: 5px; overflow: hidden; width: fit-content;">
+                                            <style>
+                                                input[type=number]::-webkit-inner-spin-button, 
+                                                input[type=number]::-webkit-outer-spin-button { 
+                                                    -webkit-appearance: none; 
+                                                    margin: 0; 
+                                                }
+                                                input[type=number] { -moz-appearance: textfield; }
+                                            </style>
+                                            <input type="number" name="quantity" value="@item.Quantity" min="1" 
+                                                   class="form-control text-center fw-bold border-0" 
+                                                   style="background: #f2efe9; color: #000 !important; font-size: 1.2rem; width: 100px; padding: 5px;" 
+                                                   onchange="this.form.submit()" />
+                                            <div class="d-flex flex-column bg-light border-start">
+                                                <button type="button" onclick="this.parentNode.previousElementSibling.stepUp(); this.parentNode.previousElementSibling.dispatchEvent(new Event('change'));" class="btn btn-sm btn-light border-bottom py-0 px-2" style="font-size: 0.8rem; line-height: 1;">▲</button>
+                                                <button type="button" onclick="this.parentNode.previousElementSibling.stepDown(); this.parentNode.previousElementSibling.dispatchEvent(new Event('change'));" class="btn btn-sm btn-light py-0 px-2" style="font-size: 0.8rem; line-height: 1;">▼</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td style="font-weight: bold; color: #2c3e50;">৳@item.LineTotal.ToString("#,##0")</td>
+                                <td>
+                                    <form asp-action="Remove" method="post">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="hidden" name="size" value="@item.Size" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
 
             <div class="d-flex justify-content-between align-items-center mt-4 p-3" style="background: #f2efe9; border-radius: 8px;">
                 <div>
-                    <button type="button" class="btn btn-danger btn-sm">Clear Cart</button>
+                    <form asp-action="Clear" method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Clear Cart</button>
+                    </form>
                 </div>
                 <div class="d-flex align-items-center gap-4">
-                    <span class="fs-4" style="color: #333;"><strong>Total (Inc. VAT): </strong> <span style="color: #d9534f; font-weight: 800;">৳5,175</span></span>
+                    <span class="fs-4" style="color: #333;"><strong>Total (Inc. VAT): </strong> <span style="color: #d9534f; font-weight: 800;">৳@Model.GrandTotal.ToString("#,##0")</span></span>
                     <a href="/Order/Checkout" class="btn btn-success px-4 py-2" style="font-weight: bold;">Checkout Now</a>
                 </div>
             </div>
