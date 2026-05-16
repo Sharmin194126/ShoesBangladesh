@@ -1,0 +1,255 @@
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model ShoesBangladeshWebApp.Models.OrderReceiptViewModel
+@{
+    ViewData["Title"] = "Money Receipt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var companyName = Configuration["CompanySettings:Name"] ?? "Shoes Bangladesh";
+    var companyAddress = Configuration["CompanySettings:Address"] ?? "Uttara, Dhaka, Bangladesh";
+    var companyPhone = Configuration["CompanySettings:Phone"] ?? "+880 1234-567890";
+}
+
+<style>
+    @@media print {
+        .no-print { display: none !important; }
+        .invoice-container { box-shadow: none !important; border: 1px solid #ddd !important; margin: 0 !important; width: 100% !important; }
+        body { background: #fff !important; }
+    }
+
+    .invoice-container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 40px;
+        border-radius: 4px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        color: #333;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .receipt-header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px solid #333;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    .company-info h2 {
+        margin: 0;
+        font-weight: 800;
+        color: #000;
+        font-size: 1.8rem;
+    }
+
+    .company-info p {
+        margin: 2px 0;
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .receipt-info {
+        text-align: right;
+    }
+
+    .receipt-info p {
+        margin: 3px 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .receipt-info strong {
+        color: #000;
+    }
+
+    .bill-to {
+        margin-bottom: 40px;
+    }
+
+    .bill-to h5 {
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+        width: fit-content;
+    }
+
+    .bill-to p {
+        margin: 2px 0;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .product-table th {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 12px;
+        text-align: left;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+    }
+
+    .product-table td {
+        border: 1px solid #dee2e6;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    .total-section {
+        margin-top: 20px;
+        float: right;
+        width: 300px;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .total-row.grand-total {
+        border-bottom: 2px solid #333;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: #d00000;
+    }
+
+    .action-bar {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-custom {
+        padding: 10px 25px;
+        border-radius: 5px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        margin: 0 10px;
+        transition: 0.3s;
+    }
+
+    .btn-print {
+        background: #333;
+        color: #fff;
+    }
+
+    .btn-home {
+        background: #d00000;
+        color: #fff;
+    }
+
+    .btn-custom:hover {
+        opacity: 0.8;
+        color: #fff;
+    }
+
+    .status-unpaid {
+        color: #d00000;
+        font-weight: 800;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+    <div class="action-bar no-print">
+        <button onclick="window.print()" class="btn-custom btn-print">
+            <i class="bi bi-printer"></i> Print Receipt
+        </button>
+        <a href="/" class="btn-custom btn-home">
+            <i class="bi bi-house"></i> Continue Shopping
+        </a>
+    </div>
+
+    <div class="invoice-container">
+        <!-- Header Section -->
+        <div class="receipt-header">
+            <div class="company-info">
+                <h2>@companyName</h2>
+                <p>@companyAddress</p>
+                <p>Phone: @companyPhone</p>
+            </div>
+            <div class="receipt-info">
+                <p><strong>Receipt SL:</strong> @Model.InvoiceNumber.Split('-').Last()</p>
+                <p><strong>Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy | hh:mm tt")</p>
+                <p><strong>Status:</strong> <span class="status-unpaid">Unpaid</span></p>
+                <p><strong>Trx ID:</strong> @Model.PaymentMethod</p>
+            </div>
+        </div>
+
+        <!-- Bill To Section -->
+        <div class="bill-to">
+            <h5>Bill To:</h5>
+            <p>@Model.CustomerName</p>
+            <p>@Model.Phone</p>
+            <p>@Model.Address, @Model.City - @Model.ZipCode</p>
+        </div>
+
+        <!-- Product Grid -->
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>SL</th>
+                    <th>Product Name</th>
+                    <th>Size</th>
+                    <th class="text-end">Qty</th>
+                    <th class="text-end">Unit Price</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int sl = 1; }
+                @foreach (var item in Model.Cart.Items)
+                {
+                    <tr>
+                        <td>@(sl++)</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.Size</td>
+                        <td class="text-end">@item.Quantity</td>
+                        <td class="text-end">৳@item.UnitPrice.ToString("#,##0")</td>
+                        <td class="text-end">৳@item.LineTotal.ToString("#,##0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Totals Section -->
+        <div class="total-section">
+            <div class="total-row">
+                <span>Subtotal:</span>
+                <span>৳@Model.Cart.SubTotal.ToString("#,##0")</span>
+            </div>
+            @if (Model.Cart.TotalVat > 0)
+            {
+                <div class="total-row">
+                    <span>VAT:</span>
+                    <span>৳@Model.Cart.TotalVat.ToString("#,##0")</span>
+                </div>
+            }
+            <div class="total-row grand-total">
+                <span>Grand Total:</span>
+                <span>৳@Model.Cart.GrandTotal.ToString("#,##0")</span>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+
+        <div class="mt-5 text-center" style="border-top: 1px dashed #ccc; padding-top: 20px; color: #888; font-size: 0.85rem;">
+            <p>This is a computer generated receipt. Thank you for choosing @companyName!</p>
+        </div>
+    </div>
+</div>

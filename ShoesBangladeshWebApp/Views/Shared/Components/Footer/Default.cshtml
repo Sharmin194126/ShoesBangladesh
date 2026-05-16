@@ -1,0 +1,68 @@
+@model ShoesBangladesh.API.ViewModels.FooterInfoViewModel
+
+<footer style="
+    background: linear-gradient(135deg, #D00000 0%, #4A0000 100%);
+    color: #fff;
+    padding: 5rem 0 0;
+    border-top: 3px solid #D4AF37;
+    margin-top: 0;
+">
+    <div class="container pb-5">
+        <div class="row g-5">
+            <div class="col-lg-4">
+                <div style="font-size:1.8rem; font-weight:900; letter-spacing:-1px; margin-bottom:1rem;">
+                    SHOES<span style="color:#D4AF37">BD</span>
+                </div>
+                <p style="color:rgba(255,255,255,0.6); line-height:1.8;">Your trusted destination for premium fashion and quality footwear in Bangladesh.</p>
+                <div class="d-flex gap-3 mt-4">
+                    @if (!string.IsNullOrEmpty(Model.FacebookUrl))
+                    {
+                        <a href="@Model.FacebookUrl" target="_blank" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-facebook"></i></a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.InstagramUrl))
+                    {
+                        <a href="@Model.InstagramUrl" target="_blank" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-instagram"></i></a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.TwitterUrl))
+                    {
+                        <a href="@Model.TwitterUrl" target="_blank" class="btn btn-outline-warning btn-sm rounded-circle" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-twitter"></i></a>
+                    }
+                </div>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Explore</h6>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Latest Shoes</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">New Arrivals</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Special Offers</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Track Order</a>
+            </div>
+            <div class="col-6 col-lg-2">
+                <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Support</h6>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Terms of Service</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Privacy Policy</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">Refund Policy</a>
+                <a href="#" style="color:rgba(255,255,255,0.7); text-decoration:none; display:block; margin-bottom:0.8rem; transition:0.3s;" class="footer-nav-link">FAQs</a>
+            </div>
+            <div class="col-lg-4">
+                <h6 style="color:#D4AF37; font-weight:800; text-transform:uppercase; letter-spacing:2px; margin-bottom:1.8rem;">Newsletter</h6>
+                <div style="background:rgba(255,255,255,0.05); padding:1.5rem; border-radius:16px; border:1px solid rgba(212,175,55,0.2);">
+                    <p class="small mb-3" style="color:rgba(255,255,255,0.6);">Get the latest updates on new collections and exclusive offers.</p>
+                    <div class="input-group">
+                        <input type="email" id="footer-newsletter-email" class="form-control" placeholder="Your Email Address"
+                               style="background:rgba(255,255,255,0.08); border:1px solid rgba(212,175,55,0.4); color:#fff;">
+                        <button class="btn btn-warning px-3" type="button" onclick="subscribeFooter()"><i class="bi bi-send"></i></button>
+                    </div>
+                    <div id="footer-newsletter-msg" class="small mt-2" style="display:none;"></div>
+                </div>
+                <div class="mt-4 ps-1">
+                    <p class="mb-2" style="color:rgba(255,255,255,0.6);"><i class="bi bi-geo-alt-fill me-2" style="color:#D4AF37"></i> @(string.IsNullOrEmpty(Model.Address) ? "Dhaka, Bangladesh" : Model.Address)</p>
+                    <p class="mb-2" style="color:rgba(255,255,255,0.6);"><i class="bi bi-envelope-fill me-2" style="color:#D4AF37"></i> @(string.IsNullOrEmpty(Model.Email) ? "info@shoesbangladesh.com" : Model.Email)</p>
+                    <p class="mb-0" style="color:rgba(255,255,255,0.6);"><i class="bi bi-telephone-fill me-2" style="color:#D4AF37"></i> @(string.IsNullOrEmpty(Model.ContactNumber) ? "+880 1234 56789" : Model.ContactNumber)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.08); padding:1.5rem 0; text-align:center; color:rgba(255,255,255,0.4); font-size:0.85rem;">
+        &copy; @DateTime.Now.Year Shoes Bangladesh. All Rights Reserved.
+    </div>
+</footer>

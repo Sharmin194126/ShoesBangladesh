@@ -451,7 +451,7 @@
 
                 <div class="d-flex flex-wrap gap-2 mt-4">
                     <button type="submit" formaction="/Cart/AddToCart" class="btn btn-warning text-white btn-lg px-4 fw-bold">@Localizer["Add to Cart"]</button>
-                    <button type="submit" formaction="/Cart/BuyNow" class="btn btn-danger btn-lg px-4 fw-bold">@Localizer["Buy Now"]</button>
+                    <button type="submit" formaction="/Cart/BuyNowDirect" class="btn btn-danger btn-lg px-4 fw-bold">@Localizer["Buy Now"]</button>
                     <a href="/Home/CategoryProducts?typeId=@Model.Product.ProductTypeId" class="btn btn-outline-secondary btn-lg px-4">@Localizer["View More"] @Model.Product.ProductType?.Name</a>
                 </div>
 

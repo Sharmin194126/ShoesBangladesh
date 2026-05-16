@@ -1,4 +1,5 @@
 using ShoesBangladesh.Web.Services;
+using ShoesBangladeshWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,7 @@ builder.Services.AddHttpClient("ShoesAPI", client =>
 });
 
 builder.Services.AddScoped<ICategoryApiService, CategoryApiService>();
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 

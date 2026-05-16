@@ -35,24 +35,23 @@
     .theme-back-btn { background: #F5F5F5; color: #1F1F1F; border: 1px solid #ECECEC; padding: 0.5rem 1.2rem; border-radius: 8px; font-weight: 600; font-size: 0.82rem; text-decoration: none; transition: 0.2s; }
     .theme-back-btn:hover { background: #ECECEC; color: #000; text-decoration: none; }
     
-    /* Custom Radio Button styling */
+    /* Radio Button States */
     .custom-radio {
         appearance: none;
         -webkit-appearance: none;
-        width: 22px;
-        height: 22px;
-        border: 2px solid #ccc;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
-        outline: none;
-        position: relative;
+        border: 2px solid #aaa;     /* grey border — defines the white circle shape */
+        background: #ffffff;        /* plain white inside = unselected */
         cursor: pointer;
-        transition: 0.2s;
-        margin-top: 3px;
-        background-color: #fff; /* Blank white circle */
+        flex-shrink: 0;
+        transition: background 0.2s, border-color 0.2s;
+        margin-top: 2px;
     }
     .custom-radio:checked {
-        border-color: #198754; /* Success green */
-        background-color: #198754; /* Full solid color circle */
+        background: #198754;        /* solid green fill = selected */
+        border-color: #198754;
     }
 </style>
 
@@ -119,7 +118,7 @@
             <!-- Billing Info Form -->
             <div class="col-md-7 order-md-1">
                 <h4 class="mb-3 border-bottom pb-2">Step 1: Shipping Details</h4>
-                <form method="post" action="#">
+                <form method="post" asp-controller="Order" asp-action="CheckoutConfirmed">
                     <!-- Name Box -->
                     <div class="row">
                         <div class="col-md-12 mb-3">
@@ -164,7 +163,7 @@
                     <div class="d-block my-3">
                         <!-- COD Option -->
                         <div class="form-check mb-3 p-3 border rounded bg-white box-shadow-sm d-flex align-items-start">
-                            <input id="cod" name="paymentMethod" type="radio" class="custom-radio mt-1 me-3" value="COD" checked required>
+                            <input id="cod" name="paymentMethod" type="radio" class="custom-radio mt-1 me-3" value="COD" required>
                             <div class="flex-grow-1">
                                 <label class="form-check-label d-flex align-items-center w-100" style="cursor: pointer;" for="cod">
                                     <span class="fw-bold fs-5 text-dark"><i class="bi bi-cash-stack me-2"></i>Cash on Delivery</span>
@@ -190,3 +189,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Allow radio buttons to be deselected by clicking again (toggle)
+    document.addEventListener('DOMContentLoaded', function () {
+        let lastChecked = null;
+        document.querySelectorAll('input[type="radio"][name="paymentMethod"]').forEach(function (radio) {
+            radio.addEventListener('click', function () {
+                if (this === lastChecked) {
+                    this.checked = false;
+                    lastChecked = null;
+                } else {
+                    lastChecked = this;
+                }
+            });
+        });
+    });
+</script>
