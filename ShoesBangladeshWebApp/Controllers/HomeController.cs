@@ -157,11 +157,149 @@ public class HomeController : Controller
                 return Content($"API Error ({r.StatusCode}): {error}");
             }
         }
-        catch (Exception ex) 
-        { 
-            _logger.LogError("Product Details fetch failed: {0}", ex.Message); 
+        catch (Exception ex)
+        {
+            _logger.LogError("Product Details fetch failed: {0}", ex.Message);
             return Content($"Exception: {ex.Message}");
         }
+    }
+
+    public async Task<IActionResult> CategoryProducts(int? categoryId, int? typeId, string? priceRange, string? size, string? query)
+    {
+        var client = _httpClientFactory.CreateClient("ShoesAPI");
+        var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        // Fetch all products
+        List<System.Text.Json.JsonElement>? allProducts = null;
+        try
+        {
+            var r = await client.GetAsync("api/Products");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    allProducts = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("CategoryProducts - Products fetch failed: {0}", ex.Message); }
+
+        // Fetch categories
+        List<System.Text.Json.JsonElement>? categories = null;
+        try
+        {
+            var r = await client.GetAsync("api/Category");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    categories = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("CategoryProducts - Categories fetch failed: {0}", ex.Message); }
+
+        // Fetch product types
+        List<System.Text.Json.JsonElement>? productTypes = null;
+        try
+        {
+            var r = await client.GetAsync("api/ProductTypes");
+            if (r.IsSuccessStatusCode)
+            {
+                var j = await r.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(j))
+                    productTypes = System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(j, jsonOptions);
+            }
+        }
+        catch (Exception ex) { _logger.LogWarning("CategoryProducts - ProductTypes fetch failed: {0}", ex.Message); }
+
+        // Build ViewModel
+        var vm = new CategoryProductsViewModel
+        {
+            SelectedCategory = categoryId,
+            SelectedType = typeId,
+            PriceRange = priceRange,
+            SelectedSize = size,
+            SearchQuery = query
+        };
+
+        // Map categories
+        if (categories != null)
+        {
+            foreach (var cat in categories)
+            {
+                vm.Categories.Add(new CategoryProductsViewModel.CategoryItem
+                {
+                    Id = cat.TryGetProperty("id", out var cid) ? cid.GetInt32() : 0,
+                    Name = cat.TryGetProperty("name", out var cn) ? cn.GetString() ?? "" : ""
+                });
+            }
+        }
+
+        // Map product types
+        if (productTypes != null)
+        {
+            foreach (var pt in productTypes)
+            {
+                vm.ProductTypes.Add(new CategoryProductsViewModel.ProductTypeItem
+                {
+                    Id = pt.TryGetProperty("id", out var ptid) ? ptid.GetInt32() : 0,
+                    Name = pt.TryGetProperty("name", out var ptn) ? ptn.GetString() ?? "" : ""
+                });
+            }
+        }
+
+        // Map & filter products
+        if (allProducts != null)
+        {
+            foreach (var p in allProducts)
+            {
+                var pId = p.TryGetProperty("id", out var pid) ? pid.GetInt32() : 0;
+                var pName = p.TryGetProperty("name", out var pn) ? pn.GetString() ?? "" : "";
+                var pImg = p.TryGetProperty("imageUrl", out var pi) ? pi.GetString() ?? "" : "";
+                var pPrice = p.TryGetProperty("price", out var pp) ? pp.GetDecimal() : 0m;
+                var pRegPrice = p.TryGetProperty("regularPrice", out var prp) ? prp.GetDecimal() : pPrice;
+                var pDiscount = p.TryGetProperty("discountPrice", out var pdp) && pdp.ValueKind != System.Text.Json.JsonValueKind.Null ? (decimal?)pdp.GetDecimal() : null;
+                var pStock = p.TryGetProperty("stockQuantity", out var ps) ? ps.GetInt32() : 0;
+                var pStatus = p.TryGetProperty("status", out var pst) ? pst.GetString() ?? "Active" : "Active";
+                var pCatId = p.TryGetProperty("categoryId", out var pcid) ? pcid.GetInt32() : 0;
+                var pTypeId = p.TryGetProperty("productTypeId", out var ptid2) ? ptid2.GetInt32() : 0;
+                var pSizes = p.TryGetProperty("availableSizesJson", out var psz) ? psz.GetString() : null;
+                double pRating = 0;
+                if (p.TryGetProperty("averageRating", out var pr)) pRating = pr.GetDouble();
+
+                // Apply filters
+                if (categoryId.HasValue && pCatId != categoryId.Value) continue;
+                if (typeId.HasValue && pTypeId != typeId.Value) continue;
+                if (!string.IsNullOrEmpty(query) && !pName.Contains(query, StringComparison.OrdinalIgnoreCase)) continue;
+
+                // Price filter
+                var effectivePrice = pDiscount.HasValue && pDiscount.Value > 0 ? pDiscount.Value : pPrice;
+                if (priceRange == "low" && effectivePrice >= 500) continue;
+                if (priceRange == "mid" && (effectivePrice < 500 || effectivePrice > 2000)) continue;
+                if (priceRange == "high" && effectivePrice <= 2000) continue;
+                if (priceRange == "very-high" && effectivePrice <= 10000) continue;
+
+                // Size filter
+                if (!string.IsNullOrEmpty(size) && !string.IsNullOrEmpty(pSizes) && !pSizes.Contains(size)) continue;
+
+                vm.Products.Add(new CategoryProductsViewModel.CategoryProductItem
+                {
+                    Id = pId,
+                    Name = pName,
+                    ImageUrl = pImg,
+                    Price = effectivePrice,
+                    RegularPrice = pRegPrice > 0 ? pRegPrice : pPrice,
+                    DiscountPrice = pDiscount,
+                    StockQty = pStock,
+                    AverageRating = pRating,
+                    Status = pStatus,
+                    AvailableSizes = pSizes,
+                    CategoryId = pCatId,
+                    ProductTypeId = pTypeId
+                });
+            }
+        }
+
+        return View(vm);
     }
 
     [HttpPost]
@@ -170,7 +308,6 @@ public class HomeController : Controller
         var client = _httpClientFactory.CreateClient("ShoesAPI");
         try
         {
-            // Forward to API or handle locally
             var contactMsg = new {
                 Name = User.Identity?.Name ?? "Guest",
                 Email = "chat@shoesbangladesh.com",

@@ -820,42 +820,112 @@
     </div>
 
     <!-- Related Products Section -->
-    <div class="mt-5 mb-5">
+    <div class="mt-5 mb-5 position-relative">
         <h4 class="mb-4">@Localizer["Related Products"]</h4>
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 g-3">
-            @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
-            {
-                @foreach (var product in Model.RelatedProducts)
-                {
-                    <div class="col mb-4">
-                        <div class="card h-100 border-0 text-center shadow-sm" style="border-radius: 12px; overflow: hidden;">
-                            <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none">
-                                <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : (product.ImageUrl.StartsWith("http") ? "" : apiBase) + product.ImageUrl)" 
-                                     class="card-img-top" style="height: 260px; object-fit: contain; background: #fff; padding: 5px; border-radius: 8px;" />
-                                <div class="card-body related-card-info">
-                                    <h6 class="text-dark text-truncate mb-1" style="font-weight: 700; font-size: 0.9rem;">@product.Name</h6>
-                                    <div class="d-flex justify-content-center align-items-baseline gap-2">
-                                        @if (product.DiscountPrice > 0 && product.DiscountPrice < product.Price)
-                                        {
-                                            <span class="price-old">৳@product.Price.ToString("#,##0")</span>
-                                            <span class="price-current">৳@product.DiscountPrice?.ToString("#,##0")</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="price-current">৳@product.Price.ToString("#,##0")</span>
-                                        }
+        
+        <style>
+            .lukaz-slider-container { position: relative; width: 100%; overflow: hidden; padding: 0 40px; }
+            .lukaz-slider-track { display: flex; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); gap: 30px; padding: 10px 0; }
+            .lukaz-slider-item { flex: 0 0 calc(25% - 22.5px); min-width: 250px; }
+            @@media (max-width: 1200px) { .lukaz-slider-item { flex: 0 0 calc(33.33% - 20px); } }
+            @@media (max-width: 992px) { .lukaz-slider-item { flex: 0 0 calc(50% - 15px); } }
+            @@media (max-width: 576px) { .lukaz-slider-item { flex: 0 0 100%; min-width: 100%; } .lukaz-slider-container { padding: 0 30px; } }
+            
+            .lukaz-slider-nav {
+                position: absolute; top: 40%; left: 0; right: 0;
+                display: flex; justify-content: space-between;
+                pointer-events: none; z-index: 10; transform: translateY(-50%);
+            }
+            .lukaz-nav-btn {
+                width: 40px; height: 40px; background: white; border: 1px solid #ddd;
+                border-radius: 50%; display: flex; align-items: center; justify-content: center;
+                cursor: pointer; pointer-events: auto; transition: 0.3s;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-size: 1.2rem; color: #333;
+            }
+            .lukaz-nav-btn:hover { background: #D00000; color: #fff; border-color: #D00000; }
+        </style>
+
+        @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+        {
+            <div class="lukaz-slider-container" id="relatedSlider">
+                <div class="lukaz-slider-track" id="relatedTrack">
+                    @foreach (var product in Model.RelatedProducts)
+                    {
+                        <div class="lukaz-slider-item">
+                            <div class="card h-100 border-0 text-center shadow-sm" style="border-radius: 12px; overflow: hidden; transition: 0.3s;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 0.125rem 0.25rem rgba(0,0,0,0.075)';">
+                                <a asp-controller="Home" asp-action="Details" asp-route-id="@product.Id" class="text-decoration-none">
+                                    <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : (product.ImageUrl.StartsWith("http") ? "" : apiBase) + product.ImageUrl)" 
+                                         class="card-img-top" style="height: 260px; object-fit: contain; background: #fff; padding: 10px; border-radius: 8px;" />
+                                    <div class="card-body related-card-info">
+                                        <h6 class="text-dark text-truncate mb-2" style="font-weight: 700; font-size: 0.95rem;">@product.Name</h6>
+                                        <div class="d-flex justify-content-center align-items-baseline gap-2">
+                                            @if (product.DiscountPrice > 0 && product.DiscountPrice < product.Price)
+                                            {
+                                                <span class="price-old text-decoration-line-through text-muted small">৳@product.Price.ToString("#,##0")</span>
+                                                <span class="price-current fw-bold" style="color: #D00000; font-size: 1.1rem;">৳@product.DiscountPrice?.ToString("#,##0")</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="price-current fw-bold" style="color: #D00000; font-size: 1.1rem;">৳@product.Price.ToString("#,##0")</span>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <p class="text-muted col-12">@Localizer["No related products found."]</p>
-            }
-        </div>
+                    }
+                </div>
+                
+                <!-- Navigation Arrows -->
+                <div class="lukaz-slider-nav">
+                    <button class="lukaz-nav-btn" onclick="slideRelated(-1)"><i class="bi bi-chevron-left"></i></button>
+                    <button class="lukaz-nav-btn" onclick="slideRelated(1)"><i class="bi bi-chevron-right"></i></button>
+                </div>
+            </div>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    const track = document.getElementById('relatedTrack');
+                    if(!track) return;
+                    let currentIndex = 0;
+                    
+                    window.slideRelated = function(direction) {
+                        const items = track.querySelectorAll('.lukaz-slider-item');
+                        const totalItems = items.length;
+                        if(totalItems === 0) return;
+                        
+                        let itemsPerView = 4;
+                        if(window.innerWidth <= 1200) itemsPerView = 3;
+                        if(window.innerWidth <= 992) itemsPerView = 2;
+                        if(window.innerWidth <= 576) itemsPerView = 1;
+                        
+                        const maxIndex = Math.max(0, totalItems - itemsPerView);
+                        
+                        currentIndex += direction;
+                        if(currentIndex > maxIndex) currentIndex = 0; // Loop back to start
+                        if(currentIndex < 0) currentIndex = maxIndex; // Loop to end
+                        
+                        const itemWidth = items[0].getBoundingClientRect().width;
+                        const gap = 30; // matches gap in css
+                        track.style.transform = `translateX(-${currentIndex * (itemWidth + gap)}px)`;
+                    };
+
+                    // Auto slide every 3 seconds
+                    setInterval(function() {
+                        slideRelated(1);
+                    }, 3000);
+                    
+                    // Adjust on resize
+                    window.addEventListener('resize', function() {
+                        slideRelated(0);
+                    });
+                });
+            </script>
+        }
+        else
+        {
+            <p class="text-muted col-12">@Localizer["No related products found."]</p>
+        }
     </div>
 </div>
 

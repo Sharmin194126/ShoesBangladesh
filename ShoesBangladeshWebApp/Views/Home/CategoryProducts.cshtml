@@ -1,0 +1,559 @@
+@using ShoesBangladesh.API.ViewModels
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model CategoryProductsViewModel
+
+@functions {
+    public string RenderStars(double rating) {
+        int fullStars = (int)Math.Round(rating);
+        string stars = "";
+        for(int i = 0; i < fullStars; i++) stars += "★";
+        for(int i = fullStars; i < 5; i++) stars += "☆";
+        return stars;
+    }
+}
+
+@{
+    ViewData["Title"] = Localizer["Explore Products"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string apiBase = "http://localhost:5190";
+}
+
+<style>
+    /* ── Page Background ── */
+    .cat-page-wrapper {
+        background: #F8F8F8;
+        min-height: 100vh;
+        padding: 30px 0 60px;
+    }
+
+    /* ── Sidebar ── */
+    .filter-sidebar {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        position: sticky;
+        top: 20px;
+    }
+    .filter-sidebar h5 {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        letter-spacing: 0.5px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #D00000;
+        margin-bottom: 20px;
+    }
+    .filter-section-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+    .filter-sidebar .form-select {
+        border-radius: 10px;
+        border-color: #e0e0e0;
+        font-size: 0.9rem;
+        color: #333;
+        padding: 8px 12px;
+        transition: 0.2s;
+    }
+    .filter-sidebar .form-select:focus {
+        border-color: #D00000;
+        box-shadow: 0 0 0 3px rgba(208,0,0,0.12);
+    }
+    .price-radio-label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #333;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 8px;
+        display: block;
+        transition: 0.2s;
+    }
+    .price-radio-label:hover { background: #FFF0F0; color: #D00000; }
+    input[type="radio"]:checked + .price-radio-label { background: #FFF0F0; color: #D00000; }
+    .form-check-input:checked { background-color: #D00000 !important; border-color: #D00000 !important; }
+    .form-check-input:focus { border-color: #D00000 !important; box-shadow: 0 0 0 0.25rem rgba(208,0,0,0.2) !important; }
+
+    .size-btn {
+        padding: 5px 14px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        border: 1.5px solid #D00000;
+        color: #D00000;
+        background: transparent;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .size-btn.active, .size-btn:hover {
+        background: #D00000;
+        color: #fff;
+    }
+    .btn-clear-filters {
+        background: linear-gradient(135deg, #FF4B4B, #D00000);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 9px 16px;
+        width: 100%;
+        transition: 0.25s;
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        box-shadow: 0 3px 10px rgba(208,0,0,0.25);
+        text-decoration: none;
+    }
+    .btn-clear-filters:hover {
+        background: linear-gradient(135deg, #D00000, #A00000);
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(208,0,0,0.35);
+        transform: translateY(-1px);
+    }
+
+    /* ── Main Product Area ── */
+    .cat-main-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .cat-main-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin: 0;
+    }
+    .cat-count-badge {
+        background: #FFF0F0;
+        color: #D00000;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid #FFB3B3;
+        margin-left: 10px;
+    }
+
+    /* ── Product Card ── */
+    .cat-product-card {
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .cat-product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(208,0,0,0.12);
+    }
+    .cat-product-img-wrap {
+        height: 200px;
+        background: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .cat-product-img-wrap img {
+        max-height: 190px;
+        max-width: 100%;
+        object-fit: contain;
+        padding: 10px;
+        transition: transform 0.3s ease;
+    }
+    .cat-product-card:hover .cat-product-img-wrap img { transform: scale(1.05); }
+    .cat-product-body {
+        padding: 14px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .cat-product-name {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .cat-price-current {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #D00000;
+    }
+    .cat-price-old {
+        font-size: 0.8rem;
+        color: #aaa;
+        text-decoration: line-through;
+        margin-right: 4px;
+    }
+    .cat-stock-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+    }
+    .cat-stars { color: #F5A623; font-size: 0.78rem; }
+
+    .btn-add-cart {
+        background: linear-gradient(135deg, #532374, #7B35B2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 9px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        transition: 0.2s;
+        margin-bottom: 6px;
+    }
+    .btn-add-cart:hover { background: linear-gradient(135deg, #7B35B2, #532374); color: white; }
+    .btn-buy-now {
+        background: linear-gradient(135deg, #FF4B4B, #D00000);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 9px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        transition: 0.2s;
+    }
+    .btn-buy-now:hover { background: linear-gradient(135deg, #D00000, #A00000); color: white; }
+
+    .admin-pill {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 10;
+        display: flex;
+        gap: 4px;
+    }
+    .admin-pill a {
+        font-size: 0.68rem;
+        padding: 2px 7px;
+        border-radius: 20px;
+        font-weight: 700;
+    }
+
+    /* ── Empty State ── */
+    .cat-empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .cat-empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 16px;
+        display: block;
+    }
+    .cat-empty-state p { color: #999; font-size: 1rem; }
+
+    @@media (max-width: 768px) {
+        .filter-sidebar { margin-bottom: 24px; position: static; }
+        .cat-product-img-wrap { height: 160px; }
+    }
+
+    /* ── Back Button ── */
+    .cat-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        color: #D00000;
+        border: 2px solid #D00000;
+        border-radius: 30px;
+        padding: 9px 22px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.25s ease;
+        box-shadow: 0 2px 10px rgba(208,0,0,0.12);
+        margin-bottom: 24px;
+    }
+    .cat-back-btn .back-icon-circle {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF4B4B, #D00000);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+        transition: 0.25s ease;
+    }
+    .cat-back-btn:hover {
+        background: linear-gradient(135deg, #FF4B4B, #D00000);
+        color: #fff;
+        border-color: transparent;
+        text-decoration: none;
+        transform: translateX(-3px);
+        box-shadow: 0 5px 18px rgba(208,0,0,0.28);
+    }
+    .cat-back-btn:hover .back-icon-circle {
+        background: rgba(255,255,255,0.25);
+    }
+</style>
+
+<div class="cat-page-wrapper">
+    <div class="container-fluid px-3 px-md-4">
+
+        <a href="javascript:history.back()" class="cat-back-btn">
+            <span class="back-icon-circle"><i class="bi bi-arrow-left"></i></span>
+            @Localizer["Back"]
+        </a>
+
+        <div class="row g-4">
+            <!-- ═══════════ Sidebar Filter ═══════════ -->
+            <aside class="col-md-3 col-lg-2">
+                <div class="filter-sidebar">
+                    <h5><i class="bi bi-funnel-fill me-2" style="color:#D00000;"></i>@Localizer["Filter Products"]</h5>
+
+                    <form asp-action="CategoryProducts" method="get" id="filterForm">
+                        <input type="hidden" name="query" value="@Model.SearchQuery" />
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <div class="filter-section-label">@Localizer["Category"]</div>
+                            <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                                <option value="">@Localizer["All Categories"]</option>
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    if (Model.SelectedCategory == cat.Id)
+                                    {
+                                        <option value="@cat.Id" selected="selected">@cat.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@cat.Id">@cat.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Product Type -->
+                        <div class="mb-4">
+                            <div class="filter-section-label">@Localizer["Product Type"]</div>
+                            <select name="typeId" class="form-select" onchange="this.form.submit()">
+                                <option value="">@Localizer["All Types"]</option>
+                                @foreach (var type in Model.ProductTypes)
+                                {
+                                    if (Model.SelectedType == type.Id)
+                                    {
+                                        <option value="@type.Id" selected="selected">@type.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@type.Id">@type.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-4">
+                            <div class="filter-section-label">@Localizer["Price Range"]</div>
+                            @{
+                                var selectedPriceText = Model.PriceRange switch {
+                                    "low"       => Localizer["Below ৳500"].Value,
+                                    "mid"       => Localizer["৳500 – ৳2000"].Value,
+                                    "high"      => Localizer["Above ৳2000"].Value,
+                                    "very-high" => Localizer["Above ৳10000"].Value,
+                                    _           => Localizer["All Prices"].Value
+                                };
+                            }
+                            @if (!string.IsNullOrEmpty(Model.PriceRange))
+                            {
+                                <div class="mb-2" style="font-size:0.8rem;">
+                                    <span style="color:#D00000; font-weight:700;">@Localizer["Selected"]:</span>
+                                    <span class="fw-bold text-dark">@selectedPriceText</span>
+                                </div>
+                            }
+
+                            @foreach (var pr in new[] {
+                                ("low",       Localizer["Below ৳500"].Value),
+                                ("mid",       Localizer["৳500 – ৳2000"].Value),
+                                ("high",      Localizer["Above ৳2000"].Value),
+                                ("very-high", Localizer["Above ৳10000"].Value)
+                            })
+                            {
+                                <div class="form-check mb-1 d-flex align-items-center gap-2">
+                                    <input class="form-check-input" type="radio" name="priceRange"
+                                           value="@pr.Item1" id="p-@pr.Item1"
+                                           onchange="this.form.submit()"
+                                           @(Model.PriceRange == pr.Item1 ? "checked" : "") />
+                                    <label class="price-radio-label mb-0" for="p-@pr.Item1">@pr.Item2</label>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Sizes -->
+                        <div class="mb-4">
+                            <div class="filter-section-label">@Localizer["Size"]</div>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                @foreach (var s in new[] { "S", "M", "L", "XL", "XXL", "3XL", "38", "39", "40", "41", "42", "43", "44", "45" })
+                                {
+                                    <div class="form-check m-0 p-0">
+                                        <input class="form-check-input d-none" type="radio" name="size"
+                                               value="@s" id="sz-@s"
+                                               onchange="this.form.submit()"
+                                               @(Model.SelectedSize == s ? "checked" : "") />
+                                        <label class="size-btn @(Model.SelectedSize == s ? "active" : "")" for="sz-@s">@s</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <a href="/Home/CategoryProducts" class="btn-clear-filters">
+                            <i class="bi bi-x-circle me-1"></i>@Localizer["Clear All Filters"]
+                        </a>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- ═══════════ Product Listing ═══════════ -->
+            <main class="col-md-9 col-lg-10">
+                <div class="cat-main-header">
+                    <h1 class="cat-main-title">
+                        @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                        {
+                            @Localizer["Results for"]<text> "@Model.SearchQuery"</text>
+                        }
+                        else
+                        {
+                            @Localizer["Explore Products"]
+                        }
+                        <span class="cat-count-badge">@Model.Products.Count @Localizer["items"]</span>
+                    </h1>
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Product" asp-action="Create"
+                           class="btn btn-sm fw-bold"
+                           style="background: linear-gradient(135deg, #FF4B4B, #D00000); color:white; border-radius:30px; padding:9px 22px; box-shadow: 0 3px 10px rgba(208,0,0,0.3); transition:0.25s; text-decoration:none;"
+                           onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 18px rgba(208,0,0,0.4)'"
+                           onmouseout="this.style.transform='none'; this.style.boxShadow='0 3px 10px rgba(208,0,0,0.3)'">
+                            <i class="bi bi-plus-circle-fill me-2"></i>@Localizer["Add Product"]
+                        </a>
+                    }
+                </div>
+
+                @if (Model.Products.Any())
+                {
+                    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3">
+                        @foreach (var item in Model.Products)
+                        {
+                            var imgSrc = string.IsNullOrEmpty(item.ImageUrl)
+                                ? "/images/no-image.png"
+                                : (item.ImageUrl.StartsWith("http") ? "" : apiBase) + item.ImageUrl;
+
+                            <div class="col">
+                                <div class="cat-product-card">
+
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div class="admin-pill">
+                                            <a asp-controller="Product" asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-light shadow-sm">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-controller="Product" asp-action="Delete" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-danger shadow-sm text-white">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    }
+
+                                    <a href="/Home/Details/@item.Id" class="text-decoration-none">
+                                        <div class="cat-product-img-wrap">
+                                            <img src="@imgSrc" alt="@item.Name" loading="lazy" />
+                                        </div>
+                                    </a>
+
+                                    <div class="cat-product-body">
+                                        <a href="/Home/Details/@item.Id" class="text-decoration-none">
+                                            <div class="cat-product-name" title="@item.Name">@item.Name</div>
+                                        </a>
+
+                                        <!-- Prices -->
+                                        <div class="d-flex align-items-baseline gap-1 mb-2">
+                                            @if (item.RegularPrice > item.Price)
+                                            {
+                                                <span class="cat-price-old">৳@item.RegularPrice.ToString("#,##0")</span>
+                                            }
+                                            <span class="cat-price-current">৳@item.Price.ToString("#,##0")</span>
+                                        </div>
+
+                                        <!-- Stock & Rating row -->
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="cat-stars">@RenderStars(item.AverageRating)</span>
+                                            @if (item.StockQty > 0)
+                                            {
+                                                <span class="cat-stock-badge bg-success bg-opacity-10 text-success">
+                                                    @Localizer["In Stock"]
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="cat-stock-badge bg-danger bg-opacity-10 text-danger">
+                                                    @Localizer["Out of Stock"]
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <!-- Buttons -->
+                                        <div class="mt-auto">
+                                            <a href="/Home/Details/@item.Id" class="btn-add-cart">
+                                                <i class="bi bi-cart-plus me-1"></i>@Localizer["Add to Cart"]
+                                            </a>
+                                            <a href="/Home/Details/@item.Id" class="btn-buy-now">
+                                                <i class="bi bi-lightning-charge-fill me-1"></i>@Localizer["Buy Now"]
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="cat-empty-state">
+                        <i class="bi bi-search"></i>
+                        <p class="fw-bold fs-5">@Localizer["No products found"]</p>
+                        <p>@Localizer["Try adjusting your filters or clear them to see all products."]</p>
+                        <a href="/Home/CategoryProducts" class="btn-buy-now d-inline-block px-4 py-2" style="width:auto; border-radius:10px;">
+                            @Localizer["Clear All Filters"]
+                        </a>
+                    </div>
+                }
+            </main>
+        </div>
+    </div>
+</div>
