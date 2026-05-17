@@ -244,7 +244,25 @@
                         img.style.height = '100%';
                         img.style.objectFit = 'cover';
                         
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center';
+                        btn.style.width = '20px';
+                        btn.style.height = '20px';
+                        btn.style.borderRadius = '50%';
+                        btn.style.opacity = '0.8';
+                        btn.innerHTML = '<i class="bi bi-x" style="font-size: 14px; font-weight: bold;"></i>';
+                        btn.onclick = function() {
+                            div.remove();
+                            const dt = new DataTransfer();
+                            Array.from(input.files).forEach(f => {
+                                if(f !== file) dt.items.add(f);
+                            });
+                            input.files = dt.files;
+                        };
+                        
                         div.appendChild(img);
+                        div.appendChild(btn);
                         container.appendChild(div);
                     }
                     reader.readAsDataURL(file);
