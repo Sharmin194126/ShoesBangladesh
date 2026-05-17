@@ -42,6 +42,7 @@ namespace ShoesBangladeshWebApp.Controllers
                         p.CategoryName = categories?.FirstOrDefault(c => c.Id == p.CategoryId)?.Name ?? "Unknown";
                         p.ProductTypeName = types?.FirstOrDefault(t => t.Id == p.ProductTypeId)?.Name ?? "Unknown";
                     }
+                    ViewBag.Categories = categories;
                 }
 
                 return View(products);

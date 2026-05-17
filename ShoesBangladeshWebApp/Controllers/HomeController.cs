@@ -72,7 +72,7 @@ public class HomeController : Controller
         List<System.Text.Json.JsonElement>? categories = null;
         try
         {
-            var r = await client.GetAsync("api/Categories");
+            var r = await client.GetAsync("api/Category");
             if (r.IsSuccessStatusCode)
             {
                 var j = await r.Content.ReadAsStringAsync();

@@ -143,7 +143,13 @@
         <div class="col-md-3">
             <select class="filter-input" name="categoryId">
                 <option value="">All Categories</option>
-                <!-- Populate with ViewBag.Categories if available -->
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                }
             </select>
         </div>
         <div class="col-md-3">

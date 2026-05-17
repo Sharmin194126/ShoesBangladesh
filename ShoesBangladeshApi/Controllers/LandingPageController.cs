@@ -31,6 +31,7 @@ namespace ShoesBangladesh.API.Controllers
                 var settings = await _context.SystemSettings.FirstOrDefaultAsync();
                 var products = await _context.Products.Include(p => p.Category).ToListAsync();
                 var categories = await _context.Categories.ToListAsync();
+                var footer = await _context.FooterInfos.FirstOrDefaultAsync();
 
                 var response = new LandingPageResponse
                 {
@@ -60,6 +61,17 @@ namespace ShoesBangladesh.API.Controllers
                     },
 
                     Categories = categories.Select(c => new CategoryDTO { Id = c.Id, Name = c.Name }).ToList(),
+                    Footer = footer == null ? new FooterInfoViewModel() : new FooterInfoViewModel
+                    {
+                        Id = footer.Id,
+                        Address = footer.Address,
+                        ContactNumber = footer.ContactNumber,
+                        Email = footer.Email,
+                        FacebookUrl = footer.FacebookUrl,
+                        TwitterUrl = footer.TwitterUrl,
+                        InstagramUrl = footer.InstagramUrl,
+                        LastUpdated = footer.LastUpdated
+                    },
                     Products = products.Select(p => new ProductDTO
                     {
                         Id = p.Id,

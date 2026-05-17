@@ -492,7 +492,7 @@
                 </li>
                 <li>
                     <a asp-controller="Admin" asp-action="ManageDisplaySections" 
-                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" || ViewContext.RouteData.Values["action"]?.ToString().Contains("DisplaySection") == true ? "active" : "")">
+                       class="nav-link-item @(ViewContext.RouteData.Values["action"]?.ToString() == "ManageDisplaySections" || ViewContext.RouteData.Values["action"]?.ToString()?.Contains("DisplaySection") == true ? "active" : "")">
                         <i class="bi bi-house-door"></i> Homepage Sections
                     </a>
                 </li>

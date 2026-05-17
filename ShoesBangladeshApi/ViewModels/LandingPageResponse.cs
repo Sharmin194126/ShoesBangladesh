@@ -9,6 +9,7 @@ namespace ShoesBangladesh.API.ViewModels
         public SystemSettingsDTO Settings { get; set; } = new();
         public List<ProductDTO> Products { get; set; } = new();
         public List<CategoryDTO> Categories { get; set; } = new();
+        public FooterInfoViewModel Footer { get; set; } = new();
         public int? TargetProductId { get; set; }
     }
 

@@ -741,36 +741,58 @@ em;
     }
     .lukaz-category-card {
         position: relative;
-        border-radius: 20px;
+        border-radius: 12px;
         overflow: hidden;
-        height: 400px;
+        height: 480px; /* Same to same as Lukaz tall cards */
         margin-bottom: 30px;
-        transition: 0.5s;
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
         cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
     .lukaz-category-card:hover {
         transform: translateY(-10px);
+    }
+    .lukaz-category-card:hover img {
+        transform: scale(1.1);
     }
     .lukaz-category-card img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: 0.8s ease;
     }
     .lukaz-category-info {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        padding: 30px;
-        background: linear-gradient(0deg, rgba(58, 158, 117, 0.9) 0%, rgba(58, 158, 117, 0) 100%);
+        padding: 40px 30px;
+        background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0) 100%);
         color: #fff;
-        text-align: center;
+        text-align: left;
     }
     .lukaz-category-name {
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .lukaz-explore-text {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
         font-weight: 700;
-        margin: 0;
+        color: rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.3s;
+    }
+    .lukaz-category-card:hover .lukaz-explore-text {
+        color: #fff;
+        gap: 15px;
     }
 </style>
 
@@ -892,10 +914,16 @@ em;
         <div class="lukaz-section-header">
             <h2 class="lukaz-section-title">New In</h2>
             <div class="lukaz-tabs">
-                <a href="#" class="lukaz-tab-btn active">All</a>
-                <a href="#" class="lukaz-tab-btn">Sneakers</a>
-                <a href="#" class="lukaz-tab-btn">Luxury</a>
-                <a href="#" class="lukaz-tab-btn">Apparel</a>
+                <a href="javascript:void(0)" class="lukaz-tab-btn active" data-filter="all">All</a>
+                @if (categories != null)
+                {
+                    foreach (var cat in categories.Take(4)) // Show top 4 categories as tabs
+                    {
+                        string catName = cat.TryGetProperty("name", out var cn) ? cn.GetString() ?? "" : "";
+                        int catId = cat.TryGetProperty("id", out var cid) ? cid.GetInt32() : 0;
+                        <a href="javascript:void(0)" class="lukaz-tab-btn" data-filter="@catId">@catName</a>
+                    }
+                }
             </div>
         </div>
         
@@ -917,8 +945,9 @@ em;
                         decimal pPrice = product.TryGetProperty("price", out var p) ? p.GetDecimal() : 0;
                         string pImg = product.TryGetProperty("imageUrl", out var i) ? i.GetString() ?? "" : "";
                         int pId = product.TryGetProperty("id", out var pid) ? pid.GetInt32() : 0;
+                        int pCatId = product.TryGetProperty("categoryId", out var cid2) ? cid2.GetInt32() : 0;
 
-                        <div class="lukaz-slider-item">
+                        <div class="lukaz-slider-item" data-catid="@pCatId">
                             <div class="lukaz-product-card">
                                 <div class="lukaz-img-wrapper">
                                     <div class="lukaz-badge">New</div>
@@ -1018,7 +1047,7 @@ em;
     return t.Equals("Shop by Category", StringComparison.OrdinalIgnoreCase) && active;
 }) == true)
 {
-    <section class="lukaz-categories">
+    <section class="lukaz-categories" id="shopbycategory">
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="lukaz-section-title">Shop by Category</h2>
@@ -1027,19 +1056,21 @@ em;
             <div class="row">
                 @if (categories != null)
                 {
-                    foreach (var cat in categories.Take(6))
+                    foreach (var cat in categories)
                     {
                         string catName = cat.TryGetProperty("name", out var cn) ? cn.GetString() ?? "" : "";
                         string catImg = cat.TryGetProperty("imageUrl", out var ci) ? ci.GetString() ?? "/images/cat-placeholder.png" : "/images/cat-placeholder.png";
                         int catId = cat.TryGetProperty("id", out var cid) ? cid.GetInt32() : 0;
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 mb-4">
                             <a href="/Product/Index?categoryId=@catId" class="text-decoration-none">
                                 <div class="lukaz-category-card">
                                     <img src="@(catImg.StartsWith("http") ? "" : apiBase)@catImg" alt="@catName">
                                     <div class="lukaz-category-info">
                                         <h3 class="lukaz-category-name">@catName</h3>
-                                        <span class="small text-uppercase fw-bold">Explore More <i class="bi bi-arrow-right"></i></span>
+                                        <div class="lukaz-explore-text">
+                                            Explore Collection <i class="bi bi-arrow-right"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </a>
@@ -1238,6 +1269,33 @@ em;
                     carousel.next();
                 }, 3000);
             }
+
+            // Lukaz Category Filtering
+            const tabBtns = document.querySelectorAll('.lukaz-tab-btn');
+            const sliderItems = document.querySelectorAll('.lukaz-slider-item');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const filter = this.getAttribute('data-filter');
+                    
+                    sliderItems.forEach(item => {
+                        if (filter === 'all' || item.getAttribute('data-catid') === filter) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Reset slider position
+                    const sliderTrack = document.getElementById('newInSlider');
+                    if (sliderTrack) {
+                        sliderTrack.style.transform = 'translateX(0)';
+                    }
+                });
+            });
         });
     </script>
 }
