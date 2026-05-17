@@ -77,6 +77,15 @@
                 <div class="col-sm-4 info-label">Product Type</div>
                 <div class="col-sm-8 info-value">@Model.ProductTypeName</div>
 
+                <div class="col-sm-4 info-label">Display Section</div>
+                <div class="col-sm-8 info-value">
+                    @if (!string.IsNullOrEmpty(Model.DisplaySectionName) && Model.DisplaySectionName != "None") {
+                        <span class="badge bg-info text-dark" style="border-radius: 6px; font-weight: 600;">@Model.DisplaySectionName</span>
+                    } else {
+                        <span class="text-muted">None</span>
+                    }
+                </div>
+
                 <div class="col-sm-4 info-label">Price</div>
                 <div class="col-sm-8 info-value">
                     @if(Model.OfferPercentage > 0) {

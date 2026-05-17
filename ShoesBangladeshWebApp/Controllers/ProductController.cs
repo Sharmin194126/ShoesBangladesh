@@ -217,6 +217,22 @@ namespace ShoesBangladeshWebApp.Controllers
                     product.ProductTypeName = types?.FirstOrDefault(t => t.Id == product.ProductTypeId)?.Name ?? "Unknown";
                 }
 
+                // Map Display Section Name
+                if (product.DisplaySectionId.HasValue)
+                {
+                    var secRes = await client.GetAsync("api/Dashboard/DisplaySections");
+                    if (secRes.IsSuccessStatusCode)
+                    {
+                        var secJson = await secRes.Content.ReadAsStringAsync();
+                        var sections = JsonSerializer.Deserialize<IEnumerable<ShoesBangladesh.API.ViewModels.DisplaySectionViewModel>>(secJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        product.DisplaySectionName = sections?.FirstOrDefault(s => s.Id == product.DisplaySectionId.Value)?.Title ?? "None";
+                    }
+                }
+                else
+                {
+                    product.DisplaySectionName = "None";
+                }
+
                 return View(product);
             }
             return NotFound();

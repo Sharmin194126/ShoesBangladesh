@@ -64,6 +64,7 @@ namespace ShoesBangladesh.API.ViewModels
         public string CategoryName { get; set; } = string.Empty;
 
         public int? DisplaySectionId { get; set; }
+        public string? DisplaySectionName { get; set; }
         public int? AssignedEmployeeId { get; set; }
     }
 }

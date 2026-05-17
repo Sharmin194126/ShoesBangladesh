@@ -1096,27 +1096,32 @@ em;
             if (section.TryGetProperty("categoryId", out var c) && c.ValueKind == JsonValueKind.Number) categoryId = c.GetInt32();
             else if (section.TryGetProperty("CategoryId", out var c2) && c2.ValueKind == JsonValueKind.Number) categoryId = c2.GetInt32();
             
-            if (!sectionName.Equals("Featured items", StringComparison.OrdinalIgnoreCase) && categoryId == 0) continue;
+            int sectionIdVal = 0;
+            if (section.TryGetProperty("id", out var sid) && sid.ValueKind == JsonValueKind.Number) sectionIdVal = sid.GetInt32();
+            else if (section.TryGetProperty("Id", out var sid2) && sid2.ValueKind == JsonValueKind.Number) sectionIdVal = sid2.GetInt32();
             
-            // Filter products for this category
-            List<JsonElement>? sectionProducts = null;
-
-            if (sectionName.Equals("Featured items", StringComparison.OrdinalIgnoreCase))
-            {
-                sectionProducts = allProducts?.Where(p => {
+            // Filter products for this section
+            List<JsonElement>? sectionProducts = allProducts?.Where(p => {
+                // 1. Explicitly mapped by DisplaySectionId
+                if (p.TryGetProperty("displaySectionId", out var dsid) && dsid.ValueKind == JsonValueKind.Number && dsid.GetInt32() == sectionIdVal) return true;
+                if (p.TryGetProperty("DisplaySectionId", out var dsid2) && dsid2.ValueKind == JsonValueKind.Number && dsid2.GetInt32() == sectionIdVal) return true;
+                
+                // 2. Legacy fallback for "Featured items"
+                if (sectionName.Equals("Featured items", StringComparison.OrdinalIgnoreCase))
+                {
                     if (p.TryGetProperty("isFeatured", out var f) && f.ValueKind == JsonValueKind.True) return true;
                     if (p.TryGetProperty("IsFeatured", out var f2) && f2.ValueKind == JsonValueKind.True) return true;
-                    return false;
-                }).ToList(); // Removed .Take(4) for unlimited products
-            }
-            else if (categoryId != 0)
-            {
-                sectionProducts = allProducts?.Where(p => {
-                    if (p.TryGetProperty("categoryId", out var pc) && pc.ValueKind == JsonValueKind.Number) return pc.GetInt32() == categoryId;
-                    if (p.TryGetProperty("CategoryId", out var pc2) && pc2.ValueKind == JsonValueKind.Number) return pc2.GetInt32() == categoryId;
-                    return false;
-                }).ToList(); // Removed .Take(4) for unlimited products
-            }
+                }
+                
+                // 3. Legacy fallback for Category-mapped sections
+                if (categoryId != 0)
+                {
+                    if (p.TryGetProperty("categoryId", out var pc) && pc.ValueKind == JsonValueKind.Number && pc.GetInt32() == categoryId) return true;
+                    if (p.TryGetProperty("CategoryId", out var pc2) && pc2.ValueKind == JsonValueKind.Number && pc2.GetInt32() == categoryId) return true;
+                }
+
+                return false;
+            }).ToList();
 
             if (sectionProducts != null && sectionProducts.Any())
             {
