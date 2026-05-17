@@ -99,7 +99,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label-custom">Long Details (Daraz Style)</label>
+                <label class="form-label-custom">Long Details</label>
                 <textarea asp-for="LongDescription" class="form-control-custom" rows="8" style="resize: vertical; overflow-y: auto;" placeholder="Detailed product description (scrollable)..."></textarea>
                 <span asp-validation-for="LongDescription" class="field-error d-block"></span>
             </div>
@@ -270,11 +270,16 @@
                 <div id="additionalImagesPreview" class="d-flex flex-wrap gap-2 mb-2">
                     @if (Model.AdditionalImages != null && Model.AdditionalImages.Count > 0)
                     {
-                        foreach (var img in Model.AdditionalImages)
+                        for (int i = 0; i < Model.AdditionalImages.Count; i++)
                         {
+                            var img = Model.AdditionalImages[i];
                             var fullUrl = img.StartsWith("http") ? img : $"{baseUrl}{img}";
-                            <div class="position-relative" style="width: 80px; height: 80px; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+                            <div class="position-relative" style="width: 80px; height: 80px; border: 1px solid #eee; border-radius: 8px; overflow: hidden;" id="additionalImg-@i">
                                 <img src="@fullUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+                                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 p-0 d-flex align-items-center justify-content-center" style="width: 20px; height: 20px; border-radius: 50%; opacity: 0.8;" onclick="document.getElementById('additionalImg-@i').remove()" title="Remove Image">
+                                    <i class="bi bi-x" style="font-size: 14px; font-weight: bold;"></i>
+                                </button>
+                                <input type="hidden" name="AdditionalImages" value="@img" />
                             </div>
                         }
                     }
@@ -284,7 +289,7 @@
             </div>
             
             <div class="mb-3">
-                <label class="form-label-custom">Product Details Image (Daraz Style) <span class="text-muted fw-normal">(Optional)</span></label>
+                <label class="form-label-custom">Product Details Image</label>
                 <div id="detailsImagePreviewContainer" style="width: 100%; height: 200px; border-radius: 12px; border: 2px dashed #ECECEC; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #FAFAFA; margin-bottom: 12px;">
                     @{
                         var detailsDisplayUrl = !string.IsNullOrEmpty(Model.DetailsImageUrl) 
@@ -306,7 +311,7 @@
                 </div>
                 <input type="hidden" asp-for="DetailsImageUrl" />
                 <input type="file" name="detailsImageFile" id="detailsImageFile" class="form-control-custom" accept="image/*" onchange="previewDetailsImage(this)" />
-                <p class="text-muted mt-2" style="font-size: 0.75rem;">This image will appear below the long description, just like Daraz.</p>
+                <p class="text-muted mt-2" style="font-size: 0.75rem;">This image will appear below the long description.</p>
             </div>
             
         </div>
