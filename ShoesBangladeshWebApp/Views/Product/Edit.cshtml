@@ -212,7 +212,9 @@
 
         function previewAdditionalImages(input) {
             const container = document.getElementById('additionalImagesPreview');
-            container.innerHTML = '';
+            // Remove previously selected new previews (keep existing db images)
+            const oldPreviews = container.querySelectorAll('.new-preview-img');
+            oldPreviews.forEach(el => el.remove());
             
             if (input.files) {
                 Array.from(input.files).forEach(file => {
@@ -229,7 +231,7 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const div = document.createElement('div');
-                        div.className = 'position-relative';
+                        div.className = 'position-relative new-preview-img';
                         div.style.width = '80px';
                         div.style.height = '80px';
                         div.style.border = '1px solid #eee';
