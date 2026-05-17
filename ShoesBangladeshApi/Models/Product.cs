@@ -16,6 +16,8 @@ namespace ShoesBangladesh.API.Models
         
         public string ImageUrl { get; set; } = string.Empty;
         public string AdditionalImagesJson { get; set; } = "[]"; // Store JSON
+        public string LongDescription { get; set; } = string.Empty;
+        public string DetailsImageUrl { get; set; } = string.Empty;
         
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public List<string> AdditionalImages

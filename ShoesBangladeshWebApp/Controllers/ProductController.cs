@@ -58,11 +58,11 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles)
+        public async Task<IActionResult> Create(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles, IFormFile? detailsImageFile)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
-            // Upload image from desktop if provided
+            // Upload main image from desktop if provided
             if (imageFile != null && imageFile.Length > 0)
             {
                 using var form = new MultipartFormDataContent();
@@ -77,6 +77,24 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? "";
+                }
+            }
+
+            // Upload details image
+            if (detailsImageFile != null && detailsImageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = detailsImageFile.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(detailsImageFile.ContentType);
+                form.Add(streamContent, "file", detailsImageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    product.DetailsImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? "";
                 }
             }
             
@@ -133,7 +151,7 @@ namespace ShoesBangladeshWebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles)
+        public async Task<IActionResult> Edit(ProductViewModel product, IFormFile? imageFile, IFormFileCollection? additionalImageFiles, IFormFile? detailsImageFile)
         {
             var client = _httpClientFactory.CreateClient("ShoesAPI");
 
@@ -152,6 +170,24 @@ namespace ShoesBangladeshWebApp.Controllers
                     var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
                     var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
                     product.ImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? product.ImageUrl;
+                }
+            }
+
+            // Upload details image if provided
+            if (detailsImageFile != null && detailsImageFile.Length > 0)
+            {
+                using var form = new MultipartFormDataContent();
+                using var fileStream = detailsImageFile.OpenReadStream();
+                var streamContent = new StreamContent(fileStream);
+                streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(detailsImageFile.ContentType);
+                form.Add(streamContent, "file", detailsImageFile.FileName);
+
+                var uploadResponse = await client.PostAsync("api/products/upload", form);
+                if (uploadResponse.IsSuccessStatusCode)
+                {
+                    var uploadResult = await uploadResponse.Content.ReadAsStringAsync();
+                    var uploadJson = JsonSerializer.Deserialize<JsonElement>(uploadResult);
+                    product.DetailsImageUrl = uploadJson.GetProperty("imageUrl").GetString() ?? product.DetailsImageUrl;
                 }
             }
 

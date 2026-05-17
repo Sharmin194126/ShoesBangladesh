@@ -11,10 +11,12 @@ namespace ShoesBangladesh.Web.Controllers
         private const string CartSessionKey = "ShoesCart";
         private const string ReceiptSessionKey = "OrderReceipt";
         private readonly EmailService _emailService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public OrderController(EmailService emailService)
+        public OrderController(EmailService emailService, IHttpClientFactory httpClientFactory)
         {
             _emailService = emailService;
+            _httpClientFactory = httpClientFactory;
         }
 
         public IActionResult Checkout()
@@ -65,6 +67,27 @@ namespace ShoesBangladesh.Web.Controllers
             {
                 // Log silently — don't break the order flow
                 Console.WriteLine($"Email send failed: {ex.Message}");
+            }
+
+            // Deduct Stock via API
+            try
+            {
+                var deductionRequests = cart.Items.Select(i => new {
+                    ProductId = i.ProductId,
+                    Size = i.Size,
+                    Quantity = i.Quantity
+                }).ToList();
+
+                var client = _httpClientFactory.CreateClient("ShoesAPI");
+                var response = await client.PostAsJsonAsync("api/Products/DeductStock", deductionRequests);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Failed to deduct stock: " + await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Stock deduction failed: {ex.Message}");
             }
 
             // Clear cart after order placed

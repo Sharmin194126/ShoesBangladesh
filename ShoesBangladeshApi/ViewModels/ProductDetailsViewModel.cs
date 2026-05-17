@@ -18,7 +18,9 @@ namespace ShoesBangladesh.API.ViewModels
             public int Id { get; set; }
             public string Name { get; set; } = string.Empty;
             public string Description { get; set; } = string.Empty;
+            public string LongDescription { get; set; } = string.Empty;
             public string ImageUrl { get; set; } = string.Empty;
+            public string DetailsImageUrl { get; set; } = string.Empty;
             public decimal Price { get; set; }
             public decimal RegularPrice { get; set; }
             public decimal OfferPercentage { get; set; }

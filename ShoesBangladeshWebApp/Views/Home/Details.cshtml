@@ -28,7 +28,7 @@
         bottom: 20px;
         right: 20px;
         z-index: 9999;
-        background: linear-gradient(135deg, #532374, #8b1a6b);
+        background: #D00000;
         color: white;
         padding: 10px 20px;
         border-radius: 30px;
@@ -45,7 +45,7 @@
     .live-chat-btn:hover {
         transform: scale(1.05);
         color: white;
-        background: linear-gradient(135deg, #3d1a55, #532374);
+        background: #B00000;
     }
     .chat-box {
         position: fixed;
@@ -64,7 +64,7 @@
         display: flex;
     }
     .chat-header {
-        background: linear-gradient(135deg, #532374, #8b1a6b);
+        background: #D00000;
         color: white;
         padding: 15px;
         border-radius: 15px 15px 0 0;
@@ -108,11 +108,11 @@
         background: #ffc107;
     }
     .live-chat-banner {
-        background: linear-gradient(135deg, #532374 0%, #8b1a6b 100%);
+        background: #D00000;
         color: white;
         padding: 20px 0;
         margin-bottom: 30px;
-        box-shadow: 0 4px 15px rgba(83, 35, 116, 0.2);
+        box-shadow: 0 4px 15px rgba(208, 0, 0, 0.2);
     }
     /* Daraz Style Zoom */
     .img-zoom-container {
@@ -596,6 +596,56 @@
         </div>
     </div>
     
+    <!-- Daraz Style Product Details Section -->
+    @if (!string.IsNullOrEmpty(Model.Product.LongDescription) || !string.IsNullOrEmpty(Model.Product.DetailsImageUrl))
+    {
+        <div class="card border-0 shadow-sm mt-4 p-4 rounded-3" style="background-color: #fff;">
+            <h4 class="fw-bold mb-4" style="color: #444; font-size: 1.25rem;">@Localizer["Product details of"] @Model.Product.Name</h4>
+            <div id="daraz-product-details" style="position: relative; max-height: 250px; overflow: hidden; transition: max-height 0.5s ease-out;">
+                
+                @if (!string.IsNullOrEmpty(Model.Product.LongDescription))
+                {
+                    <div class="mb-4" style="color: #333; line-height: 1.8; font-size: 0.95rem; white-space: pre-line;">
+                        @Model.Product.LongDescription
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Product.DetailsImageUrl))
+                {
+                    var fullImgUrl = Model.Product.DetailsImageUrl.StartsWith("http") ? Model.Product.DetailsImageUrl : $"{apiBase}{Model.Product.DetailsImageUrl}";
+                    <div class="text-center">
+                        <img src="@fullImgUrl" class="img-fluid" style="max-width: 100%; border-radius: 8px;" alt="Product Details" />
+                    </div>
+                }
+
+                <!-- Gradient Fade Overlay -->
+                <div id="daraz-details-gradient" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));"></div>
+            </div>
+            
+            <div class="text-center mt-2">
+                <button id="daraz-view-more-btn" class="btn fw-bold text-primary" style="background: transparent; border: none; font-size: 0.95rem;" onclick="toggleDarazDetails()">VIEW MORE <i class="bi bi-chevron-down ms-1"></i></button>
+            </div>
+        </div>
+
+        <script>
+            function toggleDarazDetails() {
+                var container = document.getElementById('daraz-product-details');
+                var gradient = document.getElementById('daraz-details-gradient');
+                var btn = document.getElementById('daraz-view-more-btn');
+                
+                if (container.style.maxHeight === '250px') {
+                    container.style.maxHeight = '5000px'; // Arbitrary large number to allow full expansion
+                    gradient.style.display = 'none';
+                    btn.innerHTML = 'VIEW LESS <i class="bi bi-chevron-up ms-1"></i>';
+                } else {
+                    container.style.maxHeight = '250px';
+                    gradient.style.display = 'block';
+                    btn.innerHTML = 'VIEW MORE <i class="bi bi-chevron-down ms-1"></i>';
+                }
+            }
+        </script>
+    }
+
     <hr class="mt-5 mb-5" />
 
     <!-- Ratings Summary and Review List -->

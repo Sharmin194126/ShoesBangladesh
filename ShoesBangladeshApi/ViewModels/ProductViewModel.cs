@@ -13,6 +13,9 @@ namespace ShoesBangladesh.API.ViewModels
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; } = string.Empty;
 
+        public string LongDescription { get; set; } = string.Empty;
+        public string DetailsImageUrl { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Regular Price is required.")]
         [Range(0, 1000000, ErrorMessage = "Price must be a positive number.")]
         public decimal Price { get; set; }

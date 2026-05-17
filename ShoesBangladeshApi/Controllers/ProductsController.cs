@@ -100,7 +100,7 @@ namespace ShoesBangladesh.API.Controllers
             }
 
             var relatedProducts = await _context.Products
-                .Where(p => p.CategoryId == product.CategoryId && p.Id != id)
+                .Where(p => (p.CategoryId == product.CategoryId || p.ProductTypeId == product.ProductTypeId) && p.Id != id)
                 .Take(6)
                 .ToListAsync();
 
@@ -111,7 +111,9 @@ namespace ShoesBangladesh.API.Controllers
                     Id = product.Id,
                     Name = product.Name,
                     Description = product.Description,
+                    LongDescription = product.LongDescription,
                     ImageUrl = product.ImageUrl,
+                    DetailsImageUrl = product.DetailsImageUrl,
                     Price = product.DiscountPrice ?? product.Price,
                     RegularPrice = product.Price,
                     OfferPercentage = product.OfferPercentage,
@@ -181,6 +183,44 @@ namespace ShoesBangladesh.API.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        public class StockDeductionRequest
+        {
+            public int ProductId { get; set; }
+            public string Size { get; set; } = string.Empty;
+            public int Quantity { get; set; }
+        }
+
+        [HttpPost("DeductStock")]
+        public async Task<IActionResult> DeductStock([FromBody] List<StockDeductionRequest> requests)
+        {
+            foreach (var req in requests)
+            {
+                var product = await _context.Products.FindAsync(req.ProductId);
+                if (product != null)
+                {
+                    // Deduct overall stock
+                    product.StockQuantity -= req.Quantity;
+                    if (product.StockQuantity < 0) product.StockQuantity = 0;
+
+                    // Deduct size specific stock
+                    if (!string.IsNullOrEmpty(req.Size) && product.SizeQuantities.ContainsKey(req.Size))
+                    {
+                        var currentSizeQty = product.SizeQuantities[req.Size];
+                        var newSizeQty = currentSizeQty - req.Quantity;
+                        if (newSizeQty < 0) newSizeQty = 0;
+                        
+                        var sizeDict = product.SizeQuantities;
+                        sizeDict[req.Size] = newSizeQty;
+                        product.SizeQuantities = sizeDict; // trigger serialization
+                    }
+
+                    _context.Entry(product).State = EntityState.Modified;
+                }
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         private bool ProductExists(int id)
