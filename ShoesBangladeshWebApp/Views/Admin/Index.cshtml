@@ -247,11 +247,11 @@
                 <div class="card-header-custom mb-3">
                     <div>
                         <span class="text-muted fw-bold small text-uppercase">Product Sales</span>
-                        <h2 class="fw-extrabold mb-0" style="font-size: 2rem; font-weight: 900; color: #1F1F1F;">৳0</h2>
+                        <h2 class="fw-extrabold mb-0" style="font-size: 2rem; font-weight: 900; color: #1F1F1F;">৳@Model.TotalRevenue.ToString("#,##0")</h2>
                         <div class="d-flex gap-4 mt-2 small text-muted fw-bold">
-                            <div>Total Amount<br><b class="text-dark">৳0</b></div>
-                            <div>Total Pieces<br><b class="text-dark">0</b></div>
-                            <div>Avg / Period<br><b class="text-dark">৳0</b></div>
+                            <div>Total Amount<br><b class="text-dark">৳@Model.TotalRevenue.ToString("#,##0")</b></div>
+                            <div>Total Pieces<br><b class="text-dark">@Model.DailySales.Sum(d => d.Pieces)</b></div>
+                            <div>Avg / Period<br><b class="text-dark">৳@((Model.WeeklySales.Count > 0 ? Model.WeeklySales.Average(w => w.Amount) : 0).ToString("#,##0"))</b></div>
                         </div>
                     </div>
                     <button class="btn btn-sm rounded-pill px-3" style="background: #FEE2E2; color: #C40000; border: 1px solid #FECACA; font-weight: 700;">Weekly <i class="bi bi-chevron-down ms-1"></i></button>
@@ -265,29 +265,33 @@
                 <div class="card-header-custom">
                     <span class="card-title-custom" style="font-size: 1.05rem; font-weight: 800;"><i class="bi bi-award-fill"></i> Sales Goal</span>
                     <div class="d-flex gap-2">
-                        <span class="small fw-bold text-muted border px-2 rounded-pill">2026</span>
-                        <a href="#" class="text-danger small fw-bold text-decoration-none">History</a>
-                        <a href="#" class="text-muted small fw-bold text-decoration-none">Edit</a>
+                        <span class="small fw-bold text-muted border px-2 rounded-pill">@Model.CurrentYear</span>
                     </div>
                 </div>
+                @{
+                    decimal goal = Model.SalesGoal > 0 ? Model.SalesGoal : 1000000;
+                    decimal achieved = Model.TotalRevenue;
+                    decimal remaining = Math.Max(0, goal - achieved);
+                    int goalPct = (int)Math.Min(100, goal > 0 ? Math.Round((achieved / goal) * 100) : 0);
+                }
                 <div class="row g-2 text-start mb-4">
                     <div class="col-6">
                         <span class="small text-muted fw-bold">Target</span>
-                        <div class="fw-bold">৳1,523,709</div>
+                        <div class="fw-bold">৳@goal.ToString("#,##0")</div>
                         <span class="text-muted" style="font-size: 0.6rem;">Full Year Goal</span>
                     </div>
                     <div class="col-6">
                         <span class="small text-muted fw-bold">Remaining</span>
-                        <div class="fw-bold text-danger">৳973,740</div>
+                        <div class="fw-bold text-danger">৳@remaining.ToString("#,##0")</div>
                         <span class="text-muted" style="font-size: 0.6rem;">To reach target</span>
                     </div>
                 </div>
                 <div class="goal-donut-container mb-4">
-                    <canvas id="goalChart"></canvas>
-                    <div class="goal-donut-text">36%</div>
+                    <canvas id="goalChart" data-achieved="@goalPct" data-remaining="@(100 - goalPct)"></canvas>
+                    <div class="goal-donut-text">@goalPct%</div>
                 </div>
-                <h5 class="fw-bold mb-0">৳549,970 achieved</h5>
-                <p class="small text-muted">Note: Goal for 2026</p>
+                <h5 class="fw-bold mb-0">৳@achieved.ToString("#,##0") achieved</h5>
+                <p class="small text-muted">Note: Goal for @Model.CurrentYear</p>
             </div>
         </div>
 
@@ -318,14 +322,14 @@
         </div>
     </div>
 
-    <!-- Extra Stats Cards - Perfect Red Sparklines -->
+    <!-- Extra Stats Cards - Real Data Sparklines -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
             <div class="extra-stat-card">
                 <div class="extra-stat-info">
-                    <span>TOTAL SALES</span>
-                    <h4>৳549,970</h4>
-                    <p>All time revenue</p>
+                    <span>TOTAL REVENUE</span>
+                    <h4>৳@Model.TotalRevenue.ToString("#,##0")</h4>
+                    <p>All confirmed orders</p>
                 </div>
                 <div style="width: 100px; height: 50px;"><canvas id="spark1"></canvas></div>
             </div>
@@ -333,8 +337,8 @@
         <div class="col-md-3">
             <div class="extra-stat-card">
                 <div class="extra-stat-info">
-                    <span>TOTAL PROFIT (EX. VAT)</span>
-                    <h4>৳530,120</h4>
+                    <span>PROFIT (EX. VAT)</span>
+                    <h4>৳@Model.TotalProfit.ToString("#,##0")</h4>
                     <p>After VAT deduction</p>
                 </div>
                 <div style="width: 100px; height: 50px;"><canvas id="spark2"></canvas></div>
@@ -344,7 +348,7 @@
             <div class="extra-stat-card">
                 <div class="extra-stat-info">
                     <span>VAT COLLECTED</span>
-                    <h4>৳19,850</h4>
+                    <h4>৳@Model.TotalExpenses.ToString("#,##0")</h4>
                     <p>Total tax revenue</p>
                 </div>
                 <div style="width: 100px; height: 50px;"><canvas id="spark3"></canvas></div>
@@ -353,8 +357,8 @@
         <div class="col-md-3">
             <div class="extra-stat-card">
                 <div class="extra-stat-info">
-                    <span>WEEKLY SALES</span>
-                    <h4>৳0</h4>
+                    <span>WEEKLY REVENUE</span>
+                    <h4>৳@Model.WeeklyRevenue.ToString("#,##0")</h4>
                     <p>Last 7 days</p>
                 </div>
                 <div style="width: 100px; height: 50px;"><canvas id="spark4"></canvas></div>
@@ -394,25 +398,28 @@
                     <table class="table table-hover align-middle">
                         <thead style="background: #1F1F1F !important; color: #fff !important;">
                             <tr class="small fw-bold text-white">
+                                <th>SL</th>
                                 <th>MONTH / YEAR</th>
                                 <th class="text-end">REVENUE (INC. VAT)</th>
                                 <th class="text-center">PIECES</th>
-                                <th class="text-center">REPORT</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="small fw-bold">April 2026 | May 14, 2026 | 10:58 AM</td>
-                                <td class="text-end fw-bold text-success">৳7,665</td>
-                                <td class="text-center"><span class="badge bg-light text-dark border px-3">3 Pcs</span></td>
-                                <td class="text-center"><button class="btn btn-sm btn-outline-dark px-3 rounded-pill">View</button></td>
-                            </tr>
-                            <tr>
-                                <td class="small fw-bold">January 2026 | May 14, 2026 | 10:58 AM</td>
-                                <td class="text-end fw-bold text-success">৳542,305</td>
-                                <td class="text-center"><span class="badge bg-light text-dark border px-3">126 Pcs</span></td>
-                                <td class="text-center"><button class="btn btn-sm btn-outline-dark px-3 rounded-pill">View</button></td>
-                            </tr>
+                            @{ int archiveSl = 1; }
+                            @foreach (var m in Model.MonthlyHistory.Where(m => m.Amount > 0 || m.Pieces > 0).OrderByDescending(m => m.Month))
+                            {
+                                <tr>
+                                    <td class="small fw-bold text-muted">@archiveSl</td>
+                                    <td class="small fw-bold">@m.MonthName @m.Year</td>
+                                    <td class="text-end fw-bold text-success">৳@m.Amount.ToString("#,##0")</td>
+                                    <td class="text-center"><span class="badge bg-light text-dark border px-3">@m.Pieces Pcs</span></td>
+                                </tr>
+                                archiveSl++;
+                            }
+                            @if (!Model.MonthlyHistory.Any(m => m.Amount > 0 || m.Pieces > 0))
+                            {
+                                <tr><td colspan="4" class="text-center text-muted py-3">No sales data yet for this year.</td></tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -433,14 +440,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var order in Model.RecentOrders.Take(5))
+                            @{ int sl = 1; }
+                            @foreach (var order in Model.RecentOrders.Take(10))
                             {
                                 <tr>
-                                    <td>1</td><td class="fw-bold text-danger">@order.OrderId</td><td>@order.CustomerName</td>
-                                    <td>@order.OrderDate.ToString("MMM dd, yyyy | hh:mm tt")</td><td class="fw-bold">৳@order.Amount.ToString("#,##0")</td>
-                                    <td><span class="@(order.Status == "Delivered" ? "badge-delivered" : order.Status == "Processing" ? "badge-processing" : "badge-pending")">@order.Status</span></td>
-                                    <td>Uttara, Dhaka</td>
+                                    <td class="text-muted">@sl</td>
+                                    <td class="fw-bold text-danger">#@order.OrderId</td>
+                                    <td>@order.CustomerName</td>
+                                    <td>@order.OrderDate.ToString("MMM dd, yyyy | hh:mm tt")</td>
+                                    <td class="fw-bold">৳@order.Amount.ToString("#,##0")</td>
+                                    <td>
+                                        <span class="@(order.Status == "Delivered" ? "badge-delivered" : order.Status == "Processing" ? "badge-processing" : order.Status == "Shipped" ? "badge-processing" : order.Status == "Cancelled" ? "badge-cancelled" : "badge-pending")">
+                                            @order.Status
+                                        </span>
+                                    </td>
+                                    <td class="text-muted small">@(string.IsNullOrEmpty(order.ShippingAddress) ? "—" : (order.ShippingAddress.Length > 20 ? order.ShippingAddress.Substring(0, 20) + "…" : order.ShippingAddress))</td>
                                 </tr>
+                                sl++;
+                            }
+                            @if (!Model.RecentOrders.Any())
+                            {
+                                <tr><td colspan="7" class="text-center text-muted py-3">No orders found.</td></tr>
                             }
                         </tbody>
                     </table>
@@ -482,12 +502,16 @@
         gradient.addColorStop(0, 'rgba(196, 0, 0, 0.4)');
         gradient.addColorStop(1, 'rgba(196, 0, 0, 0)');
 
+        // Real weekly sales data from model
+        const weeklyLabels = [@Html.Raw(string.Join(",", Model.WeeklySales.Select(w => $"'{w.Date:MMM dd}'")))];
+        const weeklyData   = [@Html.Raw(string.Join(",", Model.WeeklySales.Select(w => w.Amount)))];
+
         new Chart(mainCtx, {
             type: 'line',
             data: {
-                labels: ['Fri, 08 May', 'Sat, 09 May', 'Sun, 10 May', 'Mon, 11 May', 'Tue, 12 May', 'Wed, 13 May', 'Thu, 14 May'],
+                labels: weeklyLabels,
                 datasets: [{
-                    data: [10, 8, 15, 12, 25, 20, 35],
+                    data: weeklyData,
                     borderColor: '#C40000',
                     backgroundColor: gradient,
                     fill: true,
@@ -499,13 +523,16 @@
                     pointBorderWidth: 3
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#F3F4F6' } } } }
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: '#F3F4F6' }, beginAtZero: true } } }
         });
 
-        // Goal Chart
-        new Chart(document.getElementById('goalChart'), {
+        // Goal Chart - real data from canvas attributes
+        const goalEl = document.getElementById('goalChart');
+        const goalAchieved  = parseInt(goalEl.dataset.achieved  || 0);
+        const goalRemaining = parseInt(goalEl.dataset.remaining || 100);
+        new Chart(goalEl, {
             type: 'doughnut',
-            data: { datasets: [{ data: [36, 64], backgroundColor: ['#C40000', '#F3F4F6'], borderWidth: 0, cutout: '80%', borderRadius: 10 }] },
+            data: { datasets: [{ data: [goalAchieved, goalRemaining], backgroundColor: ['#C40000', '#F3F4F6'], borderWidth: 0, cutout: '80%', borderRadius: 10 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { enabled: false } } }
         });
 
@@ -539,10 +566,21 @@
         }
         spark('spark1'); spark('spark2'); spark('spark3'); spark('spark4');
 
-        // Type Chart
+        // Product Type Chart - real data from model
+        const typeLabels = [@Html.Raw(string.Join(",", Model.ProductTypeSales.Select(p => $"'{System.Web.HttpUtility.JavaScriptStringEncode(p.ProductTypeName)}'")))];
+        const typeData   = [@Html.Raw(string.Join(",", Model.ProductTypeSales.Select(p => p.Amount)))];
+        const typeColors = ['#C40000','#FF6B6B','#FF9999','#FFCCCC','#FFE5E5','#FFF0F0','#7A0000','#A80000'];
         new Chart(document.getElementById('typeChart'), {
             type: 'doughnut',
-            data: { datasets: [{ data: [90.5, 9.5], backgroundColor: ['#C40000', '#F3F4F6'], borderWidth: 0, cutout: '70%' }] },
+            data: { 
+                labels: typeLabels,
+                datasets: [{ 
+                    data: typeData.length > 0 ? typeData : [1], 
+                    backgroundColor: typeData.length > 0 ? typeColors.slice(0, typeData.length) : ['#F3F4F6'], 
+                    borderWidth: 0, 
+                    cutout: '70%' 
+                }] 
+            },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
     </script>

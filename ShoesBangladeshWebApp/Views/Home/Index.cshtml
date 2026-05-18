@@ -796,6 +796,37 @@ em;
         color: #fff;
         gap: 15px;
     }
+
+    /* Premium View More Button */
+    .btn-view-more {
+        background: linear-gradient(135deg, var(--premium-red) 0%, #7A0000 100%);
+        color: white !important;
+        padding: 0.9rem 2.8rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 6px 20px rgba(208, 0, 0, 0.25);
+        border: 2px solid transparent;
+    }
+    .btn-view-more:hover {
+        background: transparent !important;
+        color: var(--premium-red) !important;
+        border-color: var(--premium-red);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(208, 0, 0, 0.15);
+    }
+    .btn-view-more i {
+        transition: transform 0.3s;
+    }
+    .btn-view-more:hover i {
+        transform: translateX(5px);
+    }
 </style>
 
 <!-- Update Layout Marquee Text Dynamically if possible, otherwise it will use default -->
@@ -1218,6 +1249,12 @@ em;
             <p>Please enable sections in Admin -> Homepage Sections.</p>
         </div>
     }
+
+    <div class="text-center my-5">
+        <a href="/Home/CategoryProducts" class="btn-view-more">
+            View More <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
 
     <!-- Bottom Features & Quality Assurance -->
     <section class="mt-5 pt-5 border-top" id="features">

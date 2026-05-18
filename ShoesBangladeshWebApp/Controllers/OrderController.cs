@@ -69,6 +69,39 @@ namespace ShoesBangladesh.Web.Controllers
                 Console.WriteLine($"Email send failed: {ex.Message}");
             }
 
+            // Save Order to Database via API
+            try
+            {
+                var createOrderRequest = new
+                {
+                    CustomerEmail = User.Identity?.Name ?? "",
+                    CustomerName = fullName,
+                    Phone = phone,
+                    ShippingAddress = address,
+                    City = city,
+                    ZipCode = zipCode,
+                    PaymentMethod = string.IsNullOrEmpty(paymentMethod) ? "COD" : paymentMethod,
+                    TotalAmount = cart.GrandTotal,
+                    Items = cart.Items.Select(i => new {
+                        ProductId = i.ProductId,
+                        Quantity = i.Quantity,
+                        UnitPrice = i.UnitPrice,
+                        VatPercentage = i.VatPercentage
+                    }).ToList()
+                };
+
+                var client = _httpClientFactory.CreateClient("ShoesAPI");
+                var response = await client.PostAsJsonAsync("api/Dashboard/CreateOrder", createOrderRequest);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Failed to save order in DB: " + await response.Content.ReadAsStringAsync());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Database order save failed: {ex.Message}");
+            }
+
             // Deduct Stock via API
             try
             {

@@ -470,11 +470,85 @@ namespace ShoesBangladesh.API.Controllers
                 }
             }).ToList();
         }
+
+        [HttpPost("CreateOrder")]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO model)
+        {
+            if (model == null || !model.Items.Any())
+            {
+                return BadRequest("Invalid order data.");
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.CustomerEmail);
+            if (user == null)
+            {
+                user = await _context.Users.FirstOrDefaultAsync(u => u.Role == "Customer");
+                if (user == null)
+                {
+                    user = await _context.Users.FirstOrDefaultAsync();
+                }
+            }
+
+            var order = new Order
+            {
+                OrderDate = DateTime.UtcNow,
+                UserId = user?.Id ?? 1,
+                TotalAmount = model.TotalAmount,
+                Status = "Pending",
+                PaymentStatus = "Pending",
+                PaymentMethod = model.PaymentMethod,
+                ShippingAddress = $"{model.ShippingAddress}, {model.City} {model.ZipCode}",
+                City = model.City,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            foreach (var item in model.Items)
+            {
+                var orderDetail = new OrderDetails
+                {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.UnitPrice,
+                    VatAmount = item.UnitPrice * (item.VatPercentage / 100),
+                    PriceWithVat = item.UnitPrice * (1 + item.VatPercentage / 100)
+                };
+                _context.OrderDetails.Add(orderDetail);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, orderId = order.Id });
+        }
     }
 
     public class UpdateOrderStatusDTO
     {
         public int OrderId { get; set; }
         public string Status { get; set; } = string.Empty;
+    }
+
+    public class CreateOrderDTO
+    {
+        public string CustomerEmail { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string ShippingAddress { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string ZipCode { get; set; } = string.Empty;
+        public string PaymentMethod { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public List<CreateOrderItemDTO> Items { get; set; } = new();
+    }
+
+    public class CreateOrderItemDTO
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal VatPercentage { get; set; }
     }
 }
