@@ -28,7 +28,10 @@ namespace ShoesBangladesh.Web.Controllers
 
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated) return RedirectToAction("Register", "Account");
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Account", new { returnUrl = "/Cart" });
+            }
             var cart = GetCart();
             return View(cart);
         }
@@ -36,9 +39,9 @@ namespace ShoesBangladesh.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddToCart(int productId, string? size, int qty = 1)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Register", "Account", new { returnUrl = $"/Home/Details/{productId}" });
+                return RedirectToAction("Login", "Account", new { returnUrl = $"/Cart/AddToCart?productId={productId}&size={size}&qty={qty}" });
             }
             
             var client = _httpClientFactory.CreateClient("ShoesAPI");
@@ -112,22 +115,22 @@ namespace ShoesBangladesh.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> BuyNow(int productId, string? size, int qty = 1)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Register", "Account", new { returnUrl = $"/Order/Checkout?productId={productId}&size={size}&qty={qty}" });
+                return RedirectToAction("Login", "Account", new { returnUrl = $"/Cart/BuyNowDirect?productId={productId}&size={size}&qty={qty}" });
             }
             
             // Clear current cart and add this single item
             HttpContext.Session.Remove(CartSessionKey);
-            return await AddToCart(productId, size, qty); // AddToCart already redirects to Index (which is fine, or we can redirect to checkout). Wait, it redirects to Index. Let's fix this.
+            return await AddToCart(productId, size, qty);
         }
         
         [HttpGet]
         public async Task<IActionResult> BuyNowDirect(int productId, string? size, int qty = 1)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Register", "Account", new { returnUrl = $"/Order/Checkout?productId={productId}&size={size}&qty={qty}" });
+                return RedirectToAction("Login", "Account", new { returnUrl = $"/Cart/BuyNowDirect?productId={productId}&size={size}&qty={qty}" });
             }
             
             HttpContext.Session.Remove(CartSessionKey);

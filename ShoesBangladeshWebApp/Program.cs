@@ -4,7 +4,10 @@ using ShoesBangladeshWebApp.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<ShoesBangladesh.Web.Services.SettingsFilter>();
+})
     .AddViewLocalization()
     .AddDataAnnotationsLocalization()
     .ConfigureApplicationPartManager(manager =>
